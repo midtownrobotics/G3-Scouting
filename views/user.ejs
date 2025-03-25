@@ -1,60 +1,73 @@
+<html>
 
-d>
-<link rel="stylesheet" href="/libs/bootstrap.min.css">
-<link rel="stylesheet" href="/libs/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
-<link rel="icon" type="image/png" href="/g3.png">
-<link rel="stylesheet" href="/global.css">
-<title>G3 Scouting!</title>
-<script src="/libs/jquery-3.7.1.min.js"></script>
-<script>var exports = {};</script>
-<script type="module" src="/js/global.js"></script>
-ad>
-y>
+<head>
+    <link rel="stylesheet" href="/libs/bootstrap.min.css">
+    <link rel="stylesheet" href="/libs/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
+    <link rel="icon" type="image/png" href="/g3.png">
+    <link rel="stylesheet" href="/global.css">
+    <title>G3 Scouting!</title>
+    <script src="/libs/jquery-3.7.1.min.js"></script>
+    <script>var exports = {};</script>
+    <script type="module" src="/js/global.js"></script>
+</head>
 
-<%- nav %>
+<body>
 
-<div id="main">
+    <%- nav %>
 
-    <h1 style="text-align:center; text-decoration: none;">Hello <%= username %>!</h1>
+        <div id="main">
 
-    <hr>
+            <h1 style="text-align:center; text-decoration: none;">Hello <%= username %>!</h1>
+
+            <hr>
 
             <div style="text-align:center;">
                 <h2>Current status:</h2>
-                <p>Block: <b><%= current.time %></b></p>
-                <p>Status: <b><%= current.status == "break" ? "Break/Other" : "Scouting" %></b></p>
-                <p>Until: <b><%= "Day " + current.until.split("-").join(" @ ") %></b></p>    
+                <p>Block: <b>
+                        <%= current.time %>
+                    </b></p>
+                <p>Status: <b>
+                        <%= current.status=="break" ? "Break/Other" : "Scouting" %>
+                    </b></p>
+                <p>Until: <b>
+                        <%= "Day " + current.until.split("-").join(" @ ") %></b></p>    
             </div>
 
             <hr>
 
-            <h2 style="text-align:center;">Your Schedule:</h2>
-            <table class="table table-dark" style="width: 40% !important; min-width: 300px; margin-left:auto; margin-right:auto;">
-                <thead>
-                    <tr>
-                        <td>Time</td>
-                        <td>Status</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% for (let i = 0; i < schedule.length; i++) { %>
-                        <tr class=<%= schedule[i].status == "break" ? "table-primary" : "table" %> !important;">
-                            <td class="table-dark"><%= schedule[i].time %></td>
-                            <td class="table-dark"><%= schedule[i].status %></td>
-                        </tr>
-                    <% } %>
-                </tbody>
-            </table>
+            <h2 style=" text-align:center;">Your Schedule:</h2>
+                            <table class="table table-dark"
+                                style="width: 40% !important; min-width: 300px; margin-left:auto; margin-right:auto;">
+                                <thead>
+                                    <tr>
+                                        <td>Time</td>
+                                        <td>Status</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for (let i=0; i < schedule.length; i++) { %>
+                                        <tr class=<%=schedule[i].status=="break" ? "table-primary" : "table" %>
+                                            !important;">
+                                            <td class="table-dark">
+                                                <%= schedule[i].time %>
+                                            </td>
+                                            <td class="table-dark">
+                                                <%= schedule[i].status %>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                </tbody>
+                            </table>
 
-        </div>
+            </div>
 
-    </body>
+</body>
+
 </html>
 
 <script>$("#nav-home").addClass("active");</script>
 
 <style>
-
     #top-row {
         top: 0px;
         position: sticky;
@@ -162,5 +175,4 @@ y>
             font-size: 25px;
         }
     }
-
 </style>
