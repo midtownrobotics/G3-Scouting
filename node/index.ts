@@ -18,7 +18,7 @@ let nav: string = "";
 
 let PORT: number = 9955;
 const SCOUTING_BLOCKS = ["1-11:00", "1-11:30", "1-12:00", "1-12:30", "1-1:00", "1-1:30", "1-2:00", "1-2:30", "1-3:00", "1-3:30", "1-4:00", "1-4:30", "1-5:00", "1-5:30", "1-6:00", "1-6:30", "2-9:30", "2-10:00", "2-10:30", "2-11:00", "2-11:30", "2-12:00"]
-const TIME_OFFSET = 4;
+const TIME_OFFSET = -4;
 
 export const TBA = new TheBlueAllianceV3(getSettingsSync().apiKey);
 
@@ -31,7 +31,7 @@ export async function getCurrentScoutingBlock(): Promise<string | null> {
         return null;
     }
 
-    return dayNumber + "-" + ((date.getHours() - 1 - TIME_OFFSET) % 12 + 1).toString() + ":" + minutesRounded.toString().padStart(2, "0")
+    return dayNumber + "-" + ((date.getHours() - 1 + TIME_OFFSET) % 12 + 1).toString() + ":" + minutesRounded.toString().padStart(2, "0")
 }
 
 interface AuthReq extends Request {
