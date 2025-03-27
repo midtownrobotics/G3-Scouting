@@ -119,11 +119,15 @@ app.get('/forms', async (req: AuthReq, res) => {
     const user = req.user
     if (!user) return res.render("401");
 
+    const currentMatch = (await getSettings()).match;
+
     const form: string | undefined = req.query.form?.toString()
     const deployedForms: string[] = await getDeployedForms()
 
-    if (form && deployedForms.includes(form)) {
-        if (user.lastMatchScouted == (await getSettings()).match) {
+    if (!user.nextMatch || (user.lastMatchScouted == user.nextMatch.number && user.nextMatch.number > currentMatch)) {
+        res.render('form-no-scout', { nav })
+    } else if (form && deployedForms.includes(form)) {
+        if (user.lastMatchScouted == currentMatch) {
             res.render('form-waiting', { nav })
         } else {
             res.render('form', { data: await getFormHTML(form), nav });
