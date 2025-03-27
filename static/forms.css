@@ -539,6 +539,10 @@ input[type='radio'] {
   font-size: 90px;
 }
 
+#submitButton[disabled] {
+    background-color: rgb(125, 156, 166) !important;
+}
+
 #saveLoadPage {
   padding: 10px;
 }

@@ -27,10 +27,15 @@ const SERVICE_ACCOUNT_FILE = path.join(__dirname + "/../storage/gapi-service-acc
 const SHEET_ID = "1XjeNkzz5bvoRGhfhx92peMuDdm_U5DVa6-k5Ppi4Zfw";
 
 async function authorize() {
-    return new google.auth.GoogleAuth({
-        credentials: JSON.parse(fs.readFileSync(SERVICE_ACCOUNT_FILE, "utf8")),
-        scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-    });
+    try {
+        return new google.auth.GoogleAuth({
+            credentials: JSON.parse(fs.readFileSync(SERVICE_ACCOUNT_FILE, "utf8")),
+            scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+        });
+    } catch (err) {
+        console.log("Could not authorize Google API.")
+        return null;
+    }
 }
 
 async function sendDataToGoogleSheets(data: ResponseCreationAttributes) {
@@ -49,6 +54,7 @@ async function sendDataToGoogleSheets(data: ResponseCreationAttributes) {
 
 async function appendToSheet(data: string[][]) {
     const authClient = await authorize();
+    if (!authClient) return;
     const sheets = google.sheets({ version: "v4", auth: authClient });
 
     await sheets.spreadsheets.values.append({
@@ -57,6 +63,4 @@ async function appendToSheet(data: string[][]) {
         valueInputOption: "RAW",
         requestBody: { values: data },
     });
-
-    console.log("Data added!");
 }
