@@ -29,11 +29,11 @@
 <script>$("#nav-forms").addClass("active")</script>
 
 <script>
-    async function Async() {
+    async function async() {
         let userget = await fetch("/user-get/").then((res) => res.json())
         $("#nextForm").text(userget.nextMatch.form)
     }
-    Async()
+    async()
 </script>
 
 <style>

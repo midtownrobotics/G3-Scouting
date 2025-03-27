@@ -9,6 +9,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 var _a;
 import { postDataGeneral, parseIntPlus, getNextMatchInfo } from "./global.js";
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = "manual";
+}
+$(() => {
+    window.scrollTo(0, 0);
+    const loadedFormData = loadFormFromLocalStorage();
+    if (loadedFormData) {
+        window.scrollTo(0, 99999999);
+        alert("Please resubmit the form. If the issue persists, please contact an admin.");
+        saveFormToLocalStorage(false);
+    }
+});
 let currentForm = (_a = new URLSearchParams(window.location.search).get('form')) !== null && _a !== void 0 ? _a : "NONE";
 if (!currentForm) {
     window.location.href = "/forms";
@@ -39,6 +51,8 @@ function submitForm() {
     formData.push({ name: "timestamp", value: formatDate(new Date()) });
     const matchNumber = parseIntPlus($("#matchNum").val());
     $('#submitButton').attr("disabled", "disabled");
+    $('#submitButton').html(`<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>`);
+    let dataPosted = false;
     postDataGeneral({
         action: "postFormData",
         form: currentForm,
@@ -47,17 +61,32 @@ function submitForm() {
     }).then(function (res) {
         return __awaiter(this, void 0, void 0, function* () {
             if (res.status == "OK") {
-                setTimeout(() => {
-                    window.location.reload();
-                }, 500);
-            }
-            else {
-                alert("FORM NOT SAVED!");
-                $('#submitButton').removeAttr("disabled");
+                // dataPosted = true;
+                // setTimeout(() => window.location.reload(), 500)
             }
         });
     });
+    setTimeout(() => {
+        if (!dataPosted) {
+            alert("Form could not save! The current data will save to your device and the page will reload. Please try submitting again.");
+            saveFormToLocalStorage(formData);
+            setTimeout(() => window.location.reload(), 500);
+        }
+    }, 4000);
 }
 function formatDate(date) {
     return [date.getMonth(), "/", date.getDate(), "/", date.getFullYear().toString().substring(2), " ", date.getHours(), ":", date.getMinutes(), ":", date.getSeconds()].join("");
+}
+function saveFormToLocalStorage(formData) {
+    localStorage.setItem(`formData:${currentForm}`, JSON.stringify(formData));
+}
+function loadFormFromLocalStorage() {
+    const data = JSON.parse(localStorage.getItem(`formData:${currentForm}`) || "null");
+    if (data) {
+        data.forEach((p) => $(`[name="${p.name}"]`).val(p.value));
+        return true;
+    }
+    else {
+        return false;
+    }
 }
