@@ -4,6 +4,7 @@ export type Settings = {
     match: number;
     permissionLevels: Array<Permission>;
     apiKey: string;
+    earlyBlock: string | null;
 }
 
 type Permission = {
@@ -46,7 +47,9 @@ export type AdminPostRequest =
     | { action: "setMatch"; match: number; }
     | { action: "deploySchedule"; schedule: Schedule }
     | { action: "resetAssignedMatchData" }
-    | {action: "deleteRow", rowId: number};
+    | {action: "deleteRow", rowId: number}
+    | {action: "startBlockEarly"}
+    | {action: "cancelStartBlockEarly"};
 
 export type AdminPostResponse = {
     "editUserField": { status: "OK" | "Bad User" },
@@ -58,7 +61,9 @@ export type AdminPostResponse = {
     "setMatch": { status: "OK" },
     "deploySchedule": { status: "OK" },
     "resetAssignedMatchData": { status: "OK" },
-    "deleteRow": { status: "OK" }
+    "deleteRow": { status: "OK" },
+    "startBlockEarly": { status: "OK" },
+    "cancelStartBlockEarly": { status: "OK" }
 };
 
 export type ResponseKeyValuePair = {
@@ -108,4 +113,10 @@ type Assignment = {
 type NextMatch = {
     number: number,
     team: number
+}
+
+export type BlockParts = {
+    day: number,
+    hour: number,
+    minutes: 30 | 0
 }

@@ -186,4 +186,10 @@ $("#resetAssignedMatchData").on('click', () => {
     else
         alert("Cancelled.");
 });
+$("#startBlockEarly").on('click', () => {
+    postDataAdmin({ action: "startBlockEarly" });
+});
+$("#cancelStartBlockEarly").on('click', () => {
+    postDataAdmin({ action: "cancelStartBlockEarly" });
+});
 assigner.init();

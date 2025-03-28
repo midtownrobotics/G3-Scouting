@@ -13,7 +13,7 @@
 
 <body>
 
-    <%- nav %>
+    <%- include('partials/nav') %>
 
         <br>
 
@@ -25,6 +25,16 @@
                 <input type="number" step="1" min="0" class="form-control" id="matchNumber" value="<%= match + 1 %>">
                 <button class="btn btn-secondary" type="button" id="setMatch">Set Match</button>
             </div>
+
+            <% if (!earlyBlock) { %>
+            <button class="btn btn-secondary" id="startBlockEarly">
+                Start next block (<%= nextBlock %>) early
+            </button>
+            <% } else { %>
+            <button class="btn btn-secondary" id="cancelStartBlockEarly">
+                Cancel early block start
+            </button>
+            <% } %>
 
             <hr>
 
