@@ -1,8 +1,9 @@
 import { APICalls, MatchSimple } from "thebluealliancev3";
-import { getCurrentScoutingBlock, TBA } from ".";
+import { TBA } from ".";
 import UserModel from "./models/UserModel";
 import { getSettings, writeSettings } from "./storage";
 import { Schedule } from "./types";
+import { getCurrentScoutingBlock } from "./blockManager";
 
 let matches: MatchSimple[] = [];
 

@@ -1,37 +1,23 @@
 import express, { Request } from 'express';
 import http from 'http';
-import TheBlueAllianceV3, { APICalls } from 'thebluealliancev3';
+import TheBlueAllianceV3 from 'thebluealliancev3';
 import { WebSocketServer } from 'ws';
 import { generateSchedule, setMatch } from './assigner';
-import syncDatabase from './models/syncDatabase';
-import UserModel from './models/UserModel';
-import { getDeployedForms, getFile, getFormHTML, getSettings, getSettingsSync, writeSettings } from './storage';
-import { AdminPostRequest, GeneralPostRequest, Settings, UserGetData } from './types';
+import { earlyStartBlock, getCurrentScoutingBlock, SCOUTING_BLOCKS } from './blockManager';
 import formDataHandler from './formDataHandler';
 import ResponseModel from './models/ResponseModel';
+import syncDatabase from './models/syncDatabase';
+import UserModel from './models/UserModel';
+import { getDeployedForms, getFormHTML, getSettings, getSettingsSync, writeSettings } from './storage';
+import { AdminPostRequest, GeneralPostRequest, Settings, UserGetData } from './types';
 
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 
-let nav: string = "";
-
 let PORT: number = 9955;
-const SCOUTING_BLOCKS = ["1-11:00", "1-11:30", "1-12:00", "1-12:30", "1-1:00", "1-1:30", "1-2:00", "1-2:30", "1-3:00", "1-3:30", "1-4:00", "1-4:30", "1-5:00", "1-5:30", "1-6:00", "1-6:30", "2-9:30", "2-10:00", "2-10:30", "2-11:00", "2-11:30", "2-12:00"]
 
 export const TBA = new TheBlueAllianceV3(getSettingsSync().apiKey);
-
-export async function getCurrentScoutingBlock(): Promise<string | null> {
-    const date = new Date();
-    const minutesRounded = Math.floor(date.getMinutes() / 30) * 30
-    const dayNumber = (await getSettings()).dayNumber
-    if (!dayNumber) {
-        console.error("No dayNumber set!")
-        return null;
-    }
-
-    return dayNumber + "-" + ((date.getHours() - 1) % 12 + 1).toString() + ":" + minutesRounded.toString().padStart(2, "0")
-}
 
 interface AuthReq extends Request {
     user?: UserModel
@@ -91,7 +77,7 @@ app.use(async function (req: AuthReq, res, next) {
         }
 
         if (bad) {
-            res.render("401", { nav });
+            res.render("401", { user: req.user });
         } else {
             req.user = user
             next();
@@ -125,19 +111,19 @@ app.get('/forms', async (req: AuthReq, res) => {
     const deployedForms: string[] = await getDeployedForms()
 
     if (!user.nextMatch || (user.lastMatchScouted == user.nextMatch.number && user.nextMatch.number > currentMatch)) {
-        res.render('form-no-scout', { nav })
+        return res.render('form-no-scout', { user: req.user })
     } else if (form && deployedForms.includes(form)) {
         if (user.lastMatchScouted == currentMatch) {
-            res.render('form-waiting', { nav })
+            return res.render('form-waiting', { user: req.user })
         } else {
-            res.render('form', { data: await getFormHTML(form), nav });
+            return res.render('form', { data: await getFormHTML(form) });
         }
     } else if (deployedForms.length > 0) {
-        res.redirect(`/forms?form=${deployedForms[0]}`)
-        // res.render('form-home', { sheets: deployedForms, nav })
-    } else {
-        res.render('form-home', { sheets: false, nav })
+        return res.redirect(`/forms?form=${deployedForms[0]}`)
+        // res.render('form-home', { sheets: deployedForms })
     }
+
+    return res.render('form-home', { sheets: false })
 })
 
 app.get('/admin', async (req, res) => {
@@ -165,13 +151,14 @@ app.get('/admin', async (req, res) => {
         times: SCOUTING_BLOCKS,
         perms: settings.permissionLevels,
         match: settings.match,
-        nav
+        earlyBlock: settings.earlyBlock != null,
+        nextBlock: await getCurrentScoutingBlock(1)
     })
 })
 
 app.get('/', async (req: AuthReq, res) => {
     const user = req.user;
-    if (!user || !user.assignments) return res.render('schedule-error', { nav });
+    if (!user || !user.assignments) return res.render('schedule-error', { user: req.user });
 
     const currentScoutingBlock = await getCurrentScoutingBlock();
     console.log(currentScoutingBlock)
@@ -204,8 +191,7 @@ app.get('/', async (req: AuthReq, res) => {
             status: currentAssignment == -1 ? "Day over!" : user.assignments[currentAssignment].status,
             until: lastMatchingTime,
             time: currentScoutingBlock
-        },
-        nav
+        }
     })
 })
 
@@ -348,27 +334,34 @@ app.post('/admin', async (req, res) => {
             UserModel.resetAssignedMatchData()
             sendPostResponce({ status: "OK" })
             break
+        case "startBlockEarly":
+            earlyStartBlock()
+            sendPostResponce({ status: "OK" })
+            break;
+        case "cancelStartBlockEarly":
+            earlyStartBlock(true)
+            sendPostResponce({ status: "OK" })
+            break
         case "deleteRow":
             (await ResponseModel.findOne({ where: { id: body.rowId } }))?.destroy()
             break;
     }
 })
 
-app.get('/data', async (req, res) => {
+app.get('/data', async (req: AuthReq, res) => {
     const jsonData: object[] = []
         ; (await ResponseModel.findAll()).forEach((r) => jsonData.push(r.toJSON()))
 
-    if (jsonData.length == 0) { return res.render("404", { nav }) }
+    if (jsonData.length == 0) { return res.render("404", { user: req.user }) }
 
-    res.render("data", { nav, data: { cols: Object.keys(jsonData[0]), rows: jsonData } })
+    res.render("data", { data: { cols: Object.keys(jsonData[0]), rows: jsonData } })
 })
 
-app.get("*", async (req, res) => {
-    res.render("404", { nav })
+app.get("*", async (req: AuthReq, res) => {
+    res.render("404", { user: req.user })
 })
 
-    ; (async () => {
-        nav = await getFile("/../src/nav.html")
-        server.listen(PORT);
-        console.log(`listening on port ${PORT}! enjoy!`);
-    })()
+; (async () => {
+    server.listen(PORT);
+    console.log(`listening on port ${PORT}! enjoy!`);
+})()
