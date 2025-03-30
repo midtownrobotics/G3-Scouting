@@ -187,9 +187,11 @@ $("#resetAssignedMatchData").on('click', () => {
         alert("Cancelled.");
 });
 $("#startBlockEarly").on('click', () => {
-    postDataAdmin({ action: "startBlockEarly" });
+    $("#startBlockEarly").attr("disabled", "disabled");
+    postDataAdmin({ action: "cancelStartBlockEarly" }).then(() => window.location.reload());
 });
 $("#cancelStartBlockEarly").on('click', () => {
-    postDataAdmin({ action: "cancelStartBlockEarly" });
+    $("#cancelStartBlockEarly").attr("disabled", "disabled");
+    postDataAdmin({ action: "cancelStartBlockEarly" }).then(() => window.location.reload());
 });
 assigner.init();

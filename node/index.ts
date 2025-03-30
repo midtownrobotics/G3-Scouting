@@ -17,6 +17,9 @@ const wss = new WebSocketServer({ server });
 
 let PORT: number = 9955;
 
+/** Whether to show the "You are not currently scouting" page or not. */
+const NOT_SCOUTING_PAGE = true;
+
 export const TBA = new TheBlueAllianceV3(getSettingsSync().apiKey);
 
 interface AuthReq extends Request {
@@ -110,7 +113,7 @@ app.get('/forms', async (req: AuthReq, res) => {
     const form: string | undefined = req.query.form?.toString()
     const deployedForms: string[] = await getDeployedForms()
 
-    if (!user.nextMatch || (user.lastMatchScouted == user.nextMatch.number && user.nextMatch.number > currentMatch)) {
+    if (NOT_SCOUTING_PAGE && (!user.nextMatch || (user.lastMatchScouted == user.nextMatch.number && user.nextMatch.number > currentMatch))) {
         return res.render('form-no-scout', { user: req.user })
     } else if (form && deployedForms.includes(form)) {
         if (user.lastMatchScouted == currentMatch) {

@@ -411,10 +411,6 @@ h2 {
   padding-left: 5px;
 }
 
-textarea {
-    width: calc(100vw - 80px);
-}
-
 body {
   height: 100%;
   width: 100%;
@@ -523,6 +519,12 @@ input[type='radio'] {
 .multiple-choice-question {
   margin-left: 20px;
   font-size: 40px;
+}
+
+.text-input-block {
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 40px;
 }
 
 #submitButton {

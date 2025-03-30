@@ -49,6 +49,9 @@ class ResponseModel extends Model<Response, ResponseCreationAttributes> {
     public additionalNotes!: string;
 
     @Column({ type: DataType.TEXT, allowNull: true })
+    public dealgify!: string;
+
+    @Column({ type: DataType.TEXT, allowNull: true })
     public timestamp!: string;
 
     @Column({ type: DataType.INTEGER, allowNull: true })

@@ -43,27 +43,34 @@ export async function getCurrentScoutingBlock(offset: number = 0): Promise<strin
     return earlyBlock
 }
 
+/** Starts the next scouting block early. */
+export async function earlyStartBlock(): Promise<void>
 /** 
  * Starts the next scouting block early or cancels the early starting. 
  * @param cancel Whether to cancel the block starting early.
  */
 export async function earlyStartBlock(cancel: boolean): Promise<void>
-/** Starts the next scouting block early. */
-export async function earlyStartBlock(): Promise<void>
 export async function earlyStartBlock(cancel: boolean = false) {
     const settings = await getSettings()
     settings.earlyBlock = cancel ? null : await getCurrentScoutingBlock(1)
     writeSettings(settings)
 }
 
+/** Generates a block string from the individual parts of the block. */
 const generateBlockFormat = (block: BlockParts): string => block.day + "-" + block.hour.toString() + ":" + block.minutes.toString().padStart(2, "0");
 
+/** Gets the individual parts of a block string. */
 function parseBlock(block: string): BlockParts {
     const [day, time] = block.split("-");
     const [hour, minutes] = time.split(":").map(Number);
     return { day: +day, hour, minutes: minutes as (30 | 0) };
 };
 
+/**
+ * Offsets a block in 30 minute steps 
+ * @param block The individual {@link BlockParts} of the block.
+ * @param offset The number of 30 minute blocks to offset by.
+ */
 function offsetBlock(block: BlockParts, offset: number): BlockParts {
     let totalMinutes = block.hour * 60 + block.minutes + offset * 30;
 

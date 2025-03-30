@@ -32,6 +32,7 @@ export interface Response {
     climb: string;
     additionalNotes: string;
     timestamp: string;
+    dealgify: string;
     scoutId: string;
     scout: string;
 }

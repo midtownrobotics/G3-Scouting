@@ -59,8 +59,8 @@ function submitForm() {
         matchNumber 
     }).then(async function (res) {
         if (res.status == "OK") {
-            // dataPosted = true;
-            // setTimeout(() => window.location.reload(), 500)
+            dataPosted = true;
+            setTimeout(() => window.location.reload(), 500)
         }
     })
 
