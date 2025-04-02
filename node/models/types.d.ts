@@ -3,6 +3,8 @@ import { Assignment, NextMatch, Status } from "../types";
 
 export interface User {
     id: number;
+    slackId?: string;
+    slackLinkCode: string;
     username: string;
     password: string;
     permissionId: number;
