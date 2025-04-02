@@ -8,6 +8,14 @@ import { getCurrentScoutingBlock } from "./blockManager";
 let matches: MatchSimple[] = [];
 
 export let assignedScouts: UserModel[] = []
+/** Priority of teams to assign extra scouts. Ex: ["1648", "1234", "10001"] */
+export let teamPriority: string[] = [];
+
+/**
+ * Gets team priority from team key.
+ * @param teamKey The team key: `"frc"+number`
+ */
+function getPriorityFromKey(teamKey: string): number { return teamPriority.indexOf(teamKey.slice(3)) }
 
 export async function generateSchedule(schedule: Schedule) {
     const userIds = Object.keys(schedule);
@@ -37,8 +45,11 @@ export async function setMatch(matchNumber: number) {
         return
     }
     const currentScoutingBlock = await getCurrentScoutingBlock();
-    const blueTeams = match.alliances.blue.team_keys;
-    const redTeams = match.alliances.red.team_keys
+    const blueTeams = match.alliances.blue.team_keys.sort((a, b) => getPriorityFromKey(b) - getPriorityFromKey(a));
+    const redTeams = match.alliances.red.team_keys.sort((a, b) => getPriorityFromKey(b) - getPriorityFromKey(a));
+
+    console.log(redTeams, blueTeams)
+
     const avalibleScouts = (await UserModel.getAllUsers()).filter((u) => {
         const avalible = u.assignments && (u.assignments.some((a) => {
             return a.time == currentScoutingBlock && a.status == "scouting";
