@@ -26,7 +26,7 @@
 
                 <thead>
                     <tr>
-                        <th id="trash-head"></th>
+                        <!-- <th id="trash-head"></th> -->
 
                         <% for (x=0; x < data.cols.length; x++) { %>
                             <th scope="col">
@@ -42,9 +42,9 @@
 
                     <% for(i = 0; i < data.rows.length; i++) { %>
                         <tr id="row-<%= i %>">
-                            <td class="trash">
+                            <!-- <td class="trash">
                                 <i class="bi bi-trash-fill"></i>
-                            </td>
+                            </td> -->
                             <% for (x=0; x < data.cols.length; x++) { %>
                                 <td style="white-space: nowrap;">        
                                     <%= data.rows[i][data.cols[x]] %> 
