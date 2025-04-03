@@ -56,13 +56,12 @@ export async function setMatch(matchNumber: number) {
         const avalible = u.assignments && (u.assignments.some((a) => {
             return a.time == currentScoutingBlock && a.status == "scouting";
         }))
+        return avalible;
     })
 
     const redScouts = avalibleScouts.filter((u) => u.assignedAlliance == "red").sort((a, b) => Number(b.reliable) - Number(a.reliable))
     const blueScouts = avalibleScouts.filter((u) => u.assignedAlliance == "blue").sort((a, b) => Number(b.reliable) - Number(a.reliable))
-
-    console.log(blueScouts)
-
+    
     assignedScouts = avalibleScouts
 
     for (let i = 0; i < redScouts.length; i++) {
