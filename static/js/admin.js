@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 var _a;
 import * as assigner from "./assigner.js";
-import { postDataAdmin, postDataGeneral } from "./global.js";
+import { parseStringArray, postDataAdmin, postDataGeneral } from "./global.js";
 $('.collapse-icon').parent().next().slideUp(0);
 setDarkMode(((_a = document.cookie.split(";").find(a => a.includes("darkMode"))) === null || _a === void 0 ? void 0 : _a.trim().split("=")[1]) != "false");
 $('#color-switcher').click(function () {
@@ -124,11 +124,13 @@ $("#add-user").on("click", function () {
         const newName = prompt("What is this users username?");
         const newPassword = prompt("What is this users password?");
         const perm = prompt("What is the ID of the permission they should have?");
+        const reliable = prompt("Would you consider this scout reliable? [y/N]") == "y";
         const permId = perm ? parseInt(perm) : null;
         console.log(newName, newPassword, permId);
         if (newName && newPassword && (permId || permId == 0)) {
             postDataAdmin({
                 action: "addUser", data: {
+                    reliable,
                     username: newName,
                     password: newPassword,
                     permissionId: permId
@@ -159,9 +161,8 @@ $(".user-field").on('click', function () {
     const id = $(this).parent().children().eq(1).text().trim();
     const field = $(this).closest('table').find('th').eq($(this).index()).text().trim();
     const updated = prompt(`What would you like to change user #${id}'s ${field} to?`);
-    if (!updated || !(field == "username" || field == "password" || field == "permissionId")) {
+    if (!updated || !(field == "username" || field == "password" || field == "permissionId" || field == "reliable"))
         return;
-    }
     postDataAdmin({
         action: "editUserField",
         data: {
@@ -195,6 +196,6 @@ $("#cancelStartBlockEarly").on('click', () => {
     postDataAdmin({ action: "cancelStartBlockEarly" }).then(() => window.location.reload());
 });
 $("#deployPriorityList").on('click', () => {
-    // postDataAdmin({ action: "deployPriorityList", priorityList: $("#priorityList").val() })
+    postDataAdmin({ action: "deployPriorityList", priorityList: parseStringArray($("#priorityList").val()) });
 });
 assigner.init();

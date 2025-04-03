@@ -153,7 +153,7 @@
                     </tbody>
                 </table>
 
-                <input type="text" placeholder="1648, 1000, 12345">
+                <input type="text" placeholder="<%= teamPriorityList || '1648, 1000, 12345'%>">
                 <button id="deployPriorityList">Deploy Priority List</button>
             </div>
 
@@ -213,6 +213,9 @@
                             <th scope="col">
                                 permissionId
                             </th>
+                            <th scope="col">
+                                reliable
+                            </th>
                         </tr>
                     </thead>
 
@@ -233,6 +236,9 @@
                                 </td>
                                 <td class="user-field">
                                     <%= users[i].permissionId %>
+                                </td>
+                                <td class="user-field">
+                                    <%= users[i].reliable %>
                                 </td>
                             </tr>
                             <% } %>

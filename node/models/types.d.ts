@@ -13,6 +13,7 @@ export interface User {
     nextMatch?: NextMatch;
     lastMatchScouted?: number;
     assignedMatches: number[];
+    reliable: boolean;
 }
 
 export interface UserCreationAttributes extends Optional<User, 'id'> { }

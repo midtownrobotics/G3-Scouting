@@ -49,7 +49,7 @@ app.use(async function (req: AuthReq, res, next) {
     const allUsers = await UserModel.findAll()
 
     if (!allUsers[0] || !allUsers.find((user) => user.permissionId == 0)) {
-        UserModel.addUser("admin", "password", 0)
+        UserModel.addUser("admin", "password", 0, true)
     }
 
     const settings: Settings = await getSettings();
@@ -163,6 +163,7 @@ app.get('/admin', async (req, res) => {
         perms: settings.permissionLevels,
         match: settings.match,
         earlyBlock: settings.earlyBlock != null,
+        teamPriorityList: settings.teamPriority.join(", "),
         nextBlock: await getCurrentScoutingBlock(1)
     })
 })
@@ -278,6 +279,8 @@ app.post('/admin', async (req, res) => {
                 const field = body.data.field
                 if (field == "permissionId") {
                     user[field] = parseInt(body.data.updated)
+                } else if (field == "reliable") {
+                    user[field] = body.data.updated == "true"
                 } else {
                     user[field] = body.data.updated
                 }
@@ -298,7 +301,7 @@ app.post('/admin', async (req, res) => {
                     !!body.data.password &&
                     body.data.permissionId < settings.permissionLevels.length
                 ) {
-                    UserModel.addUser(body.data.username, body.data.password, body.data.permissionId)
+                    UserModel.addUser(body.data.username, body.data.password, body.data.permissionId, body.data.reliable)
                     sendPostresponse({ status: "OK" })
                 } else {
                     sendPostresponse({ status: "Bad User" });

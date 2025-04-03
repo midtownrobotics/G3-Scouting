@@ -27,9 +27,9 @@ export type AdminPostRequest =
         action: "editUserField";
         data: {
             id: nubmer;
-            field: "username" | "password" | "permissionId";
+            field: "username" | "password" | "permissionId" | "reliable";
             updated: string;
-        }
+        } 
     }
     | {
         action: "addUser";
@@ -37,6 +37,7 @@ export type AdminPostRequest =
             username: string;
             password: string;
             permissionId: number;
+            reliable: boolean;
         }
     }
     | { action: "deleteUser"; data: number }

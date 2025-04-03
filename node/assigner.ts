@@ -52,15 +52,16 @@ export async function setMatch(matchNumber: number) {
     const blueTeams = match.alliances.blue.team_keys.sort((a, b) => getPriorityFromKey(b, teamPriorityList) - getPriorityFromKey(a, teamPriorityList));
     const redTeams = match.alliances.red.team_keys.sort((a, b) => getPriorityFromKey(b, teamPriorityList) - getPriorityFromKey(a, teamPriorityList));
 
-    console.log(redTeams, blueTeams)
-
     const avalibleScouts = (await UserModel.findAll()).filter((u) => {
         const avalible = u.assignments && (u.assignments.some((a) => {
             return a.time == currentScoutingBlock && a.status == "scouting";
         }))
     })
-    const redScouts = avalibleScouts.filter((u) => u.assignedAlliance == "red")
-    const blueScouts = avalibleScouts.filter((u) => u.assignedAlliance == "blue")
+
+    const redScouts = avalibleScouts.filter((u) => u.assignedAlliance == "red").sort((a, b) => Number(b.reliable) - Number(a.reliable))
+    const blueScouts = avalibleScouts.filter((u) => u.assignedAlliance == "blue").sort((a, b) => Number(b.reliable) - Number(a.reliable))
+
+    console.log(blueScouts)
 
     assignedScouts = avalibleScouts
 

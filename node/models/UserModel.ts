@@ -39,6 +39,8 @@ class UserModel extends Model<User, UserCreationAttributes> {
     @Column({ type: DataType.INTEGER, allowNull: true })
     public lastMatchScouted?: number;
 
+    @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: 0 })
+    public reliable!: boolean;
     /**
      * Sends a slack DM to this user.
      * @param message The message to be sent.
@@ -58,7 +60,7 @@ class UserModel extends Model<User, UserCreationAttributes> {
      * @param password The user's password.
      * @param permissionId The permission ID that the user will have.
      */
-    public static async addUser(username: string, password: string, permissionId: number) {
+    public static async addUser(username: string, password: string, permissionId: number, reliable: boolean) {
         const [redCount, blueCount] = await Promise.all([
             UserModel.count({ where: { assignedAlliance: "red" } }),
             UserModel.count({ where: { assignedAlliance: "blue" } }),
@@ -68,6 +70,7 @@ class UserModel extends Model<User, UserCreationAttributes> {
             username,
             password,
             permissionId,
+            reliable,
             assignedAlliance: redCount < blueCount ? "red" : "blue",
             assignedMatches: [],
             slackLinkCode: uuid.v4()

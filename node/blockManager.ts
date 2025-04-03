@@ -19,7 +19,7 @@ export async function getCurrentScoutingBlock(offset: number = 0): Promise<strin
     const settings = await getSettings();
     const earlyBlock = settings.earlyBlock;
     let day = settings.dayNumber;
-    let hour = date.getHours() - 9;
+    let hour = date.getHours();
     let minutes = (Math.floor(date.getMinutes() / 30) * 30) as (30 | 0);
 
     if (offset) ({ day, hour, minutes } = offsetBlock({ day, hour, minutes}, offset));
