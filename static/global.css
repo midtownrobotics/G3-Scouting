@@ -10,6 +10,7 @@ nav .logout:hover {
 body {
     background-color: rgb(173, 176, 179);
     color: rgb(39,38,38);
+    touch-action: manipulation;
 }
 
 a:not(nav a) {

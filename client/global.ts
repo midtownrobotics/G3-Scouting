@@ -32,39 +32,61 @@ export async function postDataGeneral<T extends GeneralPostRequest>(data: T) {
 }
 
 $(document).ready(function () {
-    let darkMode = document.cookie.split(";").find(a => a.includes("darkMode"))?.trim().split("=")[1]
+    let darkMode = document.cookie.split(";").find(a => a.includes("darkMode"))?.trim().split("=")[1];
 
     if (darkMode == "true") {
-        switchColor()
-    } if (darkMode == undefined) {
-        document.cookie = "darkMode=false; path/"
+        switchColor();
+    } 
+    if (darkMode == undefined) {
+        document.cookie = "darkMode=false; path=/";
     }
 
     $('#logout-button').on('click', () => {
-        logoutUser()
-    })
+        logoutUser();
+    });
 
     $('#color-switcher-button').on('click', () => {
-        switchColor()
-    })
-
-})
+        switchColor();
+    });
+});
 
 function switchColor() {
-    if ($("#color-switcher-button i").hasClass("bi-sun")) {
-        $("#color-switcher-button i").removeClass("bi-sun")
-        $("#color-switcher-button i").addClass("bi-moon")
-        $("body").css("backgroundColor", "rgb(39,38,38)")
-        $("h1, h3, div, body, a:not(nav a)").css("color", "rgb(173, 176, 179)")
-        console.log("dark")
-        document.cookie = "darkMode=true; path=/"
+    let isDarkMode = $("#color-switcher-button i").hasClass("bi-sun");
+
+    if (isDarkMode) {
+        $("#color-switcher-button i").removeClass("bi-sun").addClass("bi-moon");
+        $("body").css("backgroundColor", "rgb(39,38,38)");
+        $("h1, h3, div, body, a:not(nav a)").css("color", "rgb(173, 176, 179)");
+
+        // Change button color in dark mode
+        $("#theme-toggle").css({
+            "color": "white",
+            "background-color": "transparent",
+            "border": "none"
+        });
+
+        // Ensure hover effect works correctly
+        $("#theme-toggle").css("color", "white");
+
+        console.log("dark");
+        document.cookie = "darkMode=true; path=/";
     } else {
-        $("#color-switcher-button i").removeClass("bi-moon")
-        $("#color-switcher-button i").addClass("bi-sun")
-        $("body").css("backgroundColor", "rgb(173, 176, 179)")
-        $("h1, h3, div, body, a:not(nav a)").css("color", "rgb(39,38,38)")
-        console.log("light")
-        document.cookie = "darkMode=false; path=/"
+        $("#color-switcher-button i").removeClass("bi-moon").addClass("bi-sun");
+        $("body").css("backgroundColor", "rgb(173, 176, 179)");
+        $("h1, h3, div, body, a:not(nav a)").css("color", "rgb(39,38,38)");
+
+        // Reset button color in light mode
+        $("#theme-toggle").css({
+            "color": "",
+            "background-color": "",
+            "border": ""
+        });
+
+        // Remove hover effect in light mode
+        $("#theme-toggle").off("mouseenter mouseleave");
+
+        console.log("light");
+        document.cookie = "darkMode=false; path=/";
     }
 }
 
@@ -82,4 +104,16 @@ export function parseIntPlus(val: string | string[] | number | undefined): numbe
 
 export async function getNextMatchInfo(): Promise<NextMatch> {
     return (await fetch("/user-get/").then((res) => res.json())).nextMatch as NextMatch
+}
+
+export function parseStringArray(val: string | string[] | number | undefined): string[] {
+    if (typeof val == "object") return val;
+    if (typeof val == "number") val = val.toString();
+    if (typeof val == "string") {
+        val = val.split(",")
+        const newValList: string[] = []
+        val.forEach((v) => newValList.push(v.trim()))
+        return newValList;
+    }
+    return [];
 }

@@ -113,7 +113,9 @@ app.get('/forms', async (req: AuthReq, res) => {
     const form: string | undefined = req.query.form?.toString()
     const deployedForms: string[] = await getDeployedForms()
 
-    if (NOT_SCOUTING_PAGE && (!user.nextMatch || (user.lastMatchScouted == user.nextMatch.number && user.nextMatch.number > currentMatch))) {
+    const currentBlock = await getCurrentScoutingBlock()
+
+    if (NOT_SCOUTING_PAGE && user.assignments?.find((a) => a.time == currentBlock)?.status == "break") {
         return res.render('form-no-scout', { user: req.user })
     } else if (form && deployedForms.includes(form)) {
         if (user.lastMatchScouted == currentMatch) {
@@ -348,6 +350,13 @@ app.post('/admin', async (req, res) => {
         case "deleteRow":
             (await ResponseModel.findOne({ where: { id: body.rowId } }))?.destroy()
             break;
+        case "deployPriorityList":
+            { 
+                const settings = await getSettings(); 
+                settings.teamPriority = body.priorityList; 
+                writeSettings(settings); 
+            }
+            break;
     }
 })
 
@@ -364,7 +373,7 @@ app.get("*", async (req: AuthReq, res) => {
     res.render("404", { user: req.user })
 })
 
-; (async () => {
-    server.listen(PORT);
-    console.log(`listening on port ${PORT}! enjoy!`);
-})()
+    ; (async () => {
+        server.listen(PORT);
+        console.log(`listening on port ${PORT}! enjoy!`);
+    })()

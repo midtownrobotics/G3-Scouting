@@ -194,4 +194,7 @@ $("#cancelStartBlockEarly").on('click', () => {
     $("#cancelStartBlockEarly").attr("disabled", "disabled");
     postDataAdmin({ action: "cancelStartBlockEarly" }).then(() => window.location.reload());
 });
+$("#deployPriorityList").on('click', () => {
+    // postDataAdmin({ action: "deployPriorityList", priorityList: $("#priorityList").val() })
+});
 assigner.init();

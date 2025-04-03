@@ -1,5 +1,5 @@
 import * as assigner from "./assigner.js";
-import { postDataAdmin, postDataGeneral } from "./global.js"
+import { parseStringArray, postDataAdmin, postDataGeneral } from "./global.js"
 
 $('.collapse-icon').parent().next().slideUp(0)
 
@@ -192,6 +192,10 @@ $("#startBlockEarly").on('click', () => {
 $("#cancelStartBlockEarly").on('click', () => {
     $("#cancelStartBlockEarly").attr("disabled", "disabled")
     postDataAdmin({ action: "cancelStartBlockEarly" }).then(() => window.location.reload())
+})
+
+$("#deployPriorityList").on('click', () => {
+    postDataAdmin({ action: "deployPriorityList", priorityList: parseStringArray($("#priorityList").val()) })
 })
 
 assigner.init()

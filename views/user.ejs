@@ -52,7 +52,7 @@
                                                 <%= schedule[i].time %>
                                             </td>
                                             <td class="table-dark">
-                                                <%= schedule[i].status %>
+                                                <%= schedule[i].status == "scouting" ? 'Scouting':'Break/Other' %>
                                             </td>
                                         </tr>
                                         <% } %>

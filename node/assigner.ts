@@ -8,14 +8,17 @@ import { getCurrentScoutingBlock } from "./blockManager";
 let matches: MatchSimple[] = [];
 
 export let assignedScouts: UserModel[] = []
-/** Priority of teams to assign extra scouts. Ex: ["1648", "1234", "10001"] */
-export let teamPriority: string[] = [];
 
 /**
  * Gets team priority from team key.
  * @param teamKey The team key: `"frc"+number`
+ * @param teamPriorityList The team priority list.
+ * @returns Index or {@link Number.MAX_VALUE} if index is -1.
  */
-function getPriorityFromKey(teamKey: string): number { return teamPriority.indexOf(teamKey.slice(3)) }
+function getPriorityFromKey(teamKey: string, teamPriorityList: string[]): number {
+    const index = teamPriorityList.indexOf(teamKey.slice(3)) 
+    return index == -1 ? Number.MAX_VALUE : index
+}
 
 export async function generateSchedule(schedule: Schedule) {
     const userIds = Object.keys(schedule);
@@ -45,8 +48,9 @@ export async function setMatch(matchNumber: number) {
         return
     }
     const currentScoutingBlock = await getCurrentScoutingBlock();
-    const blueTeams = match.alliances.blue.team_keys.sort((a, b) => getPriorityFromKey(b) - getPriorityFromKey(a));
-    const redTeams = match.alliances.red.team_keys.sort((a, b) => getPriorityFromKey(b) - getPriorityFromKey(a));
+    const teamPriorityList = (await getSettings()).teamPriority
+    const blueTeams = match.alliances.blue.team_keys.sort((a, b) => getPriorityFromKey(b, teamPriorityList) - getPriorityFromKey(a, teamPriorityList));
+    const redTeams = match.alliances.red.team_keys.sort((a, b) => getPriorityFromKey(b, teamPriorityList) - getPriorityFromKey(a, teamPriorityList));
 
     console.log(redTeams, blueTeams)
 
