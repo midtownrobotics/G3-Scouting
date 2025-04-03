@@ -54,12 +54,10 @@ export async function setMatch(matchNumber: number) {
 
     console.log(redTeams, blueTeams)
 
-    const avalibleScouts = (await UserModel.getAllUsers()).filter((u) => {
+    const avalibleScouts = (await UserModel.findAll()).filter((u) => {
         const avalible = u.assignments && (u.assignments.some((a) => {
             return a.time == currentScoutingBlock && a.status == "scouting";
         }))
-        console.log(u.username, avalible)
-        return avalible
     })
     const redScouts = avalibleScouts.filter((u) => u.assignedAlliance == "red")
     const blueScouts = avalibleScouts.filter((u) => u.assignedAlliance == "blue")

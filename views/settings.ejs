@@ -1,0 +1,73 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="/libs/bootstrap.min.css">
+    <link rel="stylesheet" href="/libs/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
+    <link rel="icon" type="image/png" href="/g3.png">
+    <link rel="stylesheet" href="/global.css">
+    <title>G3 Scouting!</title>
+    <script src="/libs/jquery-3.7.1.min.js"></script>
+    <script>var exports = {};</script>
+    <script type="module" src="/js/global.js"></script>
+</head>
+
+<body>
+
+    <%- include('partials/nav') %>
+
+    <div style="padding: 20px;">
+        <h1>User Settings and Info</h2>
+
+        <div>
+            <h2>How to link your slack account:</h2>
+            <ol>
+                <li>Open slack</li>
+                <li>Open any channel</li>
+                <li>Type "/link <%= user.id %> <%= user.slackLinkCode %>" or click here to copy: <i class="bi bi-clipboard" id="copyCommand" data-command="/link <%= user.id %> <%= user.slackLinkCode %>"></i></li>
+                <li>Send the message, and be sure you get a response from the bot</li>
+                <li>And your done!</li>
+            </ol>
+        </div>
+  
+        <h2>User Info:</h3>
+        <ul>
+            <li>Username: <%= user.username %></li>
+            <li>Slack Link Code: <%= user.slackLinkCode %></li>
+            <li>Linked slack account: <%= user.slackId || "NULL" %></li>
+            <li>Permission: <%= user.permissionId %></li>
+            <li>ID: <%= user.id %></li>
+        </ul>
+
+    </div>
+
+</body>
+
+</html>
+
+<script>$("#nav-settings").addClass("active")</script>
+
+<script>
+    $("#copyCommand").on('click', () => {
+        navigator.clipboard.writeText($("#copyCommand").data("command"))
+        $("#copyCommand").removeClass("bi-clipboard")
+        $("#copyCommand").addClass("bi-clipboard-check")
+    })
+</script>
+
+<style>
+    body {
+        overflow: auto;
+        width: fit-content;
+        min-width: calc(100% - 40px);
+        background-color: white !important;
+    }
+
+    * {
+        color: #272626 !important;
+    }
+
+    #copyCommand:hover {
+        cursor: pointer;
+    }
+
+</style>

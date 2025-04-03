@@ -19,7 +19,7 @@ export async function getCurrentScoutingBlock(offset: number = 0): Promise<strin
     const settings = await getSettings();
     const earlyBlock = settings.earlyBlock;
     let day = settings.dayNumber;
-    let hour = date.getHours();
+    let hour = date.getHours() - 9;
     let minutes = (Math.floor(date.getMinutes() / 30) * 30) as (30 | 0);
 
     if (offset) ({ day, hour, minutes } = offsetBlock({ day, hour, minutes}, offset));
@@ -74,7 +74,7 @@ function parseBlock(block: string): BlockParts {
 function offsetBlock(block: BlockParts, offset: number): BlockParts {
     let totalMinutes = block.hour * 60 + block.minutes + offset * 30;
 
-    let newHour = Math.floor(totalMinutes / 60);
+    let newHour = ((Math.floor(totalMinutes / 60) - 1) % 24) + 1;
     let newMinutes = totalMinutes % 60 as (30 | 0);
 
     return { day: block.day, hour: newHour, minutes: newMinutes };

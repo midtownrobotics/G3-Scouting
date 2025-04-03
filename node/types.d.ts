@@ -1,9 +1,12 @@
 export type Settings = {
+    keys: {
+        slack: string;
+        theBlueAlliance: string;
+    }
     eventKey: string;
     dayNumber: number;
     match: number;
     permissionLevels: Array<Permission>;
-    apiKey: string;
     earlyBlock: string | null;
     teamPriority: string[];
 }
