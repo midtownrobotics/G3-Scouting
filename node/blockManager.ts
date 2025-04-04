@@ -5,7 +5,39 @@ import { BlockParts } from "./types";
  * List of scouting blocks. Should be in format `[day]-[hour]:(30 | 00)`. 
  * @example ["1-11:00", "1-11:30", "1-12:00", "2-21:00", "2-21:30"]
  */
-export const SCOUTING_BLOCKS: string[] = ["1-11:00", "1-11:30", "1-12:00", "1-12:30", "1-13:00", "1-13:30", "1-14:00", "1-14:30", "1-15:00", "1-15:30", "1-16:00", "1-16:30", "1-17:00", "1-17:30", "1-18:00", "1-18:30", "2-9:30", "2-10:00", "2-10:30", "2-11:00", "2-11:30", "2-12:00"]
+export const SCOUTING_BLOCKS: string[] = [
+    "1-08:00", "1-08:30",
+    "1-09:00", "1-09:30",
+    "1-10:00", "1-10:30",
+    "1-11:00", "1-11:30",
+    "1-12:00", "1-12:30",
+    "1-13:00", "1-13:30",
+    "1-14:00", "1-14:30",
+    "1-15:00", "1-15:30",
+    "1-16:00", "1-16:30",
+    "1-17:00", "1-17:30",
+    "1-18:00", "1-18:30",
+    "1-19:00", "1-19:30",
+    "2-08:00", "2-08:30",
+    "2-09:00", "2-09:30",
+    "2-10:00", "2-10:30",
+    "2-11:00", "2-11:30",
+    "2-12:00", "2-12:30",
+    "2-13:00", "2-13:30",
+    "2-14:00", "2-14:30",
+    "2-15:00", "2-15:30",
+    "2-16:00", "2-16:30",
+    "2-17:00", "2-17:30",
+    "2-18:00",
+    "3-08:00", "3-08:30",
+    "3-09:00", "3-09:30",
+    "3-10:00", "3-10:30",
+    "3-11:00", "3-11:30",
+    "3-12:00", "3-12:30",
+    "3-13:00", "3-13:30",
+    "3-14:00", "3-14:30",
+    "3-18:00", "3-18:30"
+];
 
 /** 
  * Get the current scouting block based on local time and preset day number, plus an offest. 
@@ -22,7 +54,7 @@ export async function getCurrentScoutingBlock(offset: number = 0): Promise<strin
     let hour = date.getHours();
     let minutes = (Math.floor(date.getMinutes() / 30) * 30) as (30 | 0);
 
-    if (offset) ({ day, hour, minutes } = offsetBlock({ day, hour, minutes}, offset));
+    if (offset) ({ day, hour, minutes } = offsetBlock({ day, hour, minutes }, offset));
 
     if (!day) {
         console.error("No dayNumber set!");

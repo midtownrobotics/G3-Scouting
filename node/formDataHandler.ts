@@ -24,7 +24,7 @@ export default function (keyValuePairs: ResponseKeyValuePair[], user?: UserModel
 }
 
 const SERVICE_ACCOUNT_FILE = path.join(__dirname + "/../storage/gapi-service-account.json");
-const SHEET_ID = "1XjeNkzz5bvoRGhfhx92peMuDdm_U5DVa6-k5Ppi4Zfw";
+const SHEET_ID = "1rcEKW0mZ52PXnDiJKITzOaCCcISpALeu5wvh5vlqFAA";
 
 async function authorize() {
     try {

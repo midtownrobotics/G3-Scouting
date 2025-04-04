@@ -199,9 +199,11 @@ app.get('/', async (req: AuthReq, res) => {
         }
     }
 
+    const currentAssignmentIndex = user.assignments.findIndex((a) => a.time == currentScoutingBlock)
+
     return res.render('user', {
         username: user.username,
-        schedule: user.assignments,
+        schedule: currentAssignmentIndex > 0 ? user.assignments.splice(0, currentAssignmentIndex) : user.assignments,
         current: {
             status: currentAssignment == -1 ? "Day over!" : user.assignments[currentAssignment].status,
             until: lastMatchingTime,
