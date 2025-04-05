@@ -59,6 +59,8 @@ export async function setMatch(matchNumber: number) {
         return avalible;
     })
 
+    console.log(avalibleScouts.length)
+
     const redScouts = avalibleScouts.filter((u) => u.assignedAlliance == "red").sort((a, b) => Number(b.reliable) - Number(a.reliable))
     const blueScouts = avalibleScouts.filter((u) => u.assignedAlliance == "blue").sort((a, b) => Number(b.reliable) - Number(a.reliable))
     

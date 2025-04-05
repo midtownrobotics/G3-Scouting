@@ -16,7 +16,7 @@ export function sendMessage(channel: string, text: string) {
     try {
         slack.chat.postMessage({ text, channel })
     } catch (err) {
-        console.log(JSON.stringify((err as any).data.response_metadata.acceptedScopes))
+        console.log(err)
     }
 }
 

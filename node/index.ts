@@ -121,7 +121,7 @@ app.get('/forms', async (req: AuthReq, res) => {
 
     const currentBlock = await getCurrentScoutingBlock()
 
-    if (NOT_SCOUTING_PAGE && user.assignments?.find((a) => a.time == currentBlock)?.status == "break") {
+    if (NOT_SCOUTING_PAGE && (user.assignments?.find((a) => a.time == currentBlock)?.status || "break") == "break") {
         return res.render('form-no-scout', { user: req.user })
     } else if (form && deployedForms.includes(form)) {
         if (user.lastMatchScouted == currentMatch) {
@@ -203,9 +203,9 @@ app.get('/', async (req: AuthReq, res) => {
 
     return res.render('user', {
         username: user.username,
-        schedule: currentAssignmentIndex > 0 ? user.assignments.splice(0, currentAssignmentIndex) : user.assignments,
+        schedule: currentAssignmentIndex > 0 ? user.assignments.toSpliced(0, currentAssignmentIndex) : user.assignments,
         current: {
-            status: currentAssignment == -1 ? "Day over!" : user.assignments[currentAssignment].status,
+            status: currentAssignment == -1 ? "Day over!" : user.assignments[currentAssignment]?.status,
             until: lastMatchingTime,
             time: currentScoutingBlock
         }
