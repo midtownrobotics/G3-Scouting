@@ -9,9 +9,12 @@ import ResponseModel from './models/ResponseModel';
 import syncDatabase from './models/syncDatabase';
 import UserModel from './models/UserModel';
 import { getDeployedForms, getFormHTML, getSettings, getSettingsSync, writeSettings } from './storage';
-import { AdminPostRequest, GeneralPostRequest, Settings, UserGetData } from './types';
+import { AdminPostRequest, Assignment, GeneralPostRequest, Settings, UserGetData } from './types';
 import slackRouter from './slack';
 import startReminderSchedule from './reminders';
+import { Op } from 'sequelize';
+import ejs from 'ejs';
+import path from 'path';
 
 export const app = express();
 const server = http.createServer(app);
@@ -145,7 +148,7 @@ app.get('/admin', async (req, res) => {
     const currentEvilScouts = allUsers.filter((s) => s.assignedMatches.includes(settings.match) && !currentResponses.some((m) => m.scoutId == s.id))
     const lastEvilScouts = allUsers.filter((s) => s.assignedMatches.includes(settings.match - 1) && !lastResponses.some((m) => m.scoutId == s.id))
 
-    res.render('admin', {
+    const html = await ejs.renderFile(path.join(__dirname, '/../views/admin.ejs'), {
         users: allUsers,
         matchReview: {
             current: {
@@ -164,8 +167,12 @@ app.get('/admin', async (req, res) => {
         match: settings.match,
         earlyBlock: settings.earlyBlock != null,
         teamPriorityList: settings.teamPriority.join(", "),
-        nextBlock: await getCurrentScoutingBlock(1)
+        nextBlock: await getCurrentScoutingBlock(1),
+    }, {
+        async: true
     })
+
+    res.send(html)
 })
 
 app.get('/settings', async (req: AuthReq, res) => {
@@ -200,10 +207,12 @@ app.get('/', async (req: AuthReq, res) => {
     }
 
     const currentAssignmentIndex = user.assignments.findIndex((a) => a.time == currentScoutingBlock)
+    const assignments: Assignment[] = user.assignments.slice();
+    assignments.splice(0, currentAssignmentIndex)
 
     return res.render('user', {
         username: user.username,
-        schedule: currentAssignmentIndex > 0 ? user.assignments.toSpliced(0, currentAssignmentIndex) : user.assignments,
+        schedule: assignments,
         current: {
             status: currentAssignment == -1 ? "Day over!" : user.assignments[currentAssignment]?.status,
             until: lastMatchingTime,
@@ -365,10 +374,10 @@ app.post('/admin', async (req, res) => {
             (await ResponseModel.findOne({ where: { id: body.rowId } }))?.destroy()
             break;
         case "deployPriorityList":
-            { 
-                const settings = await getSettings(); 
-                settings.teamPriority = body.priorityList; 
-                writeSettings(settings); 
+            {
+                const settings = await getSettings();
+                settings.teamPriority = body.priorityList;
+                writeSettings(settings);
             }
             break;
     }
@@ -380,7 +389,14 @@ app.get('/data', async (req: AuthReq, res) => {
 
     if (jsonData.length == 0) { return res.render("404", { user: req.user }) }
 
-    res.render("data", { data: { cols: Object.keys(jsonData[0]), rows: jsonData } })
+    const matchNumber = (await getSettings()).match;
+
+    const numberOfResponses = {
+        actual: (await ResponseModel.count({ where: { matchNum: { [Op.lte]: matchNumber } }, distinct: true, col: 'matchNum' })) * 6,
+        ideal: matchNumber * 6
+    }
+
+    res.render("data", { data: { cols: Object.keys(jsonData[0]), rows: jsonData }, numberOfResponses })
 })
 
 app.get("*", async (req: AuthReq, res) => {
@@ -391,3 +407,9 @@ app.get("*", async (req: AuthReq, res) => {
         server.listen(PORT);
         console.log(`listening on port ${PORT}! enjoy!`);
     })()
+
+// UserModel.findAll().then(u => {
+//     u.forEach((s) => {
+//         s.update({ assignedMatches: [...new Set(s.assignedMatches)] })
+//     })
+// })

@@ -67,7 +67,8 @@ export async function setMatch(matchNumber: number) {
     assignedScouts = avalibleScouts
 
     for (let i = 0; i < redScouts.length; i++) {
-        const currentMatches = redScouts[i].assignedMatches
+        if (redScouts[i].assignedMatches.includes(matchNumber)) continue;
+        const currentMatches = redScouts[i].assignedMatches.slice()
         redScouts[i].update({
             nextMatch: {
                 number: matchNumber,
@@ -78,7 +79,8 @@ export async function setMatch(matchNumber: number) {
     }
 
     for (let i = 0; i < blueScouts.length; i++) {
-        const currentMatches = blueScouts[i].assignedMatches
+        if (blueScouts[i].assignedMatches.includes(matchNumber)) continue;
+        const currentMatches = blueScouts[i].assignedMatches.slice()
         blueScouts[i].update({
             nextMatch: {
                 number: matchNumber,

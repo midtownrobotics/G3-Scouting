@@ -13,7 +13,7 @@
 
 <body>
 
-    <%- include('partials/nav') %>
+    <%- await include('partials/nav') %>
 
         <br>
 
@@ -246,6 +246,9 @@
                                         <th scope="col">
                                             reliable
                                         </th>
+                                        <th scope="col">
+                                            percent scouted
+                                        </th>
                                     </tr>
                                 </thead>
 
@@ -269,6 +272,10 @@
                                             </td>
                                             <td class="user-field">
                                                 <%= users[i].reliable %>
+                                            </td>
+                                            <td class="user-field">
+                                                <% const score = await users[i].calculateReliability() %>
+                                                <%= score.submitted %>/<%= score.ideal %> = <%= Math.round(score.percent*100) || 0 %>%
                                             </td>
                                         </tr>
                                         <% } %>

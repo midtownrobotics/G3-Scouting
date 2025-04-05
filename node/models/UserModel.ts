@@ -3,6 +3,9 @@ import { User, UserCreationAttributes } from "./types";
 import { Assignment, NextMatch } from "../types";
 import * as uuid from "uuid";
 import { sendMessage } from "../slack";
+import ResponseModel from "./ResponseModel";
+import { Op } from "sequelize";
+import { getSettings } from "../storage";
 
 @Table({ tableName: "users" })
 class UserModel extends Model<User, UserCreationAttributes> {
@@ -41,6 +44,7 @@ class UserModel extends Model<User, UserCreationAttributes> {
 
     @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: 0 })
     public reliable!: boolean;
+
     /**
      * Sends a slack DM to this user.
      * @param message The message to be sent.
@@ -52,6 +56,23 @@ class UserModel extends Model<User, UserCreationAttributes> {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Calculates the percent of assigned matches scouted.
+     * @returns Number of scouted matches / Number of assigned matches.
+     */
+    public async calculateReliability() {
+        const assignedMatchesString = this.assignedMatches.map(num => num.toString());
+
+        const submitted = (await ResponseModel.count({ where: { scoutId: this.id, matchNum: { [Op.in]: assignedMatchesString } }, distinct: true, col: 'matchNum' }));
+        const ideal = this.assignedMatches.length;
+
+        return {
+            percent: submitted/ideal,
+            submitted,
+            ideal
+        };
     }
 
     /**
