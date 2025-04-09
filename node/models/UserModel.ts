@@ -52,7 +52,7 @@ class UserModel extends Model<User, UserCreationAttributes> {
      */
     public sendSlackMessage(message: string): boolean {
         if (this.slackId) {
-            sendMessage(this.slackId, message);
+            // sendMessage(this.slackId, message);
             return true;
         }
         return false;

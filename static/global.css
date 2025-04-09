@@ -11,6 +11,12 @@ body {
     background-color: rgb(173, 176, 179);
     color: rgb(39,38,38);
     touch-action: manipulation;
+    min-width: 100%;
+    padding-top: 75px;
+}
+
+html {
+    width: 100%;
 }
 
 a:not(nav a) {
