@@ -256,7 +256,7 @@ app.post('/post', async (req: AuthReq, res) => {
             sendPostresponse({ match: (await getSettings()).match })
             break
         case "postFormData":
-            formDataHandler(body.data, req.user)
+            formDataHandler(body.data, body.form, req.user)
             sendPostresponse({ status: 'OK' })
             break
     }

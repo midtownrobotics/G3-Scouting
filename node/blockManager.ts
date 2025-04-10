@@ -79,7 +79,7 @@ export async function getCurrentScoutingBlock(offset: number = 0): Promise<strin
 export async function earlyStartBlock(): Promise<void>
 /** 
  * Starts the next scouting block early or cancels the early starting. 
- * @param cancel Whether to cancel the block starting early.
+ * @param cancel Whether to cancel the block starting early or to start the next block early.
  */
 export async function earlyStartBlock(cancel: boolean): Promise<void>
 export async function earlyStartBlock(cancel: boolean = false) {
