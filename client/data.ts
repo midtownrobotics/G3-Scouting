@@ -1,4 +1,4 @@
-import { postDataAdmin } from "./global";
+import { postDataAdmin } from "./global.js";
 
 const URLParams = new URLSearchParams(window.location.search)
 

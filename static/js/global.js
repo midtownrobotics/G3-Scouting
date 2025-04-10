@@ -68,6 +68,7 @@ function switchColor() {
             "background-color": "transparent",
             "border": "none"
         });
+        
         // Ensure hover effect works correctly
         $("#theme-toggle").css("color", "white");
         console.log("dark");
@@ -83,8 +84,7 @@ function switchColor() {
             "background-color": "",
             "border": ""
         });
-        // Remove hover effect in light mode
-        $("#theme-toggle").off("mouseenter mouseleave");
+
         console.log("light");
         document.cookie = "darkMode=false; path=/";
     }

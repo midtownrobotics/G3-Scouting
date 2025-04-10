@@ -32,63 +32,10 @@ export async function postDataGeneral<T extends GeneralPostRequest>(data: T) {
 }
 
 $(document).ready(function () {
-    let darkMode = document.cookie.split(";").find(a => a.includes("darkMode"))?.trim().split("=")[1];
-
-    if (darkMode == "true") {
-        switchColor();
-    } 
-    if (darkMode == undefined) {
-        document.cookie = "darkMode=false; path=/";
-    }
-
     $('#logout-button').on('click', () => {
         logoutUser();
     });
-
-    $('#color-switcher-button').on('click', () => {
-        switchColor();
-    });
 });
-
-function switchColor() {
-    let isDarkMode = $("#color-switcher-button i").hasClass("bi-sun");
-
-    if (isDarkMode) {
-        $("#color-switcher-button i").removeClass("bi-sun").addClass("bi-moon");
-        $("body").css("backgroundColor", "rgb(39,38,38)");
-        $("h1, h3, div, body, a:not(nav a)").css("color", "rgb(173, 176, 179)");
-
-        // Change button color in dark mode
-        $("#theme-toggle").css({
-            "color": "white",
-            "background-color": "transparent",
-            "border": "none"
-        });
-
-        // Ensure hover effect works correctly
-        $("#theme-toggle").css("color", "white");
-
-        console.log("dark");
-        document.cookie = "darkMode=true; path=/";
-    } else {
-        $("#color-switcher-button i").removeClass("bi-moon").addClass("bi-sun");
-        $("body").css("backgroundColor", "rgb(173, 176, 179)");
-        $("h1, h3, div, body, a:not(nav a)").css("color", "rgb(39,38,38)");
-
-        // Reset button color in light mode
-        $("#theme-toggle").css({
-            "color": "",
-            "background-color": "",
-            "border": ""
-        });
-
-        // Remove hover effect in light mode
-        $("#theme-toggle").off("mouseenter mouseleave");
-
-        console.log("light");
-        document.cookie = "darkMode=false; path=/";
-    }
-}
 
 function logoutUser() {
     fetch('/logout')

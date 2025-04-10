@@ -3,10 +3,6 @@ nav .logout {
     color: dimgray;
 }
 
-nav .logout:hover {
-    color: black;
-}
-
 body {
     background-color: rgb(173, 176, 179);
     color: rgb(39,38,38);
