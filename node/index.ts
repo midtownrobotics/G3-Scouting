@@ -9,9 +9,14 @@ import ResponseModel from './models/ResponseModel';
 import syncDatabase from './models/syncDatabase';
 import UserModel from './models/UserModel';
 import { getDeployedForms, getFormHTML, getSettings, getSettingsSync, writeSettings } from './storage';
-import { AdminPostRequest, GeneralPostRequest, Settings, UserGetData } from './types';
+import { AdminPostRequest, Assignment, GeneralPostRequest, Settings, UserGetData } from './types';
+import slackRouter from './slack';
+import startReminderSchedule from './reminders';
+import { Op } from 'sequelize';
+import ejs from 'ejs';
+import path from 'path';
 
-const app = express();
+export const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 
@@ -20,13 +25,15 @@ let PORT: number = 9955;
 /** Whether to show the "You are not currently scouting" page or not. */
 const NOT_SCOUTING_PAGE = true;
 
-export const TBA = new TheBlueAllianceV3(getSettingsSync().apiKey);
+export const TBA = new TheBlueAllianceV3(getSettingsSync().keys.theBlueAlliance);
 
 interface AuthReq extends Request {
     user?: UserModel
 }
 
-syncDatabase()
+syncDatabase().then(() => {
+    startReminderSchedule()
+})
 
 app.set('views', 'views');
 app.set('view engine', 'ejs');
@@ -34,16 +41,18 @@ app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(slackRouter)
+
 if (process.argv.indexOf("port") > -1) {
     PORT = parseInt(process.argv[process.argv.indexOf("port") + 1])
 }
 
 app.use(async function (req: AuthReq, res, next) {
 
-    const allUsers = await UserModel.getAllUsers()
+    const allUsers = await UserModel.findAll()
 
     if (!allUsers[0] || !allUsers.find((user) => user.permissionId == 0)) {
-        UserModel.addUser("admin", "password", 0)
+        UserModel.addUser("admin", "password", 0, true)
     }
 
     const settings: Settings = await getSettings();
@@ -92,7 +101,7 @@ async function getUserFromAuth(authHeader: string | undefined): Promise<UserMode
     if (!authHeader) return undefined;
     const auth = Buffer.from(authHeader.substring(6), 'base64').toString().split(':');
     const username = auth[0], password = auth[1];
-    const users = await UserModel.getAllUsers()
+    const users = await UserModel.findAll()
     return users.find((u) => u.username == username && u.password == password)
 }
 
@@ -113,7 +122,9 @@ app.get('/forms', async (req: AuthReq, res) => {
     const form: string | undefined = req.query.form?.toString()
     const deployedForms: string[] = await getDeployedForms()
 
-    if (NOT_SCOUTING_PAGE && (!user.nextMatch || (user.lastMatchScouted == user.nextMatch.number && user.nextMatch.number > currentMatch))) {
+    const currentBlock = await getCurrentScoutingBlock()
+
+    if (NOT_SCOUTING_PAGE && (user.assignments?.find((a) => a.time == currentBlock)?.status || "break") == "break") {
         return res.render('form-no-scout', { user: req.user })
     } else if (form && deployedForms.includes(form)) {
         if (user.lastMatchScouted == currentMatch) {
@@ -131,13 +142,13 @@ app.get('/forms', async (req: AuthReq, res) => {
 
 app.get('/admin', async (req, res) => {
     const settings = await getSettings()
-    const allUsers = await UserModel.getAllUsers()
+    const allUsers = await UserModel.findAll()
     const currentResponses = await ResponseModel.findAll({ where: { matchNum: settings.match } })
     const lastResponses = await ResponseModel.findAll({ where: { matchNum: settings.match - 1 } })
     const currentEvilScouts = allUsers.filter((s) => s.assignedMatches.includes(settings.match) && !currentResponses.some((m) => m.scoutId == s.id))
     const lastEvilScouts = allUsers.filter((s) => s.assignedMatches.includes(settings.match - 1) && !lastResponses.some((m) => m.scoutId == s.id))
 
-    res.render('admin', {
+    const html = await ejs.renderFile(path.join(__dirname, '/../views/admin.ejs'), {
         users: allUsers,
         matchReview: {
             current: {
@@ -155,8 +166,17 @@ app.get('/admin', async (req, res) => {
         perms: settings.permissionLevels,
         match: settings.match,
         earlyBlock: settings.earlyBlock != null,
-        nextBlock: await getCurrentScoutingBlock(1)
+        teamPriorityList: settings.teamPriority.join(", "),
+        nextBlock: await getCurrentScoutingBlock(1),
+    }, {
+        async: true
     })
+
+    res.send(html)
+})
+
+app.get('/settings', async (req: AuthReq, res) => {
+    res.render("settings", { user: req.user })
 })
 
 app.get('/', async (req: AuthReq, res) => {
@@ -164,7 +184,6 @@ app.get('/', async (req: AuthReq, res) => {
     if (!user || !user.assignments) return res.render('schedule-error', { user: req.user });
 
     const currentScoutingBlock = await getCurrentScoutingBlock();
-    console.log(currentScoutingBlock)
     const currentAssignment = user.assignments.findIndex((a) => a.time == currentScoutingBlock)
 
     let lastMatchingTime = "is over.";
@@ -187,11 +206,15 @@ app.get('/', async (req: AuthReq, res) => {
         }
     }
 
+    const currentAssignmentIndex = user.assignments.findIndex((a) => a.time == currentScoutingBlock)
+    const assignments: Assignment[] = user.assignments.slice();
+    assignments.splice(0, currentAssignmentIndex)
+
     return res.render('user', {
         username: user.username,
-        schedule: user.assignments,
+        schedule: assignments,
         current: {
-            status: currentAssignment == -1 ? "Day over!" : user.assignments[currentAssignment].status,
+            status: currentAssignment == -1 ? "Day over!" : user.assignments[currentAssignment]?.status,
             until: lastMatchingTime,
             time: currentScoutingBlock
         }
@@ -217,24 +240,24 @@ app.get('/forms-get', (req, res) => {
 
 app.post('/post', async (req: AuthReq, res) => {
     const body = req.body as GeneralPostRequest
-    const sendPostResponce = (postRes: any) => res.send(postRes);
+    const sendPostresponse = (postRes: any) => res.send(postRes);
 
     switch (body.action) {
         case "getKey":
-            sendPostResponce({ key: (await getSettings()).eventKey })
+            sendPostresponse({ key: (await getSettings()).eventKey })
             break
         case "getDayNumber":
-            sendPostResponce({ dayNumber: (await getSettings()).dayNumber })
+            sendPostresponse({ dayNumber: (await getSettings()).dayNumber })
             break
         case "getBlocks":
-            sendPostResponce({ blocks: SCOUTING_BLOCKS })
+            sendPostresponse({ blocks: SCOUTING_BLOCKS })
             break
         case "getCurrentMatch":
-            sendPostResponce({ match: (await getSettings()).match })
+            sendPostresponse({ match: (await getSettings()).match })
             break
         case "postFormData":
             formDataHandler(body.data, req.user)
-            sendPostResponce({ status: 'OK' })
+            sendPostresponse({ status: 'OK' })
             break
     }
 
@@ -252,30 +275,32 @@ async function isValidUser(userObject: UserModel) {
 app.post('/admin', async (req, res) => {
     const body: AdminPostRequest = req.body
 
-    const sendPostResponce = (postRes: object) => res.send(postRes);
+    const sendPostresponse = (postRes: object) => res.send(postRes);
 
     switch (body.action) {
         case "editUserField":
             {
-                const users = await UserModel.getAllUsers()
+                const users = await UserModel.findAll()
                 const user = users.find(p => p.id == body.data.id)
                 if (!user) {
-                    sendPostResponce({ status: "Bad User" });
+                    sendPostresponse({ status: "Bad User" });
                     return;
                 }
 
                 const field = body.data.field
                 if (field == "permissionId") {
                     user[field] = parseInt(body.data.updated)
+                } else if (field == "reliable") {
+                    user[field] = body.data.updated == "true"
                 } else {
                     user[field] = body.data.updated
                 }
 
                 if (await isValidUser(user)) {
                     user.save()
-                    sendPostResponce({ status: "OK" })
+                    sendPostresponse({ status: "OK" })
                 } else {
-                    sendPostResponce({ status: "Bad User" });
+                    sendPostresponse({ status: "Bad User" });
                 }
             }
             break
@@ -287,16 +312,16 @@ app.post('/admin', async (req, res) => {
                     !!body.data.password &&
                     body.data.permissionId < settings.permissionLevels.length
                 ) {
-                    UserModel.addUser(body.data.username, body.data.password, body.data.permissionId)
-                    sendPostResponce({ status: "OK" })
+                    UserModel.addUser(body.data.username, body.data.password, body.data.permissionId, body.data.reliable)
+                    sendPostresponse({ status: "OK" })
                 } else {
-                    sendPostResponce({ status: "Bad User" });
+                    sendPostresponse({ status: "Bad User" });
                 }
             }
             break
         case "deleteUser":
             await (await UserModel.findOne({ where: { id: body.data } }))?.destroy()
-            sendPostResponce({ status: "OK" })
+            sendPostresponse({ status: "OK" })
             break
         case "addPerm":
             {
@@ -306,7 +331,7 @@ app.post('/admin', async (req, res) => {
                     blacklist: body.data.blacklist
                 })
                 writeSettings(settings)
-                sendPostResponce({ status: "OK" })
+                sendPostresponse({ status: "OK" })
             }
             break
         case "changeKey":
@@ -314,7 +339,7 @@ app.post('/admin', async (req, res) => {
                 const settings: Settings = await getSettings()
                 settings.eventKey = body.data
                 writeSettings(settings)
-                sendPostResponce({ status: "OK" })
+                sendPostresponse({ status: "OK" })
             }
             break
         case "changeDayNumber":
@@ -322,31 +347,38 @@ app.post('/admin', async (req, res) => {
                 const settings: Settings = await getSettings()
                 settings.dayNumber = body.dayNumber
                 writeSettings(settings)
-                sendPostResponce({ status: "OK" })
+                sendPostresponse({ status: "OK" })
             }
             break
         case "deploySchedule":
             generateSchedule(body.schedule)
-            sendPostResponce({ status: "OK" })
+            sendPostresponse({ status: "OK" })
             break;
         case "setMatch":
             setMatch(body.match)
-            sendPostResponce({ status: "OK" })
+            sendPostresponse({ status: "OK" })
             break
         case "resetAssignedMatchData":
             UserModel.resetAssignedMatchData()
-            sendPostResponce({ status: "OK" })
+            sendPostresponse({ status: "OK" })
             break
         case "startBlockEarly":
             earlyStartBlock()
-            sendPostResponce({ status: "OK" })
+            sendPostresponse({ status: "OK" })
             break;
         case "cancelStartBlockEarly":
             earlyStartBlock(true)
-            sendPostResponce({ status: "OK" })
+            sendPostresponse({ status: "OK" })
             break
         case "deleteRow":
             (await ResponseModel.findOne({ where: { id: body.rowId } }))?.destroy()
+            break;
+        case "deployPriorityList":
+            {
+                const settings = await getSettings();
+                settings.teamPriority = body.priorityList;
+                writeSettings(settings);
+            }
             break;
     }
 })
@@ -357,14 +389,27 @@ app.get('/data', async (req: AuthReq, res) => {
 
     if (jsonData.length == 0) { return res.render("404", { user: req.user }) }
 
-    res.render("data", { data: { cols: Object.keys(jsonData[0]), rows: jsonData } })
+    const matchNumber = (await getSettings()).match;
+
+    const numberOfResponses = {
+        actual: (await ResponseModel.count({ where: { matchNum: { [Op.lte]: matchNumber } }, distinct: true, col: 'matchNum' })) * 6,
+        ideal: matchNumber * 6
+    }
+
+    res.render("data", { data: { cols: Object.keys(jsonData[0]), rows: jsonData }, numberOfResponses })
 })
 
 app.get("*", async (req: AuthReq, res) => {
     res.render("404", { user: req.user })
 })
 
-; (async () => {
-    server.listen(PORT);
-    console.log(`listening on port ${PORT}! enjoy!`);
-})()
+    ; (async () => {
+        server.listen(PORT);
+        console.log(`listening on port ${PORT}! enjoy!`);
+    })()
+
+// UserModel.findAll().then(u => {
+//     u.forEach((s) => {
+//         s.update({ assignedMatches: [...new Set(s.assignedMatches)] })
+//     })
+// })

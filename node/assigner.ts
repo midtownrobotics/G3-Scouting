@@ -9,6 +9,17 @@ let matches: MatchSimple[] = [];
 
 export let assignedScouts: UserModel[] = []
 
+/**
+ * Gets team priority from team key.
+ * @param teamKey The team key: `"frc"+number`
+ * @param teamPriorityList The team priority list.
+ * @returns Index or {@link Number.MAX_VALUE} if index is -1.
+ */
+function getPriorityFromKey(teamKey: string, teamPriorityList: string[]): number {
+    const index = teamPriorityList.indexOf(teamKey.slice(3)) 
+    return index == -1 ? Number.MAX_VALUE : index
+}
+
 export async function generateSchedule(schedule: Schedule) {
     const userIds = Object.keys(schedule);
 
@@ -37,22 +48,27 @@ export async function setMatch(matchNumber: number) {
         return
     }
     const currentScoutingBlock = await getCurrentScoutingBlock();
-    const blueTeams = match.alliances.blue.team_keys;
-    const redTeams = match.alliances.red.team_keys
-    const avalibleScouts = (await UserModel.getAllUsers()).filter((u) => {
+    const teamPriorityList = (await getSettings()).teamPriority
+    const blueTeams = match.alliances.blue.team_keys.sort((a, b) => getPriorityFromKey(b, teamPriorityList) - getPriorityFromKey(a, teamPriorityList));
+    const redTeams = match.alliances.red.team_keys.sort((a, b) => getPriorityFromKey(b, teamPriorityList) - getPriorityFromKey(a, teamPriorityList));
+
+    const avalibleScouts = (await UserModel.findAll()).filter((u) => {
         const avalible = u.assignments && (u.assignments.some((a) => {
             return a.time == currentScoutingBlock && a.status == "scouting";
         }))
-        console.log(u.username, avalible)
-        return avalible
+        return avalible;
     })
-    const redScouts = avalibleScouts.filter((u) => u.assignedAlliance == "red")
-    const blueScouts = avalibleScouts.filter((u) => u.assignedAlliance == "blue")
 
+    console.log(avalibleScouts.length)
+
+    const redScouts = avalibleScouts.filter((u) => u.assignedAlliance == "red").sort((a, b) => Number(b.reliable) - Number(a.reliable))
+    const blueScouts = avalibleScouts.filter((u) => u.assignedAlliance == "blue").sort((a, b) => Number(b.reliable) - Number(a.reliable))
+    
     assignedScouts = avalibleScouts
 
     for (let i = 0; i < redScouts.length; i++) {
-        const currentMatches = redScouts[i].assignedMatches
+        if (redScouts[i].assignedMatches.includes(matchNumber)) continue;
+        const currentMatches = redScouts[i].assignedMatches.slice()
         redScouts[i].update({
             nextMatch: {
                 number: matchNumber,
@@ -63,7 +79,8 @@ export async function setMatch(matchNumber: number) {
     }
 
     for (let i = 0; i < blueScouts.length; i++) {
-        const currentMatches = blueScouts[i].assignedMatches
+        if (blueScouts[i].assignedMatches.includes(matchNumber)) continue;
+        const currentMatches = blueScouts[i].assignedMatches.slice()
         blueScouts[i].update({
             nextMatch: {
                 number: matchNumber,

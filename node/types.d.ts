@@ -1,10 +1,14 @@
 export type Settings = {
+    keys: {
+        slack: string;
+        theBlueAlliance: string;
+    }
     eventKey: string;
     dayNumber: number;
     match: number;
     permissionLevels: Array<Permission>;
-    apiKey: string;
     earlyBlock: string | null;
+    teamPriority: string[];
 }
 
 type Permission = {
@@ -23,9 +27,9 @@ export type AdminPostRequest =
         action: "editUserField";
         data: {
             id: nubmer;
-            field: "username" | "password" | "permissionId";
+            field: "username" | "password" | "permissionId" | "reliable";
             updated: string;
-        }
+        } 
     }
     | {
         action: "addUser";
@@ -33,6 +37,7 @@ export type AdminPostRequest =
             username: string;
             password: string;
             permissionId: number;
+            reliable: boolean;
         }
     }
     | { action: "deleteUser"; data: number }
@@ -47,9 +52,10 @@ export type AdminPostRequest =
     | { action: "setMatch"; match: number; }
     | { action: "deploySchedule"; schedule: Schedule }
     | { action: "resetAssignedMatchData" }
-    | {action: "deleteRow", rowId: number}
-    | {action: "startBlockEarly"}
-    | {action: "cancelStartBlockEarly"};
+    | { action: "deleteRow", rowId: number }
+    | { action: "startBlockEarly" }
+    | { action: "cancelStartBlockEarly" }
+    | { action: "deployPriorityList", priorityList: string[] };
 
 export type AdminPostResponse = {
     "editUserField": { status: "OK" | "Bad User" },
@@ -63,7 +69,8 @@ export type AdminPostResponse = {
     "resetAssignedMatchData": { status: "OK" },
     "deleteRow": { status: "OK" },
     "startBlockEarly": { status: "OK" },
-    "cancelStartBlockEarly": { status: "OK" }
+    "cancelStartBlockEarly": { status: "OK" },
+    "deployPriorityList": { status: "OK" }
 };
 
 export type ResponseKeyValuePair = {
@@ -77,13 +84,13 @@ export type GeneralPostRequest =
     | { action: "getBlocks" }
     | { action: "getCurrentMatch" }
     | { action: "postFormData", data: ResponseKeyValuePair[], matchNumber?: number, form: string };
-    
+
 export type GeneralPostResponse = {
     "getKey": { key: string };
     "getDayNumber": { dayNumber: string };
     "getBlocks": { blocks: string[] };
     "getCurrentMatch": { match: number };
-    "postFormData": { status: "OK" | "ERROR" } ;
+    "postFormData": { status: "OK" | "ERROR" };
 }
 
 export type Station = "blue1" | "blue2" | "blue3" | "red1" | "red2" | "red3";

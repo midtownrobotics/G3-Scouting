@@ -3,6 +3,8 @@ import { Assignment, NextMatch, Status } from "../types";
 
 export interface User {
     id: number;
+    slackId?: string;
+    slackLinkCode: string;
     username: string;
     password: string;
     permissionId: number;
@@ -11,6 +13,7 @@ export interface User {
     nextMatch?: NextMatch;
     lastMatchScouted?: number;
     assignedMatches: number[];
+    reliable: boolean;
 }
 
 export interface UserCreationAttributes extends Optional<User, 'id'> { }

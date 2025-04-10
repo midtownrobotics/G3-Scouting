@@ -61,8 +61,8 @@ function submitForm() {
     }).then(function (res) {
         return __awaiter(this, void 0, void 0, function* () {
             if (res.status == "OK") {
-                // dataPosted = true;
-                // setTimeout(() => window.location.reload(), 500)
+                dataPosted = true;
+                setTimeout(() => window.location.reload(), 500);
             }
         });
     });

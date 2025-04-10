@@ -16,6 +16,10 @@
         
         <div id="main">
 
+            <h1>Percent scouted: <%= numberOfResponses.actual %>/<%= numberOfResponses.ideal %> = <%= Math.round(numberOfResponses.actual/numberOfResponses.ideal*1000)/10 %>%</h1>
+
+            <br><br>
+
             <% if (data?.rows) { %>
 
             <button class="btn btn-primary" onclick="downloadTable()">Download as CSV</button><br><br>
@@ -118,17 +122,6 @@
 <script>$("#nav-data").addClass("active")</script>
 
 <style>
-
-    nav {
-        width: calc(100% + 40px) !important;
-    }
-
-    body {
-        overflow: auto;
-        width: fit-content;
-        min-width: calc(100% - 40px);
-        /* background-color:  */
-    }
 
     #main {
         margin: 20px;
