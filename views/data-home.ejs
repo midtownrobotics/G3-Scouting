@@ -2,7 +2,7 @@
     <head>
         <link rel="stylesheet" href="/libs/bootstrap.min.css">
         <link rel="stylesheet" href="/libs/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
-        <link rel="stylesheet" href="/global.css">
+        <link rel="stylesheet" href="/css/global.css">
         <link rel="icon" type="image/png" href="/g3.png">
         <script src="/libs/jquery-3.7.1.min.js"></script>
         <script>var exports = {};</script>
@@ -14,13 +14,13 @@
 
     <div id="main">
 
-        <% if (sheets[0]) { %>
+        <% if (forms[0]) { %>
             <h3>View form data:</h3>
-            <% for (let i=0; i < sheets.length; i++) { %>
-                <a href="/data?sheet=<%=sheets[i]%>">#<%=i+1%>: <%=sheets[i]%></a><br>
+            <% for (let i=0; i < forms.length; i++) { %>
+                <a href="/data?form=<%=forms[i].id%>">#<%=i+1%>: <%=forms[i].title%></a><br>
             <% } %>
         <% } else { %>
-            <h3>No sheets were found! Contact your server administrator if you think this is an issue.</h3>
+            <h3>No form data found! Contact your server administrator if you think this is an issue.</h3>
         <% } %>
 
     </div>

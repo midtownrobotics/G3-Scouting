@@ -3,7 +3,7 @@
         <link rel="stylesheet" href="/libs/bootstrap.min.css">
         <link rel="stylesheet" href="/libs/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
         <link rel="icon" type="image/png" href="/g3.png">
-        <link rel="stylesheet" href="/global.css">
+        <link rel="stylesheet" href="/css/global.css">
         <script src="/libs/jquery-3.7.1.min.js"></script>
         <script>var exports = {};</script>
         <script type="module" src="/js/global.js"></script>
@@ -13,28 +13,21 @@
     <%- include('partials/nav') %>
 
     <div id="forms">
-
-        <% if (sheets[0]) { %>
-            <h3>Select Your Assigned Match Form Below.</h3>
-            <% for (let i=0; i < sheets.length; i++) { %>
-                <a href="/forms?form=<%=sheets[i]%>">#<%=i+1%>: <%=sheets[i]%></a><br>
-            <% } %>
-        <% } else { %>
-            <h3>No forms were found! Contact your server administrator if you think this is an issue.</h3>
+        <h3>Select a Form</h3>
+        <% if (message) { %>
+            <h5 style="font-style: italic;"><%= message %></h5>
         <% } %>
-
+        <% for (let i=0; i < forms.length; i++) { 
+            if (i == 0) { %>
+                <a href="/forms?form=<%=forms[i].id%>" style="font-size: 35px;">> <%=forms[i].title%> <</a><br>
+            <% } else { %>
+                <a href="/forms?form=<%=forms[i].id%>">> <%=forms[i].title%> <</a><br>
+            <% } %>
+        <% } %>
     </div>
 </html>
 
 <script>$("#nav-forms").addClass("active")</script>
-
-<script>
-    async function async() {
-        let userget = await fetch("/user-get/").then((res) => res.json())
-        $("#nextForm").text(userget.nextMatch.form)
-    }
-    async()
-</script>
 
 <style>
 
@@ -62,9 +55,5 @@
     a {
         color: black;
         font-size: large;
-    }
-
-    .head-buttons a {
-        text-decoration: none;
     }
 </style>    

@@ -8,12 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var _a;
-import { postDataGeneral, parseIntPlus, getNextMatchInfo } from "./global.js";
+import { postDataGeneral, parseIntPlus } from "./global.js";
 if ('scrollRestoration' in history) {
     history.scrollRestoration = "manual";
 }
 $(() => {
     window.scrollTo(0, 0);
+    const alliance = localStorage.getItem("alliance");
+    if (alliance)
+        $("#allianceInput").val(alliance);
     const loadedFormData = loadFormFromLocalStorage();
     if (loadedFormData) {
         window.scrollTo(0, 99999999);
@@ -26,14 +29,6 @@ if (!currentForm) {
     window.location.href = "/forms";
     currentForm = "";
 }
-function setNextMatchInfo() {
-    return __awaiter(this, void 0, void 0, function* () {
-        let nextMatch = yield getNextMatchInfo();
-        $("#matchNum").val(nextMatch.number);
-        $("#teamNum").val(nextMatch.team);
-    });
-}
-setNextMatchInfo();
 $('#submitButton').on('click', function (e) {
     submitForm();
 });
@@ -47,6 +42,10 @@ $(".minus").on('click', function () {
     $(this).next().children().first().val(val <= 1 ? 0 : (val - 1));
 });
 function submitForm() {
+    const alliance = $("#allianceInput").val();
+    if (alliance) {
+        localStorage.setItem("alliance", alliance.toString());
+    }
     const formData = $('form').serializeArray();
     formData.push({ name: "timestamp", value: formatDate(new Date()) });
     const matchNumber = parseIntPlus($("#matchNum").val());

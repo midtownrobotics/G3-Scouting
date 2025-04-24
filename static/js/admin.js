@@ -7,24 +7,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var _a;
 import * as assigner from "./assigner.js";
 import { parseStringArray, postDataAdmin, postDataGeneral } from "./global.js";
 $('.collapse-icon').parent().next().slideUp(0);
-setDarkMode(((_a = document.cookie.split(";").find(a => a.includes("darkMode"))) === null || _a === void 0 ? void 0 : _a.trim().split("=")[1]) != "false");
-$('#color-switcher').click(function () {
-    setDarkMode(!$("#color-switcher i").hasClass("bi-sun"));
-});
-function setDarkMode(dark) {
-    if (dark) {
-        $("input, select").css("background-color", "rgb(173, 176, 179)");
-        $("input, select").css("border-color", "rgb(173, 176, 179)");
-    }
-    else {
-        $("input, select").css("background-color", "#BFBFBF");
-        $("input, select").css("border-color", "rgb(39,38,38)");
-    }
-}
 setCurrentKey();
 setEventDay();
 function setCurrentKey() {
@@ -87,7 +72,6 @@ for (let i = 0; i < document.cookie.split(";").length; i++) {
 setTimeout(function () {
     var _a;
     const scrollTopPos = parseInt(((_a = document.cookie.split(";").find((p) => p.includes("scroll"))) === null || _a === void 0 ? void 0 : _a.replace("scroll=", "").trim()) || "0");
-    ;
     window.scrollTo({
         top: scrollTopPos,
         left: 0,

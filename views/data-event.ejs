@@ -4,7 +4,6 @@
         <link rel="stylesheet" href="/libs/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
         <link rel="icon" type="image/png" href="/g3.png">
         <link rel="stylesheet" href="/css/global.css">
-        <link rel="stylesheet" href="/css/data.css">
         <title>G3 Scouting!</title>
         <script src="/libs/jquery-3.7.1.min.js"></script>
         <script>var exports = {};</script>
@@ -17,11 +16,11 @@
         
         <div id="main">
 
-            <% if (typeof numberOfResponses != "undefined") { %>
             <h1>Percent scouted: <%= numberOfResponses.submitted %>/<%= numberOfResponses.assigned %> = <%= Math.round(numberOfResponses.submitted/numberOfResponses.assigned*1000)/10 %>%</h1>
-            <% } %>
 
             <br><br>
+
+            <% if (data?.rows) { %>
 
             <button class="btn btn-primary" onclick="downloadTable()">Download as CSV</button><br><br>
 
@@ -61,45 +60,30 @@
 
             </table>
 
+            <% } else { %>
+
+            <br><br><br>
+            <h1>There is no data to show! :(</h1>
+            <h3>There may be no responses, and incorrect URL, or an internal error.</h3>
+
+            <% } %>
+
         </div>
 
     </body>
 </html>
 
 <script>
-
-    function downloadTable() {
-        let csvTable = "";
-        for (let i = 0; i < $("#data-table thead tr").children().length-1; i++) {
-            csvTable += `"${$("#data-table thead tr").children()[i+1].innerText}",`
+    $("th").on('click', function(){
+        if ($(this).hasClass("reverse-sort")) {
+            $("th").removeClass("reverse-sort")
+            sortTable("data-table", $(this).index(), true)
+        } else {
+            $("th").removeClass("reverse-sort")
+            $(this).addClass("reverse-sort")
+            sortTable("data-table", $(this).index(), false)
         }
-
-        csvTable = csvTable.slice(0, -1) + "\n";
-
-        for (let i = 0; i < $("#data-table tbody tr").length; i++) {
-            for (let x = 0; x < $($("#data-table tbody tr")[i]).children().length - 1; x++) {
-                csvTable += `"${$($("#data-table tbody tr")[i]).children()[x+1].innerText}",`
-            }
-
-            csvTable = csvTable.slice(0, -1) + "\n";
-        }
-
-        const file = new File([csvTable], 'table.csv', {
-            type: 'text/plain',
-        })
-
-        const link = document.createElement('a')
-        const url = URL.createObjectURL(file)
-
-        link.href = url
-        link.download = file.name
-
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-
-        window.URL.revokeObjectURL(url)
-    }
+    })
 </script>
 
 <script>$("#nav-data").addClass("active")</script>

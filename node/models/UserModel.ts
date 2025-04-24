@@ -2,10 +2,6 @@ import { Column, DataType, Model, Table } from "sequelize-typescript";
 import { User, UserCreationAttributes } from "./types";
 import { Assignment, NextMatch } from "../types";
 import * as uuid from "uuid";
-import { sendMessage } from "../slack";
-import ResponseModel from "./ResponseModel";
-import { Op } from "sequelize";
-import { getSettings } from "../storage";
 
 @Table({ tableName: "users" })
 class UserModel extends Model<User, UserCreationAttributes> {
@@ -58,22 +54,22 @@ class UserModel extends Model<User, UserCreationAttributes> {
         return false;
     }
 
-    /**
-     * Calculates the percent of assigned matches scouted.
-     * @returns Number of scouted matches / Number of assigned matches.
-     */
-    public async calculateReliability() {
-        const assignedMatchesString = this.assignedMatches.map(num => num.toString());
+    // /**
+    //  * Calculates the percent of assigned matches scouted.
+    //  * @returns Number of scouted matches / Number of assigned matches.
+    //  */
+    // public async calculateReliability() {
+    //     const assignedMatchesString = this.assignedMatches.map(num => num.toString());
 
-        const submitted = (await ResponseModel.count({ where: { scoutId: this.id, matchNum: { [Op.in]: assignedMatchesString } }, distinct: true, col: 'matchNum' }));
-        const ideal = this.assignedMatches.length;
+    //     const submitted = (await ResponseModel.count({ where: { scoutId: this.id, matchNum: { [Op.in]: assignedMatchesString } }, distinct: true, col: 'matchNum' }));
+    //     const assigned = this.assignedMatches.length;
 
-        return {
-            percent: submitted/ideal,
-            submitted,
-            ideal
-        };
-    }
+    //     return {
+    //         percent: submitted/assigned,
+    //         submitted,
+    //         assigned
+    //     };
+    // }
 
     /**
      * Creates a user model.

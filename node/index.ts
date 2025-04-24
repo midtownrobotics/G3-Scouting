@@ -1,20 +1,19 @@
+import ejs from 'ejs';
 import express, { Request } from 'express';
 import http from 'http';
-import TheBlueAllianceV3 from 'thebluealliancev3';
+import path from 'path';
+import TheBlueAllianceV3, { APICalls } from 'thebluealliancev3';
 import { WebSocketServer } from 'ws';
 import { generateSchedule, setMatch } from './assigner';
 import { earlyStartBlock, getCurrentScoutingBlock, SCOUTING_BLOCKS } from './blockManager';
-import formDataHandler from './formDataHandler';
-import ResponseModel from './models/ResponseModel';
 import syncDatabase from './models/syncDatabase';
 import UserModel from './models/UserModel';
-import { getDeployedForms, getFormHTML, getSettings, getSettingsSync, writeSettings } from './storage';
-import { AdminPostRequest, Assignment, GeneralPostRequest, Settings, UserGetData } from './types';
-import slackRouter from './slack';
 import startReminderSchedule from './reminders';
-import { Op } from 'sequelize';
-import ejs from 'ejs';
-import path from 'path';
+import slackRouter from './slack';
+import { getSettings, getSettingsSync, writeSettings } from './storage';
+import { AdminPostRequest, Assignment, GeneralPostRequest, Settings, UserGetData } from './types';
+import generateForms from './forms/generateForms';
+import { FormRegistry } from './forms/formUtils';
 
 export const app = express();
 const server = http.createServer(app);
@@ -22,17 +21,17 @@ const wss = new WebSocketServer({ server });
 
 let PORT: number = 9955;
 
-/** Whether to show the "You are not currently scouting" page or not. */
-const NOT_SCOUTING_PAGE = true;
-
 export const TBA = new TheBlueAllianceV3(getSettingsSync().keys.theBlueAlliance);
 
 interface AuthReq extends Request {
     user?: UserModel
 }
 
+generateForms()
 syncDatabase().then(() => {
     startReminderSchedule()
+    server.listen(PORT);
+    console.log(`listening on port ${PORT}! enjoy!`);
 })
 
 app.set('views', 'views');
@@ -117,48 +116,54 @@ app.get('/forms', async (req: AuthReq, res) => {
     const user = req.user
     if (!user) return res.render("401");
 
-    const currentMatch = (await getSettings()).match;
+    const settings = (await getSettings());
+    const currentMatch = settings.match
 
-    const form: string | undefined = req.query.form?.toString()
-    const deployedForms: string[] = await getDeployedForms()
+    const formQuery = req.query.form?.toString()
+    const forms = FormRegistry.getAll()
+    const form = forms.find((f) => f.id == formQuery)
 
     const currentBlock = await getCurrentScoutingBlock()
 
-    if (NOT_SCOUTING_PAGE && (user.assignments?.find((a) => a.time == currentBlock)?.status || "break") == "break") {
-        return res.render('form-no-scout', { user: req.user })
-    } else if (form && deployedForms.includes(form)) {
+    const assignment = user.assignments?.find((a) => a.time == currentBlock);
+
+    if (form) {
         if (user.lastMatchScouted == currentMatch) {
             return res.render('form-waiting', { user: req.user })
-        } else {
-            return res.render('form', { data: await getFormHTML(form) });
         }
-    } else if (deployedForms.length > 0) {
-        return res.redirect(`/forms?form=${deployedForms[0]}`)
-        // res.render('form-home', { sheets: deployedForms })
-    }
+        if (form.enforceSchedule && ((assignment?.status || "break") == "break")) {
+            return res.render('form-home', { forms: forms, message: "You're not currently assigned to be scouting!" })
+        }
 
-    return res.render('form-home', { sheets: false })
+        const match = (await TBA.get({call: APICalls.event.matches.simple, event_key: settings.eventKey})).find(m => m.match_number == user.nextMatch?.number)
+        return res.render('form', { data: form.generateHTML(match, user.nextMatch?.team) });
+    }
+    if (forms.length > 0) {
+        return res.render('form-home', { forms: forms, message: false })
+    }
+    return res.render('form-home', { forms: forms, message: "No forms were found! Contact your server administrator if you think this is an issue." })
 })
 
 app.get('/admin', async (req, res) => {
     const settings = await getSettings()
     const allUsers = await UserModel.findAll()
-    const currentResponses = await ResponseModel.findAll({ where: { matchNum: settings.match } })
-    const lastResponses = await ResponseModel.findAll({ where: { matchNum: settings.match - 1 } })
-    const currentEvilScouts = allUsers.filter((s) => s.assignedMatches.includes(settings.match) && !currentResponses.some((m) => m.scoutId == s.id))
-    const lastEvilScouts = allUsers.filter((s) => s.assignedMatches.includes(settings.match - 1) && !lastResponses.some((m) => m.scoutId == s.id))
+    // TODO:
+    // const currentResponses = await ResponseModel.findAll({ where: { matchNum: settings.match } })
+    // const lastResponses = await ResponseModel.findAll({ where: { matchNum: settings.match - 1 } })
+    // const currentEvilScouts = allUsers.filter((s) => s.assignedMatches.includes(settings.match) && !currentResponses.some((m) => m.scoutId == s.id))
+    // const lastEvilScouts = allUsers.filter((s) => s.assignedMatches.includes(settings.match - 1) && !lastResponses.some((m) => m.scoutId == s.id))
 
     const html = await ejs.renderFile(path.join(__dirname, '/../views/admin.ejs'), {
         users: allUsers,
         matchReview: {
             current: {
-                responses: currentResponses,
-                evilScouts: currentEvilScouts,
+                responses: [],
+                evilScouts: [],
                 number: settings.match
             },
             last: {
-                responses: lastResponses,
-                evilScouts: lastEvilScouts,
+                responses: [],
+                evilScouts: [],
                 number: settings.match - 1
             }
         },
@@ -256,7 +261,11 @@ app.post('/post', async (req: AuthReq, res) => {
             sendPostresponse({ match: (await getSettings()).match })
             break
         case "postFormData":
-            formDataHandler(body.data, body.form, req.user)
+            if (!req.user || !body.data || !body.form) {
+                sendPostresponse({ status: 'ERROR' })
+                break;
+            }
+            FormRegistry.getAll().find(f => f.id == body.form)?.submitResponse(req.user, body.data);
             sendPostresponse({ status: 'OK' })
             break
     }
@@ -371,7 +380,8 @@ app.post('/admin', async (req, res) => {
             sendPostresponse({ status: "OK" })
             break
         case "deleteRow":
-            (await ResponseModel.findOne({ where: { id: body.rowId } }))?.destroy()
+            // TODO :
+            // (await ResponseModel.findOne({ where: { id: body.rowId } }))?.destroy()
             break;
         case "deployPriorityList":
             {
@@ -384,32 +394,72 @@ app.post('/admin', async (req, res) => {
 })
 
 app.get('/data', async (req: AuthReq, res) => {
-    const jsonData: object[] = []
-        ; (await ResponseModel.findAll()).forEach((r) => jsonData.push(r.toJSON()))
+    const formQuery = req.query.form
+    const forms = Form.getForms()
+    const form = forms.find((f) => f.id == formQuery)
 
-    if (jsonData.length == 0) { return res.render("404", { user: req.user }) }
-
-    const matchNumber = (await getSettings()).match;
-
-    const numberOfResponses = {
-        actual: (await ResponseModel.count({ where: { matchNum: { [Op.lte]: matchNumber } }, distinct: true, col: 'matchNum' })) * 6,
-        ideal: matchNumber * 6
+    if (!form) {
+        return res.render('data-home', { forms: forms });
     }
 
-    res.render("data", { data: { cols: Object.keys(jsonData[0]), rows: jsonData }, numberOfResponses })
+    const jsonData: object[] = [];
+
+    ; (await form.getModel().findAll()).forEach((r) => jsonData.push(r.toJSON()))
+
+    if (jsonData.length == 0) {
+        return res.render('data-home', { forms: forms });
+    }
+
+    const col = req.query.col?.toString()
+    const reverse = req.query.reverse?.toString()
+
+    if (col && reverse) {
+        jsonData.sort((a, b) => {
+            if (!(col in a) || !(col in b)) return 0;
+
+            const valA = a[col as keyof typeof a];
+            const valB = b[col as keyof typeof b];
+
+            if (valA < valB) return reverse === "true" ? 1 : -1
+            if (valA > valB) return reverse === "true" ? -1 : 1
+            return 0
+        })
+    }
+
+    // if (form.options?.respondRate) {
+    //     const matchNumber = (await getSettings()).match;
+
+    //     let submitted = 0;
+
+    //     const users = await UserModel.findAll();
+    //     for (const u of users) {
+    //         submitted += (await u.calculateReliability()).submitted;
+    //     }
+
+    //     return res.render("data", {
+    //         data: {
+    //             cols: Object.keys(jsonData[0]),
+    //             rows: jsonData
+    //         },
+    //         numberOfResponses: {
+    //             submitted,
+    //             assigned: matchNumber * form.options.responsesPerMatch
+    //         }
+    //     })
+    // }
+
+    return res.render("data", {
+        data: {
+            cols: Object.keys(jsonData[0]),
+            rows: jsonData
+        }
+    })
+})
+
+app.get('/data/event', async (req: AuthReq, res) => {
+
 })
 
 app.get("*", async (req: AuthReq, res) => {
     res.render("404", { user: req.user })
 })
-
-    ; (async () => {
-        server.listen(PORT);
-        console.log(`listening on port ${PORT}! enjoy!`);
-    })()
-
-// UserModel.findAll().then(u => {
-//     u.forEach((s) => {
-//         s.update({ assignedMatches: [...new Set(s.assignedMatches)] })
-//     })
-// })

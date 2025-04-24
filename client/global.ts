@@ -49,10 +49,6 @@ export function parseIntPlus(val: string | string[] | number | undefined): numbe
     return parseInt(val.toString());
 }
 
-export async function getNextMatchInfo(): Promise<NextMatch> {
-    return (await fetch("/user-get/").then((res) => res.json())).nextMatch as NextMatch
-}
-
 export function parseStringArray(val: string | string[] | number | undefined): string[] {
     if (typeof val == "object") return val;
     if (typeof val == "number") val = val.toString();

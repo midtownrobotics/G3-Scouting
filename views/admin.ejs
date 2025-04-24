@@ -3,7 +3,7 @@
 <head>
     <link rel="stylesheet" href="/libs/bootstrap.min.css">
     <link rel="stylesheet" href="/libs/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="/global.css">
+    <link rel="stylesheet" href="/css/global.css">
     <link rel="icon" type="image/png" href="/g3.png">
     <title>G3 Scouting!</title>
     <script src="/libs/jquery-3.7.1.min.js"></script>
@@ -272,10 +272,6 @@
                                             </td>
                                             <td class="user-field">
                                                 <%= users[i].reliable %>
-                                            </td>
-                                            <td class="user-field">
-                                                <% const score = await users[i].calculateReliability() %>
-                                                <%= score.submitted %>/<%= score.ideal %> = <%= Math.round(score.percent*100) || 0 %>%
                                             </td>
                                         </tr>
                                         <% } %>

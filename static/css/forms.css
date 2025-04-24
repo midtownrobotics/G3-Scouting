@@ -6,6 +6,11 @@ Form maker Css:
 Form maker Css:
 **/
 
+.question {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
 #titleBlock {
   background-color: lightslategrey;
   font-size: 35px;
@@ -435,6 +440,7 @@ input[type='radio'] {
 }
 
 .section_head {
+  text-align: center;
   background-color: lightblue;
   margin-left: 20px;
   margin-right: 20px;
@@ -459,7 +465,8 @@ input[type='radio'] {
 
 .textInput {
   font-size: 40px;
-  margin: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
   width: calc(100% - 20px);
 }
 

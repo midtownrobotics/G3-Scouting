@@ -3,22 +3,6 @@ import { parseStringArray, postDataAdmin, postDataGeneral } from "./global.js"
 
 $('.collapse-icon').parent().next().slideUp(0)
 
-setDarkMode(document.cookie.split(";").find(a => a.includes("darkMode"))?.trim().split("=")[1] != "false")
-
-$('#color-switcher').click(function () {
-    setDarkMode(!$("#color-switcher i").hasClass("bi-sun"))
-})
-
-function setDarkMode(dark: boolean) {
-    if (dark) {
-        $("input, select").css("background-color", "rgb(173, 176, 179)")
-        $("input, select").css("border-color", "rgb(173, 176, 179)")
-    } else {
-        $("input, select").css("background-color", "#BFBFBF")
-        $("input, select").css("border-color", "rgb(39,38,38)")
-    }
-}
-
 setCurrentKey()
 setEventDay()
 
@@ -83,7 +67,7 @@ for (let i = 0; i < document.cookie.split(";").length; i++) {
 
 // gets last saved scroll position and goes to it after 500ms
 setTimeout(function () {
-    const scrollTopPos = parseInt(document.cookie.split(";").find((p) => p.includes("scroll"))?.replace("scroll=", "").trim() || "0");;
+    const scrollTopPos = parseInt(document.cookie.split(";").find((p) => p.includes("scroll"))?.replace("scroll=", "").trim() || "0");
 
     window.scrollTo({
         top: scrollTopPos,

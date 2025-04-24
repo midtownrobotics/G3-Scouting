@@ -11,8 +11,6 @@ async function sendMessages() {
     const nextBlock = await getCurrentScoutingBlock(1);
     const block = await getCurrentScoutingBlock();
 
-    console.log("sending msgs")
-
     if (!users || !block || !nextBlock) return;
 
     users.forEach((u) => {

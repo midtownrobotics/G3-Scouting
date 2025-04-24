@@ -1,4 +1,4 @@
-import { postDataGeneral, parseIntPlus, getNextMatchInfo } from "./global.js"
+import { postDataGeneral, parseIntPlus } from "./global.js"
 
 if ('scrollRestoration' in history) {
     history.scrollRestoration = "manual";
@@ -6,6 +6,10 @@ if ('scrollRestoration' in history) {
 
 $(() => {
     window.scrollTo(0,0)
+    
+    const alliance = localStorage.getItem("alliance")
+    if (alliance) $("#allianceInput").val(alliance);
+
     const loadedFormData = loadFormFromLocalStorage();
     if (loadedFormData) {
         window.scrollTo(0, 99999999)
@@ -21,13 +25,6 @@ if (!currentForm) {
     currentForm = ""
 }
 
-async function setNextMatchInfo() {
-    let nextMatch = await getNextMatchInfo()
-    $("#matchNum").val(nextMatch.number)
-    $("#teamNum").val(nextMatch.team)
-}
-setNextMatchInfo()
-
 $('#submitButton').on('click', function (e) {
     submitForm()
 });
@@ -42,6 +39,11 @@ $(".minus").on('click', function () {
 });
 
 function submitForm() {
+    const alliance = $("#allianceInput").val();
+    if (alliance) {
+        localStorage.setItem("alliance", alliance.toString())
+    }
+
     const formData = $('form').serializeArray()
     formData.push({ name: "timestamp", value: formatDate(new Date()) })
 
