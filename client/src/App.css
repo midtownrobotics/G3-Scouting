@@ -3,15 +3,6 @@ main, footer {
     padding: 15px;
 }
 
-#navbar {
-    background-color: white;
-    font-size: 25px;
-}
-
-#navbar-brand {
-    font-size: 30px;
-}
-
 footer {
     width: 100%;
     text-align: center;

@@ -1,27 +1,17 @@
-import { Container, Nav, Navbar } from "react-bootstrap";
-import { PAGES, usePage } from "./pageContext";
-import "./App.css"
+import "./App.css";
+import NavigationBar from "./partials/nav/NavigationBar";
+import { getPageFromKey, usePage } from "./pageManager";
+import OfflineBar from "./partials/offline-bar/OfflineBar";
 
 function App() {
-    const { page, setPage } = usePage();
+    const { pageKey } = usePage();
 
     return (
         <div>
-            <Navbar expand="lg" id="navbar">
-                <Container>
-                    <Navbar.Brand id="navbar-brand" onClick={() => setPage(PAGES[0])}>G3 Scout-o-matic</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="main-navbar" />
-                    <Navbar.Collapse id="main-navbar">
-                        <Nav className="ms-auto">
-                            <Nav.Item>
-                                <Nav.Link onClick={() => setPage(PAGES[0])}>Home</Nav.Link>
-                            </Nav.Item>
-                        </Nav>
-                    </Navbar.Collapse>
-                </Container>
-            </Navbar>
+            <OfflineBar />
+            <NavigationBar />
             <main>
-                {page.component}
+                {getPageFromKey(pageKey)}
             </main>
             <footer>
                 <br />
