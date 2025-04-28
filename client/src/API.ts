@@ -7,7 +7,7 @@ import { baseAPIUrl } from "./constants";
  */
 async function fetchAPI(url: string): Promise<Response | null> {
     try { 
-        return fetch(baseAPIUrl.concat(url));
+        return await fetch(baseAPIUrl.concat(url));
     } catch(err) {
         return null;
     };
@@ -27,8 +27,9 @@ export async function fetchAPIJSON(url: string): Promise<unknown> {
  * @returns `boolean` Whether client can reach the API.
  */
 export async function getConnected(): Promise<boolean> {
-    const result = await fetchAPI("/alive")
-    return (result != null && result.status == 200 && await result.text() == "ok")
+    const result = await fetchAPI("/status")
+    const text = await result?.text()
+    return (result != null && result.status == 200 && text == "ok")
 }
 
 // TODO: REMOVE

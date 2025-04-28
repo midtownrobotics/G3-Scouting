@@ -1,6 +1,6 @@
 import express from 'express';
 import http from 'http';
-import authHandler from './AuthHandler';
+import authHandler from './authHandler';
 
 const app = express();
 export const server = http.createServer(app);
@@ -14,8 +14,8 @@ app.use((req, res, next) => {
 
 // app.use(authHandler);
 
-app.get("/api/alive", (req, res) => {
-    res.send("alive")
+app.get("/api/status", (req, res) => {
+    res.send("ok")
 })
 
 app.get("/testlog", (req, res) => {

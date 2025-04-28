@@ -8,7 +8,8 @@ function OfflineBar() {
 
     useEffect(() => {
         const interval = setInterval(async () => {
-            setIsShown(await getConnected())
+            const connected = !(await getConnected())
+            setIsShown(connected)
         }, 1000);
 
         return () => clearInterval(interval);
