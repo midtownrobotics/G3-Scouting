@@ -1,6 +1,7 @@
 import { Container, Navbar, Nav } from "react-bootstrap";
 import { usePage } from "../../pageManager";
 import "./NavigationBar.css"
+import NavPageLink from "./NavPageLink";
 
 /** The site navigation bar. */
 function NavigationBar() {
@@ -16,21 +17,11 @@ function NavigationBar() {
                 <Navbar.Toggle aria-controls="main-navbar" />
                 <Navbar.Collapse id="main-navbar">
                     <Nav className="ms-auto">
-                        <Nav.Item>
-                            <Nav.Link onClick={() => setPageKey("home")}>Home</Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link onClick={() => setPageKey("settings")}>Settings</Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link onClick={() => setPageKey("forms")}>Forms</Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link onClick={() => setPageKey("data")}>Data</Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link onClick={() => setPageKey("admin")}>Admin</Nav.Link>
-                        </Nav.Item>
+                        <NavPageLink page="home">Home</NavPageLink>
+                        <NavPageLink page="settings">Settings</NavPageLink>
+                        <NavPageLink page="forms">Forms</NavPageLink>
+                        <NavPageLink page="data">Data</NavPageLink>
+                        <NavPageLink page="admin">Admin</NavPageLink>
                     </Nav>
                 </Navbar.Collapse>
             </Container>

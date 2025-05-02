@@ -1,11 +1,11 @@
 import { createContext, useContext, useState } from "react";
 import Home from "./pages/Home";
 import Settings from "./pages/Settings";
-import Admin from "./pages/Admin";
+import Admin from "./pages/admin/Admin";
 import Data from "./pages/Data";
 import Forms from "./pages/Forms";
 
-type PageKey = "home" | "admin" | "data" | "forms" | "settings";
+export type PageKey = "home" | "admin" | "data" | "forms" | "settings";
 
 /** Gets the JSX element for a page from its respective {@link PageKey}. */
 export const getPageFromKey = (pageKey: PageKey) => {

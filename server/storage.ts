@@ -5,7 +5,7 @@ import path from 'path';
 async function getFile(relativePath: string): Promise<any> {
     return new Promise<any>((resolve) => {
         fs.readFile(path.join(__dirname, relativePath), (err, data) => {
-            let finalData
+            let finalData: any;
             try {
                 finalData = JSON.parse(data.toString())
             } catch {
@@ -21,9 +21,9 @@ export async function getSettings(): Promise<Settings> {
 }
 
 export function getSettingsSync(): Settings {
-    return JSON.parse(fs.readFileSync(path.join(__dirname, "/../storage/settings.json")).toString()) as Settings
+    return JSON.parse(fs.readFileSync(path.join(__dirname, "../storage/settings.json")).toString()) as Settings
 }
 
 export function writeSettings(data: Settings) {
-    fs.writeFile(__dirname + "/../storage/settings.json", JSON.stringify(data), () => {})
+    fs.writeFile(path.join(__dirname, "/storage/settings.json"), JSON.stringify(data), () => {})
 }

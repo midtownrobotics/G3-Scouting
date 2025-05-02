@@ -1,0 +1,46 @@
+#admin-page {
+    width: 100%;
+    display: block;
+
+    #head {
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 60px;
+    }
+
+    @media (max-width: 1200px) {
+
+        #users-table,
+        #perms-table {
+            width: 100%;
+        }
+    }
+
+    @media (min-width: 1200px) {
+        #users-table {
+            float: left;
+            width: calc(50% - 10px);
+        }
+
+        #perms-table {
+            float: right;
+            width: calc(50% - 10px);
+        }
+    }
+
+    #perms-table,
+    #users-table {
+        text-align: center;
+    }
+
+    input {
+        width: 100px;
+    }
+
+    #users-and-perms {
+        width: 100%;
+        height: 600px;
+    }
+}

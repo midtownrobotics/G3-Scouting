@@ -18,7 +18,13 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    "paths": {
+        "@shared/*": [
+            "../shared/*"
+        ]
+    }
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "../shared/"]
 }

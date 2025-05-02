@@ -1,13 +1,31 @@
-import { baseAPIUrl } from "./constants";
+import { BASE_API_URL } from "@shared/constants";
 
-/**
- * Fetches API data.
+/** Fetch API data.
  * @param url The API url.
  * @returns `null` if fetch error and {@link Response} otherwise.
  */
 async function fetchAPI(url: string): Promise<Response | null> {
     try { 
-        return await fetch(baseAPIUrl.concat(url));
+        return await fetch(BASE_API_URL.concat(url));
+    } catch(err) {
+        return null;
+    };
+}
+
+/** Post data to API.
+ * @param url The API url.
+ * @param data The data to post
+ * @returns `null` if fetch error and {@link Response} otherwise.
+ */
+export async function postAPI(url: string, data: any): Promise<Response | null> {
+    try {
+        return await fetch(BASE_API_URL.concat(url), {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
     } catch(err) {
         return null;
     };
@@ -30,9 +48,4 @@ export async function getConnected(): Promise<boolean> {
     const result = await fetchAPI("/status")
     const text = await result?.text()
     return (result != null && result.status == 200 && text == "ok")
-}
-
-// TODO: REMOVE
-export function APILog(data: any) {
-    fetch("https://3001.grayjn.com/testlog?log=" + data.toString())
 }

@@ -14,8 +14,8 @@ async function authHandler(req: AuthReq, res: Response, next: NextFunction) {
 
     const settings: Settings = await getSettings();
 
-    if (!settings.permissionLevels[0]) {
-        settings.permissionLevels.push({ name: "admin", blacklist: [] })
+    if (!settings.permissionLevels.find(p => p.name = "admin")) {
+        settings.permissionLevels.push({ name: "admin", blacklist: [], id: 0 })
         writeSettings(settings)
     }
 

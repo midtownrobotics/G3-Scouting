@@ -1,1 +1,0 @@
-export const baseAPIUrl = "https://3001.grayjn.com/api"

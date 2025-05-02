@@ -17,7 +17,7 @@ function OfflineBar() {
 
     return (
         <div id="offlineBar" style={{display: isShown ? "block" : "none"}}>
-            <p>You are offline.</p>
+            <p>Cannot connect to API. Data WILL NOT save. Please check your internet connection.</p>
         </div>
     )
 }
