@@ -16,3 +16,7 @@ export const PermissionSchema = z.object({
 })
 export type Permission = z.infer<typeof PermissionSchema>
 
+export const SaveableInputDataSchema = z.object({
+    value: z.string()
+})
+export type SaveableInputData = z.infer<typeof SaveableInputDataSchema>

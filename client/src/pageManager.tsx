@@ -13,6 +13,8 @@ export const getPageFromKey = (pageKey: PageKey) => {
     if (pageKey == "settings") return <Settings />;
     if (pageKey == "data") return <Data />;
     if (pageKey == "forms") return <Forms />;
+    /** If page key is none of the above, set page key to home, and return Home page. */
+    usePage().setPageKey("home")
     return <Home />;
 }
 

@@ -14,7 +14,7 @@ export async function getUserFromAuth(authHeader: string | undefined): Promise<U
 export async function isValidUser(user: SimpleUser): Promise<boolean> {
     const settings: Settings = await getSettings();
 
-    if (!user.username || !user.password ||
+    if (user.username === undefined || user.password === undefined ||
         user.permissionId === undefined || user.reliable === undefined ||
         !settings.permissionLevels.some(p => p.id == user.permissionId)) {
         return false;

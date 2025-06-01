@@ -15,8 +15,8 @@ function UserTable() {
 
             if (body.success && body.data) {
                 setUserRows([
-                    ...body.data.map((user) => <UserRow user={user} reload={reloadData} />),
-                    <NewUser reload={reloadData} />
+                    ...body.data.map((u, ui) => <UserRow key={ui} user={u} reload={reloadData} />),
+                    <NewUser key={-1} reload={reloadData} />
                 ])
             }
         })

@@ -15,8 +15,8 @@ function PermTable() {
 
             if (body.success && body.data) {
                 setUserRows([
-                    ...body.data.map((perm) => <PermRow perm={perm} reload={reloadData} />),
-                    <NewPerm reload={reloadData} />
+                    ...body.data.map((p, pi) => <PermRow key={pi} perm={p} reload={reloadData} />),
+                    <NewPerm key={-1} reload={reloadData} />
                 ])
             }
         })

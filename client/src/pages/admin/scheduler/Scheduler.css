@@ -1,0 +1,18 @@
+#scheduler {
+    #newDay {
+        text-align: left;
+    }
+
+    #newAssignment {
+        text-align: left;
+    }
+
+    input, button {
+        width: 140px;
+        margin: 2px;
+    }
+
+    .halfButton {
+        width: 65px;
+    }
+}

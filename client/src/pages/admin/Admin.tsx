@@ -1,5 +1,7 @@
 import "./Admin.css";
 import PermTable from "./perm-table/PermTable";
+import SaveableTextInput from "./SaveableTextInput";
+import Scheduler from "./scheduler/Scheduler";
 import UserTable from "./user-table/UserTable";
 
 function Admin() {
@@ -17,6 +19,38 @@ function Admin() {
                     <PermTable />
                 </div>
             </div>
+
+            <hr />
+
+            <div id="settings">
+                <h2>Settings</h2>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <SaveableTextInput get={"/admin/getDayNumber"} post={"/admin/setDayNumber"}>Day Number</SaveableTextInput>
+                            </td>
+                            <td>
+                                <SaveableTextInput get={"/admin/getEventKey"} post={"/admin/setEventKey"}>Event Key</SaveableTextInput>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <SaveableTextInput get={"/admin/getTbaToken"} post={"/admin/setTbaToken"}>TBA Token</SaveableTextInput>
+                            </td>
+                            <td>
+                                <SaveableTextInput get={"/admin/getSlackToken"} post={"/admin/setSlackToken"}>Slack Token</SaveableTextInput>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <hr />
+
+            <Scheduler />
+
+            <hr />
         </div>
     )
 }

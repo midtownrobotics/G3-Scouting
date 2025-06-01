@@ -15,7 +15,7 @@ function App() {
             </main>
             <footer>
                 <br />
-                <h5>Developed by Gray Jackson-Noell</h5>
+                <h5>Made by Gray Jackson-Noell</h5>
                 <br />
             </footer>
         </div>

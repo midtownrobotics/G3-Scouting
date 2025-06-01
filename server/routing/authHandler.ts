@@ -46,7 +46,7 @@ async function authHandler(req: AuthReq, res: Response, next: NextFunction) {
         }
 
         if (bad) {
-            res.render("401", { user: req.user });
+            res.sendStatus(403);
         } else {
             req.user = user
             next();
