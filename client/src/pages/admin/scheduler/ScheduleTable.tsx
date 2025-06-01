@@ -6,6 +6,7 @@ import UserRow from "./UserRow";
 import { useEffect, useRef } from "react";
 
 function ScheduleTable({ users, assignment, blocks }: { users: SimpleUser[], assignment?: Assignment, blocks: Block[] }) {
+    /** Maps user ids to a map of times to assignments. */
     const userBlockMapRef = useRef(new Map<number, Map<number, Assignment>>())
 
     useEffect(() => {

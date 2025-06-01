@@ -85,7 +85,11 @@ adminAPIRouter.post("/deleteUser", async (req: Request, res: Response) => {
     const body = z.object({ id: z.number() }).safeParse(req.body)
     if (body.success && body.data) {
         const user = await UserModel.findOne({ where: { id: body.data.id } })
-        if (user?.id == 0) {return; res.sendStatus(400)}
+        if (user?.id == 0) {
+            res.sendStatus(400);
+            return; 
+        }
+        user?.destroy()
         res.sendStatus(200)
         return
     }

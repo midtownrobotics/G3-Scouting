@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Assignment, Block } from "./types";
 
 function UserRow({ user, assignment, blocks, userBlockMapRef }: { user: SimpleUser, assignment?: Assignment, blocks: Block[], userBlockMapRef: React.RefObject<Map<number, Map<number, Assignment>>>}) {
-
     return (
         <tr>
             <td>{user.username}</td>
