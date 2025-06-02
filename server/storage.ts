@@ -3,9 +3,13 @@ import { Settings } from './types';
 import path from 'path';
 
 async function getFile(relativePath: string): Promise<any> {
+
+    console.log(path.join(__dirname, relativePath))
+
     return new Promise<any>((resolve) => {
         fs.readFile(path.join(__dirname, relativePath), (err, data) => {
             let finalData: any;
+            console.log(finalData)
             try {
                 finalData = JSON.parse(data.toString())
             } catch {
