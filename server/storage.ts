@@ -3,9 +3,6 @@ import { Settings } from './types';
 import path from 'path';
 
 async function getFile(relativePath: string): Promise<any> {
-
-    console.log(path.join(__dirname, relativePath))
-
     return new Promise<any>((resolve) => {
         fs.readFile(path.join(__dirname, relativePath), (err, data) => {
             let finalData: any;
@@ -14,14 +11,15 @@ async function getFile(relativePath: string): Promise<any> {
             } catch {
                 finalData = data.toString()
             }
-            console.log(finalData)
             resolve(finalData)
         })
     })
 }
 
 export async function getSettings(): Promise<Settings> {
-    return await getFile("/storage/settings.json") as Settings
+    const settings = await getFile("/storage/settings.json") as Settings;
+    console.log(settings.keys.slack)
+    return settings
 }
 
 export function getSettingsSync(): Settings {
