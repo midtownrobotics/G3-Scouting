@@ -9,12 +9,12 @@ async function getFile(relativePath: string): Promise<any> {
     return new Promise<any>((resolve) => {
         fs.readFile(path.join(__dirname, relativePath), (err, data) => {
             let finalData: any;
-            console.log(finalData)
             try {
                 finalData = JSON.parse(data.toString())
             } catch {
                 finalData = data.toString()
             }
+            console.log(finalData)
             resolve(finalData)
         })
     })
