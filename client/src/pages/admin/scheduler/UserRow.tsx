@@ -1,27 +1,74 @@
 import { SimpleUser } from "@shared/schemas/API";
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Assignment, Block } from "./types";
 
-function UserRow({ user, assignment, blocks, userBlockMapRef }: { user: SimpleUser, assignment?: Assignment, blocks: Block[], userBlockMapRef: React.RefObject<Map<number, Map<number, Assignment>>>}) {
+function UserRow(
+    {
+        user, blocks, index, userBlockMapRef, cellIdsMapRef, cellMouseHandler, setCurrentMousePosition, selectedCells, selectedAssignment
+    }: {
+        user: SimpleUser,
+        blocks: Block[],
+        index: number,
+        userBlockMapRef: React.RefObject<Map<number, Map<number, Assignment>>>,
+        cellIdsMapRef: React.RefObject<Map<string, { uId: number, bId: number }>>,
+        selectedCells: React.RefObject<string[]>,
+        cellMouseHandler: (i: [number, number], up: boolean) => void,
+        setCurrentMousePosition: (pos: [number, number]) => void,
+        selectedAssignment?: Assignment
+    }
+) {
+    useEffect(() => {
+        blocks.forEach((b, bi) => {
+            cellIdsMapRef.current.set(`${index}-${bi}`, { uId: user.id, bId: b.id });
+        });
+    }, [blocks, index, user.id, cellIdsMapRef]);
+
     return (
         <tr>
             <td>{user.username}</td>
-            {blocks.map((b, bi) => <AssignmentCell key={bi} id={b.id} selectedAssignment={assignment} blockSetter={(id, a) => { userBlockMapRef.current.get(user.id)?.set(id, a); console.log(userBlockMapRef.current); }}></AssignmentCell>)}
+            {blocks.map((b, bi) => {
+                const cellIndex: [number, number] = [index, bi];
+                return (
+                    <AssignmentCell
+                        key={bi}
+                        assignment={() => userBlockMapRef.current.get(user.id)?.get(b.id)}
+                        mouseHandler={(up) => cellMouseHandler(cellIndex, up)}
+                        index={cellIndex}
+                        setCurrentMousePosition={setCurrentMousePosition}
+                        selectedCells={selectedCells}
+                        selectedAssignment={selectedAssignment}
+                    />
+                );
+            })}
         </tr>
-    )
+    );
 }
 
-function AssignmentCell({ selectedAssignment, id, blockSetter }: {selectedAssignment?: Assignment, id: number, blockSetter: (id: number, assignment: Assignment) => void}) {
-    const [assignment, setAssignmentState] = useState<Assignment>()
-    const setAssignment = (assignment?: Assignment) => {
-        setAssignmentState(assignment)
-        if (assignment) {
-            blockSetter(id, assignment)
-        }
+function AssignmentCell(
+    { 
+        assignment, 
+        mouseHandler, 
+        setCurrentMousePosition, 
+        index,
+        selectedCells,
+        selectedAssignment
+    }: { 
+        assignment: () => Assignment | undefined,
+        mouseHandler: (up: boolean) => void, 
+        setCurrentMousePosition: (pos: [number, number]) => void, 
+        index: [number, number],
+        selectedCells: React.RefObject<string[]>,
+        selectedAssignment?: Assignment
     }
-
+) {
+    const id = `${index[0]}-${index[1]}`;
     return (
-        <td onClick={() => setAssignment(selectedAssignment)} style={{backgroundColor: assignment?.color, cursor: "pointer"}}></td>
+        <td 
+            onMouseUp={() => mouseHandler(true)} 
+            onMouseDown={() => mouseHandler(false)} 
+            onMouseEnter={() => setCurrentMousePosition(index)} 
+            style={{ backgroundColor: selectedAssignment && selectedCells.current.includes(id) ? selectedAssignment.color : assignment()?.color, cursor: "pointer" }}
+        />
     )
 }
 

@@ -1,4 +1,6 @@
 #scheduler {
+    user-select: none;
+
     #newDay {
         text-align: left;
     }
@@ -7,7 +9,7 @@
         text-align: left;
     }
 
-    input, button {
+    input, button, select {
         width: 140px;
         margin: 2px;
     }

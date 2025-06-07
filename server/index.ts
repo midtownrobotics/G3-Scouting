@@ -13,4 +13,6 @@ syncDatabase().then(() => {
     console.log(` ${LogColors.TX.Red}➜  ${LogColors.TX.White}${PRODUCTION ? "Production" : "Development"} mode`)
     console.log(` ${LogColors.TX.Red}➜  ${LogColors.TX.White}Auth ${ENABLE_AUTH ? "enabled" : "disabled"}`)
     console.log(` ${LogColors.TX.Red}➜  ${LogColors.TX.White}API backend: "${BASE_API_URL}"`)
+    console.log(``)
+    console.log(`Started at ${LogColors.TX.Blue}${new Date().toLocaleTimeString()}${LogColors.TX.White}`)
 })

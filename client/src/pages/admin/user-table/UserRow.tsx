@@ -18,8 +18,10 @@ function UserRow({ user, reload }: { user: SimpleUser, reload: () => void }) {
         const result = SimpleUserSchema.safeParse(editedUser);
         if (result.success) {
             postAPI("/admin/editUser", result.data).then((res) => {
-                if (res?.status != 200) setEditing(true);
-                if (res?.status == 200) {
+                if (res?.status != 200) {
+                    setEditing(true);
+                    alert("User could not save. PID is likely the issue.")
+                } else {
                     setEditing(false)
                     reload();
                 }
