@@ -10,11 +10,11 @@ import ScheduleTable from "./ScheduleTable";
 import { toFormattedTime } from "./utils";
 
 function Scheduler() {
-    const [selectedAssignment, setSelectedAssignment] = useState<Assignment>()
+    const [selectedAssignment, setSelectedAssignment] = useState<number>()
     const [assignments, setAssignmentsState] = useState<Assignment[]>(JSON.parse(localStorage.getItem("assignments") || "[]"))
-    const setAssignments = (assignments: Assignment[]) => {
-        localStorage.setItem("assignments", JSON.stringify(assignments))
-        setAssignmentsState(assignments);
+    const setAssignments = (a: Assignment[]) => {
+        localStorage.setItem("assignments", JSON.stringify(a))
+        setAssignmentsState(a);
     }
 
     const [blocks, setBlocksState] = useState<Block[]>(JSON.parse(localStorage.getItem("blocks") || "[]"));
@@ -61,7 +61,7 @@ function Scheduler() {
             <br />
             <Assignments assignments={{setAssignments, assignments, setSelectedAssignment, selectedAssignment}} />
             <br />
-            <ScheduleTable users={users} assignment={selectedAssignment} blocks={blocks} />
+            <ScheduleTable users={users} assignmentIndex={selectedAssignment} blocks={blocks} assignments={assignments} />
         </div>
     )
 }

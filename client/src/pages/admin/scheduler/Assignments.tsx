@@ -3,19 +3,22 @@ import { Assignment, AssignmentType } from "./types";
 import { Button, Form } from "react-bootstrap";
 import { useState } from "react";
 
-function Assignments({ assignments: { assignments, setAssignments, selectedAssignment, setSelectedAssignment } }: { assignments: { assignments: Assignment[], setAssignments: (assignments: Assignment[]) => void, selectedAssignment?: Assignment, setSelectedAssignment: (assignment: Assignment) => void } }) {
+function Assignments({ assignments: { assignments, setAssignments, selectedAssignment, setSelectedAssignment } }: { assignments: { assignments: Assignment[], setAssignments: (a: Assignment[]) => void, selectedAssignment?: number, setSelectedAssignment: (assignment: number) => void } }) {
     const [newColor, setNewColor] = useState<string>("#000000")
     const [newName, setNewName] = useState<string>()
     const [newType, setNewType] = useState<AssignmentType>(AssignmentType.BREAK)
 
     const removeAssignment = (id: number) => {
-        setAssignments(assignments.filter(a => a.id !== id));
-        setSelectedAssignment(assignments[0])
+        const newAssignments = [...assignments].filter(a => a.id !== id);
+        setAssignments(newAssignments);
+        setSelectedAssignment(0);
+
+        console.log(newAssignments, id)
     }
 
     const addAssignment = () => {
         if (!newColor || !newName) return alert("Please set a name.");
-        setAssignments([...assignments, { id: Math.max(...assignments.map(a => a.id), -1) + 1, color: newColor, name: newName, type: newType }])
+        setAssignments([...assignments, { id: Date.now(),color: newColor, name: newName, type: newType }])
 
         setNewColor("#000000")
         setNewName("")
@@ -32,7 +35,7 @@ function Assignments({ assignments: { assignments, setAssignments, selectedAssig
                                 <Form.Control disabled type="text" value={a.name} />
                                 <Form.Control disabled type="text" value={a.type} />
                                 <Button className="halfButton" variant="light" onClick={() => removeAssignment(a.id)}><Trash /></Button>
-                                <Button className="halfButton" variant="light" disabled={selectedAssignment?.id === a.id} onClick={() => setSelectedAssignment(a)}>{selectedAssignment?.id === a.id ? <CheckCircle /> : <Circle />}</Button>
+                                <Button className="halfButton" variant="light" disabled={selectedAssignment === ai} onClick={() => setSelectedAssignment(ai)}>{selectedAssignment === ai ? <CheckCircle /> : <Circle />}</Button>
                             </td>
                         )
                     })}

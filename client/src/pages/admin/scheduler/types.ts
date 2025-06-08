@@ -23,9 +23,11 @@ export enum AssignmentType {
 export type Assignment = {
     color: string;
     name: string;
-    id: number;
     type: AssignmentType;
+    id: number;
 }
 
 /** Date stoted in the form `YYYY-MM-DD` */
-type DateString = Brand<string, "DateString">;
+export type DateString = Brand<string, "DateString">;
+/** Time stoted in the form `MM:SS` */
+export type TimeString = Brand<string, "TimeString">;

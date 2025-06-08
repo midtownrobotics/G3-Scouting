@@ -1,20 +1,20 @@
 import { SimpleUser } from "@shared/schemas/API";
-import { Assignment, Block } from "./types";
-import { Table } from "react-bootstrap";
-import { toFormattedTime } from "./utils";
-import UserRow from "./UserRow";
 import { useEffect, useRef, useState } from "react";
+import { Table } from "react-bootstrap";
+import { Assignment, Block } from "./types";
+import UserRow from "./UserRow";
+import { toFormattedTime } from "./utils";
 
-function ScheduleTable({ users, assignment, blocks }: { users: SimpleUser[], assignment?: Assignment, blocks: Block[] }) {
+function ScheduleTable({ users, assignmentIndex, blocks, assignments }: { users: SimpleUser[], assignmentIndex?: number, blocks: Block[], assignments: Assignment[] }) {
     /** Maps user ids to a map of times to assignments. */
-    const userBlockMapRef = useRef(new Map<number, Map<number, Assignment>>())
+    const userBlockMapRef = useRef(new Map<number, Map<number, number>>())
     /** Maps cell ids to an object with the coordinated block and user. */
     const cellIdsMapRef = useRef(new Map<string, { uId: number, bId: number }>)
 
     useEffect(() => {
         for (const user of users) {
             if (!userBlockMapRef.current.has(user.id)) {
-                userBlockMapRef.current.set(user.id, new Map<number, Assignment>());
+                userBlockMapRef.current.set(user.id, new Map<number, number>());
             }
         }
     }, [users])
@@ -28,7 +28,7 @@ function ScheduleTable({ users, assignment, blocks }: { users: SimpleUser[], ass
     const cellMouseHandler = (cellIndex: [number, number], mouseUpEvent: boolean) => {
         selectedCellRange.current[mouseUpEvent ? 1 : 0] = cellIndex;
 
-        if (!mouseUpEvent) setCurrentMousePosition(cellIndex);
+        if (!mouseUpEvent) setCurrentMousePosition(cellIndex, true);
 
         if (mouseUpEvent) {
             const [start, end] = selectedCellRange.current;
@@ -40,23 +40,24 @@ function ScheduleTable({ users, assignment, blocks }: { users: SimpleUser[], ass
             for (let i = rowMin; i <= rowMax; i++) {
                 for (let x = colMin; x <= colMax; x++) {
                     const ids = cellIdsMapRef.current.get(`${i}-${x}`);
-                    if (ids && assignment) {
-                        userBlockMapRef.current.get(ids.uId)?.set(ids.bId, assignment);
+                    if (ids && typeof assignmentIndex === "number") {
+                        userBlockMapRef.current.get(ids.uId)?.set(ids.bId, assignments[assignmentIndex].id);
                     }
                 }
             }
 
             selectedCells.current.length = 0;
         };
-        
-        setSelecting(!mouseUpEvent);
+
+        setSelecting(!mouseUpEvent)
     }
 
     /** List of selected cells by id in form `row-col`. Ex: `["0-0", "0-1"]` */
     const selectedCells = useRef<string[]>([]);
 
-    const setCurrentMousePosition = (position: [number, number]) => {
-        if (selecting) {
+    const setCurrentMousePosition = (position: [number, number], selectingOverride?: boolean) => {
+        if (selecting || selectingOverride) {
+
             selectedCells.current.length = 0;
 
             const start = selectedCellRange.current[0];
@@ -108,7 +109,8 @@ function ScheduleTable({ users, assignment, blocks }: { users: SimpleUser[], ass
                         cellIdsMapRef={cellIdsMapRef} 
                         setCurrentMousePosition={setCurrentMousePosition}
                         selectedCells={selectedCells}
-                        selectedAssignment={assignment}                 
+                        selectedAssignment={assignmentIndex}
+                        assignments={assignments}                 
                     />
                 ))}
             </tbody>
