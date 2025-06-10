@@ -1,23 +1,25 @@
 import { SimpleUser } from "@shared/schemas/API";
-import { useEffect, useRef, useState } from "react";
+import { Assignment, Block } from "@shared/schemas/schedule";
+import { useRef, useState } from "react";
 import { Table } from "react-bootstrap";
-import { Assignment, Block } from "./types";
 import UserRow from "./UserRow";
 import { toFormattedTime } from "./utils";
 
-function ScheduleTable({ users, assignmentIndex, blocks, assignments }: { users: SimpleUser[], assignmentIndex?: number, blocks: Block[], assignments: Assignment[] }) {
-    /** Maps user ids to a map of times to assignments. */
-    const userBlockMapRef = useRef(new Map<number, Map<number, number>>())
+function ScheduleTable({
+    userBlockMapRef,
+    users,
+    assignmentIndex,
+    blocks,
+    assignments
+}: {
+    userBlockMapRef: React.RefObject<Map<number, Map<number, number>>>,
+    users: SimpleUser[],
+    assignmentIndex?: number,
+    blocks: Block[],
+    assignments: Assignment[]
+}) {
     /** Maps cell ids to an object with the coordinated block and user. */
     const cellIdsMapRef = useRef(new Map<string, { uId: number, bId: number }>)
-
-    useEffect(() => {
-        for (const user of users) {
-            if (!userBlockMapRef.current.has(user.id)) {
-                userBlockMapRef.current.set(user.id, new Map<number, number>());
-            }
-        }
-    }, [users])
 
     const [_, setBump] = useState(0)
     const forceReload = () => setBump(prev => prev + 1)
@@ -36,7 +38,7 @@ function ScheduleTable({ users, assignmentIndex, blocks, assignments }: { users:
             const rowMax = Math.max(start[0], end[0]);
             const colMin = Math.min(start[1], end[1]);
             const colMax = Math.max(start[1], end[1]);
-    
+
             for (let i = rowMin; i <= rowMax; i++) {
                 for (let x = colMin; x <= colMax; x++) {
                     const ids = cellIdsMapRef.current.get(`${i}-${x}`);
@@ -66,7 +68,7 @@ function ScheduleTable({ users, assignmentIndex, blocks, assignments }: { users:
             const rowMax = Math.max(start[0], end[0]);
             const colMin = Math.min(start[1], end[1]);
             const colMax = Math.max(start[1], end[1]);
-    
+
             for (let i = rowMin; i <= rowMax; i++) {
                 for (let x = colMin; x <= colMax; x++) {
                     selectedCells.current.push(`${i}-${x}`);
@@ -84,7 +86,7 @@ function ScheduleTable({ users, assignmentIndex, blocks, assignments }: { users:
                     <td></td>
                     {Array.from(
                         blocks.reduce((map, block) => {
-                            const date = block.day.date;
+                            const date = block.date;
                             map.set(date, (map.get(date) || 0) + 1);
                             return map;
                         }, new Map<string, number>())
@@ -106,11 +108,11 @@ function ScheduleTable({ users, assignmentIndex, blocks, assignments }: { users:
                         user={u}
                         blocks={blocks}
                         userBlockMapRef={userBlockMapRef}
-                        cellIdsMapRef={cellIdsMapRef} 
+                        cellIdsMapRef={cellIdsMapRef}
                         setCurrentMousePosition={setCurrentMousePosition}
                         selectedCells={selectedCells}
                         selectedAssignment={assignmentIndex}
-                        assignments={assignments}                 
+                        assignments={assignments}
                     />
                 ))}
             </tbody>

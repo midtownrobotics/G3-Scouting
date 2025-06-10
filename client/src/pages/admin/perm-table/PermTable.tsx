@@ -1,4 +1,4 @@
-import { PermissionSchema } from "@shared/schemas/API";
+import { Permission } from "@shared/schemas/API";
 import { JSX, useEffect, useState } from "react";
 import { Table } from "react-bootstrap";
 import z from 'zod';
@@ -11,7 +11,7 @@ function PermTable() {
 
     const reloadData = () => {
         fetchAPIJSON("/admin/getPerms").then((res) => {
-            const body = z.array(PermissionSchema).safeParse(res)
+            const body = z.array(Permission).safeParse(res)
 
             if (body.success && body.data) {
                 setUserRows([

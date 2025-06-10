@@ -1,4 +1,4 @@
-import { SimpleUserSchema } from "@shared/schemas/API";
+import { SimpleUser } from "@shared/schemas/API";
 import { JSX, useEffect, useState } from "react";
 import { Table } from "react-bootstrap";
 import z from 'zod';
@@ -6,14 +6,16 @@ import { fetchAPIJSON } from "../../../API";
 import NewUser from "./NewUser";
 import UserRow from "./UserRow";
 
-function UserTable() {
+function UserTable({ setUsers }: { setUsers: (u: SimpleUser[]) => void }) {
     const [userRows, setUserRows] = useState<JSX.Element[]>([])
 
     const reloadData = () => {
         fetchAPIJSON("/admin/getUsers").then((res) => {
-            const body = z.array(SimpleUserSchema).safeParse(res)
+            const body = z.array(SimpleUser).safeParse(res)
 
             if (body.success && body.data) {
+                setUsers(body.data)
+
                 setUserRows([
                     ...body.data.map((u, ui) => <UserRow key={ui} user={u} reload={reloadData} />),
                     <NewUser key={-1} reload={reloadData} />

@@ -1,6 +1,6 @@
 import { SimpleUser } from "@shared/schemas/API";
 import React, { useEffect } from "react";
-import { Assignment, Block } from "./types";
+import { Assignment, Block } from "@shared/schemas/schedule";
 
 function UserRow(
     {

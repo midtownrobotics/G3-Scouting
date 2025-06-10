@@ -1,4 +1,4 @@
-import { SimpleUser, SimpleUserSchema } from "@shared/schemas/API"
+import { SimpleUser } from "@shared/schemas/API"
 import { useState } from "react"
 import { Floppy, Pencil, Trash } from "react-bootstrap-icons"
 import EditableCell from "../EditableCell"
@@ -15,7 +15,7 @@ function UserRow({ user, reload }: { user: SimpleUser, reload: () => void }) {
     }
 
     const saveUser = () => {
-        const result = SimpleUserSchema.safeParse(editedUser);
+        const result = SimpleUser.safeParse(editedUser);
         if (result.success) {
             postAPI("/admin/editUser", result.data).then((res) => {
                 if (res?.status != 200) {

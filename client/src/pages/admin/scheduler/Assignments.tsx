@@ -1,7 +1,7 @@
 import { CheckCircle, Circle, Plus, Trash } from "react-bootstrap-icons";
-import { Assignment, AssignmentType } from "./types";
 import { Button, Form } from "react-bootstrap";
 import { useState } from "react";
+import { Assignment, AssignmentType } from "@shared/schemas/schedule";
 
 function Assignments({ assignments: { assignments, setAssignments, selectedAssignment, setSelectedAssignment } }: { assignments: { assignments: Assignment[], setAssignments: (a: Assignment[]) => void, selectedAssignment?: number, setSelectedAssignment: (assignment: number) => void } }) {
     const [newColor, setNewColor] = useState<string>("#000000")

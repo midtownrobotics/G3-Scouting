@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { Plus, Trash } from "react-bootstrap-icons";
-import { DateString, Day, TimeString } from "./types";
 import { toTimeMins, toTimeString } from "./utils";
+import { DateString, Day, TimeString } from "@shared/types";
 
 function DaySelector({ days, setDays }: { days: Day[], setDays: (days: Day[]) => void }) {
     const [newDate, setNewDate] = useState<DateString>()

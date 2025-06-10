@@ -1,22 +1,22 @@
 import z from 'zod'
 
-export const SimpleUserSchema = z.object({
+export const SimpleUser = z.object({
     username: z.string(),
     password: z.string(),
     id: z.coerce.number(),
     permissionId: z.coerce.number(),
     reliable: z.coerce.boolean()
 })
-export type SimpleUser = z.infer<typeof SimpleUserSchema>
+export type SimpleUser = z.infer<typeof SimpleUser>
 
-export const PermissionSchema = z.object({
+export const Permission = z.object({
     id: z.number(),
     name: z.string(),
     blacklist: z.array(z.string())
 })
-export type Permission = z.infer<typeof PermissionSchema>
+export type Permission = z.infer<typeof Permission>
 
-export const SaveableInputDataSchema = z.object({
+export const SaveableInputData = z.object({
     value: z.string()
 })
-export type SaveableInputData = z.infer<typeof SaveableInputDataSchema>
+export type SaveableInputData = z.infer<typeof SaveableInputData>

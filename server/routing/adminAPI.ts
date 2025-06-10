@@ -1,10 +1,16 @@
+import { Assignment, Block, DeployPayload, SendableSchedule } from '@shared/schemas/schedule';
 import express, { Request, Response } from 'express';
-import { PermissionSchema, SaveableInputDataSchema, SimpleUser, SimpleUserSchema } from '../../shared/schemas/API'
-import { getSettings, writeSettings } from '../storage';
+import { z } from 'zod';
+import { Permission, SaveableInputData, SimpleUser } from '../../shared/schemas/API';
 import UserModel from '../models/users/UserModel';
 import { isValidUser } from '../models/users/userModelUtils';
-import { z } from 'zod';
-import { Schedule } from '../types';
+import { getSettings, writeSettings } from '../storage';
+import AssignmentModel from '../models/scheduling/AssignmentModel';
+import BlockModel from '../models/scheduling/BlockModel';
+import UserBlockAssignmentModel from '../models/scheduling/UserBlockAssignmentModel';
+import { DateString } from '@shared/types';
+import { managementDatabase } from '../models/sequelize';
+import deploySchedules from '../scheduling/deploySchedules';
 const adminAPIRouter = express.Router();
 
 /**
@@ -15,7 +21,7 @@ const adminAPIRouter = express.Router();
  */
 function createValueRoute(getter: () => Promise<string>, setter: (value: string) => Promise<void>, valueKey: string) {
     adminAPIRouter.post(`/set${valueKey}`, async (req: Request, res: Response) => {
-        const body = SaveableInputDataSchema.safeParse(req.body); // want to use parseInt on this if T is number
+        const body = SaveableInputData.safeParse(req.body); // want to use parseInt on this if T is number
 
         if (body.success && body.data) {
             await setter(body.data.value)
@@ -66,7 +72,7 @@ createValueRoute(async () => {
 }, "DayNumber")
 
 adminAPIRouter.post("/addUser", async (req: Request, res: Response) => {
-    const body = SimpleUserSchema.safeParse(req.body);
+    const body = SimpleUser.safeParse(req.body);
 
     if (body.success && body.data) {
         const settings = await getSettings()
@@ -87,7 +93,7 @@ adminAPIRouter.post("/deleteUser", async (req: Request, res: Response) => {
         const user = await UserModel.findOne({ where: { id: body.data.id } })
         if (user?.id == 0) {
             res.sendStatus(400);
-            return; 
+            return;
         }
         user?.destroy()
         res.sendStatus(200)
@@ -99,7 +105,7 @@ adminAPIRouter.post("/deleteUser", async (req: Request, res: Response) => {
 adminAPIRouter.get("/getUsers", async (req: Request, res: Response) => {
 
     const users = await UserModel.findAll()
-    const body = z.array(SimpleUserSchema).safeParse(users);
+    const body = z.array(SimpleUser).safeParse(users);
 
     if (body.success && body.data) {
         res.json(body.data);
@@ -111,7 +117,7 @@ adminAPIRouter.get("/getUsers", async (req: Request, res: Response) => {
 
 adminAPIRouter.post("/editUser", async (req: Request, res: Response) => {
 
-    const body = SimpleUserSchema.safeParse(req.body);
+    const body = SimpleUser.safeParse(req.body);
     if (!body.success || !body.data) {
         res.sendStatus(400);
         return;
@@ -136,7 +142,7 @@ adminAPIRouter.post("/editUser", async (req: Request, res: Response) => {
 });
 
 adminAPIRouter.post("/addPerm", async (req: Request, res: Response) => {
-    const body = PermissionSchema.safeParse(req.body)
+    const body = Permission.safeParse(req.body)
 
     if (body.success && body.data) {
         const settings = await getSettings();
@@ -188,9 +194,14 @@ adminAPIRouter.post("/changeDay", async (req: Request, res: Response) => {
     res.sendStatus(400)
 });
 
+// Note: This will remove all AssignmentModel and BlockModel routes.
 adminAPIRouter.post("/deploySchedule", async (req: Request, res: Response) => {
-    let body = req.body as Schedule;
-    // TODO schedule?????
+    const body = DeployPayload.safeParse(req.body);
+
+    if (body.success && body.data) {
+        res.sendStatus(await deploySchedules(body.data) ? 200 : 500)
+    }
+    res.sendStatus(400)
 })
 
 export default adminAPIRouter;
