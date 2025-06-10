@@ -18,7 +18,6 @@ async function getFile(relativePath: string): Promise<any> {
 
 export async function getSettings(): Promise<Settings> {
     const settings = await getFile("/storage/settings.json") as Settings;
-    console.log(settings.keys.slack)
     return settings
 }
 
