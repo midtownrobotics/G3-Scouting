@@ -1,20 +1,83 @@
 import { SimpleUser } from "@shared/schemas/API";
-import { Assignment, Block } from "./types";
+import { Assignment, Block } from "@shared/schemas/schedule";
+import { useRef, useState } from "react";
 import { Table } from "react-bootstrap";
-import { toFormattedTime } from "./utils";
 import UserRow from "./UserRow";
-import { useEffect, useRef } from "react";
+import { toFormattedTime } from "./utils";
 
-function ScheduleTable({ users, assignment, blocks }: { users: SimpleUser[], assignment?: Assignment, blocks: Block[] }) {
-    const userBlockMapRef = useRef(new Map<number, Map<number, Assignment>>())
+function ScheduleTable({
+    userBlockMapRef,
+    users,
+    assignmentIndex,
+    blocks,
+    assignments
+}: {
+    userBlockMapRef: React.RefObject<Map<number, Map<number, number>>>,
+    users: SimpleUser[],
+    assignmentIndex?: number,
+    blocks: Block[],
+    assignments: Assignment[]
+}) {
+    /** Maps cell ids to an object with the coordinated block and user. */
+    const cellIdsMapRef = useRef(new Map<string, { uId: number, bId: number }>)
 
-    useEffect(() => {
-        for (const user of users) {
-            if (!userBlockMapRef.current.has(user.id)) {
-              userBlockMapRef.current.set(user.id, new Map<number, Assignment>());
+    const [_, setBump] = useState(0)
+    const forceReload = () => setBump(prev => prev + 1)
+
+    const [selecting, setSelecting] = useState(false);
+    const selectedCellRange = useRef([[-1, -1], [-1, -1]])
+
+    const cellMouseHandler = (cellIndex: [number, number], mouseUpEvent: boolean) => {
+        selectedCellRange.current[mouseUpEvent ? 1 : 0] = cellIndex;
+
+        if (!mouseUpEvent) setCurrentMousePosition(cellIndex, true);
+
+        if (mouseUpEvent) {
+            const [start, end] = selectedCellRange.current;
+            const rowMin = Math.min(start[0], end[0]);
+            const rowMax = Math.max(start[0], end[0]);
+            const colMin = Math.min(start[1], end[1]);
+            const colMax = Math.max(start[1], end[1]);
+
+            for (let i = rowMin; i <= rowMax; i++) {
+                for (let x = colMin; x <= colMax; x++) {
+                    const ids = cellIdsMapRef.current.get(`${i}-${x}`);
+                    if (ids && typeof assignmentIndex === "number") {
+                        userBlockMapRef.current.get(ids.uId)?.set(ids.bId, assignments[assignmentIndex].id);
+                    }
+                }
             }
-          }
-    }, [users])
+
+            selectedCells.current.length = 0;
+        };
+
+        setSelecting(!mouseUpEvent)
+    }
+
+    /** List of selected cells by id in form `row-col`. Ex: `["0-0", "0-1"]` */
+    const selectedCells = useRef<string[]>([]);
+
+    const setCurrentMousePosition = (position: [number, number], selectingOverride?: boolean) => {
+        if (selecting || selectingOverride) {
+
+            selectedCells.current.length = 0;
+
+            const start = selectedCellRange.current[0];
+            const end = position;
+            const rowMin = Math.min(start[0], end[0]);
+            const rowMax = Math.max(start[0], end[0]);
+            const colMin = Math.min(start[1], end[1]);
+            const colMax = Math.max(start[1], end[1]);
+
+            for (let i = rowMin; i <= rowMax; i++) {
+                for (let x = colMin; x <= colMax; x++) {
+                    selectedCells.current.push(`${i}-${x}`);
+                }
+            }
+
+            forceReload();
+        }
+    }
 
     return (
         <Table bordered>
@@ -23,7 +86,7 @@ function ScheduleTable({ users, assignment, blocks }: { users: SimpleUser[], ass
                     <td></td>
                     {Array.from(
                         blocks.reduce((map, block) => {
-                            const date = block.day.date;
+                            const date = block.date;
                             map.set(date, (map.get(date) || 0) + 1);
                             return map;
                         }, new Map<string, number>())
@@ -37,8 +100,20 @@ function ScheduleTable({ users, assignment, blocks }: { users: SimpleUser[], ass
                 </tr>
             </thead>
             <tbody>
-                {users.map(u => (
-                    <UserRow user={u} assignment={assignment} blocks={blocks} userBlockMapRef={userBlockMapRef} />
+                {users.map((u, ui) => (
+                    <UserRow
+                        key={ui}
+                        cellMouseHandler={cellMouseHandler}
+                        index={ui}
+                        user={u}
+                        blocks={blocks}
+                        userBlockMapRef={userBlockMapRef}
+                        cellIdsMapRef={cellIdsMapRef}
+                        setCurrentMousePosition={setCurrentMousePosition}
+                        selectedCells={selectedCells}
+                        selectedAssignment={assignmentIndex}
+                        assignments={assignments}
+                    />
                 ))}
             </tbody>
         </Table>

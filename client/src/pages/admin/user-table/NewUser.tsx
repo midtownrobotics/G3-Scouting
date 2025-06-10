@@ -1,4 +1,4 @@
-import { SimpleUser, SimpleUserSchema } from "@shared/schemas/API"
+import { SimpleUser } from "@shared/schemas/API"
 import { useState } from "react"
 import { PlusCircle } from "react-bootstrap-icons"
 import EditableCell from "../EditableCell"
@@ -10,7 +10,7 @@ function NewUser({ reload }: { reload: () => void }) {
     const [editing, setEditing] = useState(true);
 
     const saveUser = () => {
-        const result = SimpleUserSchema.safeParse(user);
+        const result = SimpleUser.safeParse(user);
         if (result.success) {
             setEditing(false);
             postAPI("/admin/addUser", result.data).then((res) => {

@@ -8,7 +8,6 @@ export interface User {
     username: string;
     password: string;
     permissionId: number;
-    assignments?: Assignment[];
     assignedAlliance: "blue" | "red";
     nextMatch?: NextMatch;
     lastMatchScouted?: number;

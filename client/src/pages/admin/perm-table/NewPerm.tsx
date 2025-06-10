@@ -1,4 +1,4 @@
-import { Permission, PermissionSchema } from "@shared/schemas/API"
+import { Permission } from "@shared/schemas/API"
 import { useState } from "react"
 import { PlusCircle } from "react-bootstrap-icons"
 import { postAPI } from "../../../API"
@@ -10,7 +10,7 @@ function NewPerm({ reload }: { reload: () => void }) {
     const [editing, setEditing] = useState(true);
 
     const savePerm = () => {
-        const result = PermissionSchema.safeParse(perm);
+        const result = Permission.safeParse(perm);
         if (result.success) {
             setEditing(false);
             postAPI("/admin/addPerm", result.data).then((res) => {

@@ -1,7 +1,7 @@
 /** Port to host server on. */
 export const PORT: number = 3001;
 
-/** Whether to host the react site. */
+/** Whether to host the react site. Also turns off sequlize altering. */
 export const PRODUCTION: boolean = false;
 
 /** Base URL for the backend API. Can be site relative. */

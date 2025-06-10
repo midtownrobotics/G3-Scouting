@@ -1,4 +1,4 @@
-import { TimeString } from "./types";
+import { TimeString } from "@shared/types";
 
 /** Converts a {@link TimeString} to a `number` of minutes. Ex: `1:20` -> `80` */
 export function toTimeMins(time: TimeString) {
@@ -19,5 +19,5 @@ export function toTimeString(minutes: number): TimeString {
 export function toFormattedTime(minutes: number): string {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
-    return `${(((hours - 1) % 12) + 1).toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')} ${hours > 12 ? "PM" : "AM"}`;
+    return `${(((hours - 1) % 12) + 1).toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')} ${hours >= 12 ? "PM" : "AM"}`;
 }

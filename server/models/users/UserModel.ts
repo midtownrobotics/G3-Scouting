@@ -1,7 +1,8 @@
-import { Column, DataType, Model, Table } from "sequelize-typescript";
+import { Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
 import { User, UserCreationAttributes } from "../types";
-import { Assignment, NextMatch } from "../../types";
 import * as uuid from "uuid";
+import { NextMatch } from "../../types";
+import UserBlockAssignmentModel from "../scheduling/UserBlockAssignmentModel";
 
 @Table({ tableName: "users" })
 class UserModel extends Model<User, UserCreationAttributes> {
@@ -23,9 +24,6 @@ class UserModel extends Model<User, UserCreationAttributes> {
     @Column({ type: DataType.INTEGER, allowNull: false })
     public permissionId!: number;
 
-    @Column({ type: DataType.JSON, allowNull: true })
-    public assignments?: Assignment[];
-
     @Column({ type: DataType.TEXT, allowNull: false })
     public assignedAlliance!: "blue" | "red";
 
@@ -40,6 +38,9 @@ class UserModel extends Model<User, UserCreationAttributes> {
 
     @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: 0 })
     public reliable!: boolean;
+
+    @HasMany(() => UserBlockAssignmentModel)
+    public schedule!: UserBlockAssignmentModel[];
 
     /**
      * Sends a slack DM to this user.
