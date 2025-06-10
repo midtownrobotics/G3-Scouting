@@ -27,20 +27,18 @@ export default async function deploySchedules(deployPayload: DeployPayload): Pro
         ));
 
         for (const s of deployPayload.schedules) {
-            await Promise.all(s.assignments.map(a =>
-                UserBlockAssignmentModel.create({
-                    userId: s.userId,
-                    blockId: a.blockId,
-                    assignmentId: a.assignmentId
-                }, { transaction })
-            ));
+            await UserBlockAssignmentModel.bulkCreate(s.assignments.map(a => ({
+                userId: s.userId,
+                blockId: a.blockId,
+                assignmentId: a.assignmentId,
+            })), { transaction, validate: true });
         }
 
         await transaction.commit();
         return true;
     } catch (err) {
         await transaction.rollback();
-        console.error(err);
+        console.error((err as any).sql);
         return false;
     }
 }

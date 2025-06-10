@@ -1,4 +1,4 @@
-import { BelongsTo, Column, DataType, ForeignKey, Table, Model } from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, Table, Model, AutoIncrement } from "sequelize-typescript";
 import UserModel from "../users/UserModel";
 import BlockModel from "./BlockModel";
 import AssignmentModel from "./AssignmentModel";
@@ -9,6 +9,9 @@ class UserBlockAssignmentModel extends Model<
     InferAttributes<UserBlockAssignmentModel>,
     UserBlockAssignmentModelCreationAttributes
 > {
+    @Column({ type: DataType.INTEGER, autoIncrement: true, primaryKey: true })
+    declare id: number;
+
     @ForeignKey(() => UserModel)
     @Column({ type: DataType.INTEGER })
     declare userId: number;

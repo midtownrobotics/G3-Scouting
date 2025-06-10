@@ -68,15 +68,14 @@ function Scheduler({ users }: { users: SimpleUser[] }) {
     }
 
     const deploySchedules = () => {
+        if (!confirm("Are you sure you want to deploy this schedule. This will RESET the current schedule.") || prompt(`Please type "DEPLOY" in the box below to confirm.`) !== "DEPLOY") return alert("Schedule NOT deployed.");
+
         // Converts map into an array. Maps cannot be JSON.stringify()ed.
         const schedules: SendableSchedule[] = Array.from(userBlockMapRef.current.entries()).map(([userId, blockMap]) => {
             const assignments = Array.from(blockMap.entries()).map(([blockId, assignmentId]) => ({
                 blockId,
                 assignmentId
             }))
-
-            console.log(assignments)
-            console.log(assignments.length, blocks.length)
 
             if (assignments.length !== blocks.length) {
                 alert("Every user must have an assignment for every block!")
@@ -93,6 +92,12 @@ function Scheduler({ users }: { users: SimpleUser[] }) {
             assignments,
             blocks,
             schedules
+        }).then(r => {
+            if (r?.status == 200) {
+                alert("Schedule deployed.")
+            } else {
+                alert("Error deploying schedule.")
+            }
         })
     }
 
