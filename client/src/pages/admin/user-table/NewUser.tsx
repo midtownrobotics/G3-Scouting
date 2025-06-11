@@ -14,8 +14,10 @@ function NewUser({ reload }: { reload: () => void }) {
         if (result.success) {
             setEditing(false);
             postAPI("/admin/addUser", result.data).then((res) => {
-                if (res?.status != 200) return setEditing(true);
+                setEditing(true);
+                if (res?.status != 200) return;
                 reload();
+                setUser({ id: -1 })
             })
             setUser(result.data)
         } else {
@@ -34,9 +36,9 @@ function NewUser({ reload }: { reload: () => void }) {
     return (
         <tr>
             <td></td>
-            <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "username")} />
-            <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "password")} />
-            <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "permissionId")} />
+            <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "username")}>{user.username}</EditableCell>
+            <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "password")}>{user.password}</EditableCell>
+            <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "permissionId")}>{user.permissionId}</EditableCell>
             <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "reliable")} checkbox>{user?.reliable ?? false}</EditableCell>
             <td onClick={() => saveUser()}>
                 <PlusCircle />
