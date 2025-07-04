@@ -3,7 +3,7 @@ import Home from "./pages/Home";
 import Settings from "./pages/Settings";
 import Admin from "./pages/admin/Admin";
 import Data from "./pages/Data";
-import Forms from "./pages/Forms";
+import Forms from "./pages/forms/Forms";
 
 export type PageKey = "home" | "admin" | "data" | "forms" | "settings";
 

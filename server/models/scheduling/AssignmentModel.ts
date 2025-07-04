@@ -6,7 +6,7 @@ class AssignmentModel extends Model<Assignment> {
     @Column({ type: DataType.INTEGER, primaryKey: true, autoIncrement: false })
     declare id: number;
 
-    @Column({ type: DataType.TEXT })
+    @Column({ type: DataType.ENUM(...Object.values(AssignmentType)) })
     declare type: AssignmentType;
 
     @Column({ type: DataType.TEXT })

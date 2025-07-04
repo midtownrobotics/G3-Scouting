@@ -4,6 +4,7 @@ import authHandler from './authHandler';
 import adminAPIRouter from './adminAPI';
 import { ENABLE_AUTH, PRODUCTION } from '../../shared/constants';
 import path from 'path';
+import formAPIRouter from './formsAPI';
 
 const app = express();
 export const server = http.createServer(app);
@@ -25,3 +26,4 @@ app.get("/api/status", (req, res) => {
 })
 
 app.use("/api/admin", adminAPIRouter)
+app.use("/api/forms", formAPIRouter)
