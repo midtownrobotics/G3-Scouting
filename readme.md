@@ -18,5 +18,5 @@ This version is a major overhaul introducing:
 ## ✨ Key Features
 
 - 🔗 Remote access for clients and scouts
-- 📋 Dynamic form generation from the server
+- 📋 Dynamic form generation
 - 🗓 Match assignment & automated schedule deployment
