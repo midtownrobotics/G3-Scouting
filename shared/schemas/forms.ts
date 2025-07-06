@@ -12,6 +12,15 @@ export const SerializedForm = z.object({
     name: z.string(),
     id: z.string(),
     deployed: z.boolean(),
-    components: z.array(SerializedComponent)
+    maxComponentId: z.number(),
+components: z.array(SerializedComponent)
 })
 export type SerializedForm = z.infer<typeof SerializedForm>
+
+export const SerializedResponse = z.array(
+    z.tuple([
+        z.number(), 
+        z.string()
+    ])
+)
+export type SerializedResponse = z.infer<typeof SerializedResponse>

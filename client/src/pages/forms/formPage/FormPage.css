@@ -1,0 +1,8 @@
+#form-page {
+    text-align: center;
+
+    #submit {
+        font-size: 30px;
+        width: 40%;
+    }
+}

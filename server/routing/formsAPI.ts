@@ -1,6 +1,9 @@
 import express, { Request, Response } from 'express';
 import z from 'zod';
 import FormModel from '../models/forms/FormModel';
+import { AuthReq } from '../types';
+import { SerializedResponse } from '@shared/schemas/forms';
+import FormResponseModel from '../models/forms/FormResponseModel';
 
 const formAPIRouter = express.Router();
 
@@ -17,6 +20,21 @@ formAPIRouter.get("/getForm/:formId", async (req, res) => {
     } else { 
         res.sendStatus(400); 
     }
+})
+
+formAPIRouter.post("/submitForm", async (req: AuthReq, res) => { 
+    const body = z.object({
+        response: SerializedResponse,
+        form: z.string()
+    }).safeParse(req.body)
+
+    if (req.user && body.success && body.data) {
+        await FormResponseModel.submitResponse(body.data.response, body.data.form, req.user.id)
+
+        res.sendStatus(200);
+        return
+    }
+    res.sendStatus(400);
 })
 
 export default formAPIRouter;

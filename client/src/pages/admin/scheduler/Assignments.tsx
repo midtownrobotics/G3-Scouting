@@ -12,8 +12,6 @@ function Assignments({ assignments: { assignments, setAssignments, selectedAssig
         const newAssignments = [...assignments].filter(a => a.id !== id);
         setAssignments(newAssignments);
         setSelectedAssignment(0);
-
-        console.log(newAssignments, id)
     }
 
     const addAssignment = () => {

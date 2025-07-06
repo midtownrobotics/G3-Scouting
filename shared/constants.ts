@@ -4,8 +4,8 @@ export const PORT: number = 3001;
 /** Whether to host the react site. Also turns off sequlize altering. */
 export const PRODUCTION: boolean = false;
 
-/** Base URL for the backend API. Can be site relative. */
-export const BASE_API_URL = PRODUCTION ? "/api" : "https://3001.grayjn.com/api"
+/** The api url for development. Sets up vite proxy. */
+export const DEV_API_URL = "https://3001.grayjn.com/api";
 
-/** Whether to use the authHandler for express requests. */
-export const ENABLE_AUTH: boolean = PRODUCTION;
+/** The allowed hosts for vite. */
+export const DEV_VITE_HOSTS = ["3002.grayjn.com"];

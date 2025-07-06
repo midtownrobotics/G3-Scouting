@@ -64,7 +64,7 @@ export class Information extends FormComponent {
     }
 }
 
-class MultipleChoice extends FormComponent {
+export class MultipleChoice extends FormComponent {
     public columnData: FormColumnData;
 
     /**
@@ -91,7 +91,7 @@ class MultipleChoice extends FormComponent {
     }
 }
 
-class ShortResponse extends FormComponent {
+export class ShortResponse extends FormComponent {
     public columnData: FormColumnData;
     
     /**
@@ -117,7 +117,7 @@ class ShortResponse extends FormComponent {
     }
 }
 
-class Number extends FormComponent {
+export class Number extends FormComponent {
     public columnData: FormColumnData;
     
     /**

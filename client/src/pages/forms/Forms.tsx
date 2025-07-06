@@ -1,7 +1,51 @@
+import Form from "@shared/forms/Form";
+import { useEffect, useRef, useState } from "react";
+import { fetchAPIJSON } from "../../API";
+import { SerializedForm } from "@shared/schemas/forms";
+import MainPage from "./mainPage/MainPage";
+import FormPage from "./formPage/FormPage";
+
 function Forms() {
-    return (
-        <h1>Forms page</h1>
-    )
+    const [formId, setFormId] = useState<string>();
+    const form = useRef<Form | null>(null);
+    const [mainPage, setMainPage] = useState(true);
+    const [loadingForm, setLoadingForm] = useState(false);
+
+    useEffect(() => {
+        const formIdParam = new URLSearchParams(window.location.search).get("form");
+        if (formIdParam) setFormId(formIdParam);
+    }, [])
+
+    useEffect(() => {
+        if (!formId) return;
+
+        const url = new URL(window.location.href);
+        url.searchParams.set("form", formId);
+        window.history.pushState({}, "", url.toString());
+
+        setLoadingForm(true);
+
+        fetchAPIJSON(`/forms/getForm/${formId}`).then(f => {
+            const parsed = SerializedForm.safeParse(f)
+            if (parsed.success && parsed.data) {
+                form.current = Form.fromJSON(parsed.data);
+                setMainPage(false);
+            }
+            setLoadingForm(false);
+        })
+
+        setTimeout(() => {
+            if (mainPage) {
+                setLoadingForm(false);
+            }
+        }, 5000);
+    }, [formId])
+
+    return mainPage && !loadingForm
+        ? <MainPage setFormId={setFormId} />
+        : form.current
+            ? <FormPage form={form} />
+            : <h1 style={{ textAlign: "center" }}>Loading form...</h1>
 }
 
 export default Forms;

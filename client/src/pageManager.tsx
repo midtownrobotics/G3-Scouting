@@ -13,38 +13,55 @@ export const getPageFromKey = (pageKey: PageKey) => {
     if (pageKey == "settings") return <Settings />;
     if (pageKey == "data") return <Data />;
     if (pageKey == "forms") return <Forms />;
-    /** If page key is none of the above, set page key to home, and return Home page. */
-    usePage().setPageKey("home")
+
     return <Home />;
 }
 
-const PageContext = createContext<
-  { pageKey: PageKey; setPageKey: (k: PageKey) => void } | undefined
->(undefined);
+const PageContext = createContext<{
+    pageKey: PageKey;
+    setPageKey: (k: PageKey) => void;
+    pageInstance: number;
+}>({} as any);
 
 export const PageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const urlParam = new URLSearchParams(window.location.search).get("page") as PageKey | null;
-  const defaultKey = urlParam ?? "" as PageKey;
+    const urlParam = new URLSearchParams(window.location.search).get("page") as PageKey | null;
+    const defaultKey = urlParam ?? "" as PageKey;
 
-  const [pageKey, setPageKey] = useState<PageKey>(defaultKey);
+    const [pageKey, setPageKeyState] = useState<PageKey>(defaultKey);
+    const [pageInstance, setPageInstance] = useState(0);
 
-  return (
-    <PageContext.Provider value={{ pageKey, setPageKey }}>
-      {children}
-    </PageContext.Provider>
-  );
+    const setPageKey = (key: PageKey) => {
+        setPageKeyState(prev => {
+            if (prev === key) {
+                // Same page, force refresh
+                setPageInstance(p => p + 1);
+                return prev;
+            } else {
+                setPageInstance(0); // reset counter for new page
+                return key;
+            }
+        });
+
+        const url = new URL(window.location.href);
+        url.searchParams.delete("form");
+        url.searchParams.set("page", key);
+        window.history.pushState({}, "", url.toString());
+    };
+
+    return (
+        <PageContext.Provider value={{ pageKey, setPageKey, pageInstance }}>
+            {children}
+        </PageContext.Provider>
+    );
 };
 
 export const usePage = () => {
-  const context = useContext(PageContext);
-  if (!context) throw new Error("usePage must be used within a PageProvider");
+    const context = useContext(PageContext);
+    if (!context) throw new Error("usePage must be used within a PageProvider");
 
-  const setPageKey = (key: PageKey) => {
-    context.setPageKey(key);
-    const url = new URL(window.location.href);
-    url.searchParams.set("page", key);
-    window.history.pushState({}, "", url.toString());
-  };
-
-  return { pageKey: context.pageKey, setPageKey };
+    return {
+        pageKey: context.pageKey,
+        setPageKey: context.setPageKey,
+        pageInstance: context.pageInstance,
+    };
 };

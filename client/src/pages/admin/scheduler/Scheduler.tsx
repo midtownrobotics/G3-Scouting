@@ -58,7 +58,6 @@ function Scheduler({ users }: { users: SimpleUser[] }) {
         if (firstEntry) {
             firstEntry[1].forEach((_v, k) => {
                 if (newBlocks.every(b => b.id !== k)) {
-                    console.log(new Date(k).toLocaleTimeString())
                     userBlockMapRef.current.forEach(x => x.delete(k));
                 }
             });

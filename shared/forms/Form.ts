@@ -7,13 +7,17 @@ export default class Form {
     public readonly id: string;
     public deployed: boolean = true;
 
+    public maxComponentId: number;
+
     private components: FormComponent[] = [];
 
     constructor(name: string)
-    constructor(name: string, components: FormComponent[])
-    constructor(name: string, components?: FormComponent[]) {
+    constructor(name: string, components: FormComponent[], maxComponentId: number)
+    constructor(name: string, components?: FormComponent[], maxComponentId?: number) {
         this.name = name;
         this.id = toSqlAcceptableString(name);
+
+        this.maxComponentId = maxComponentId ?? 0
 
         if (components) this.components = removeDuplicatesByKey(components, "id");
     }
@@ -24,11 +28,11 @@ export default class Form {
     /**
      * Adds a component to this form.
      * @param component The component to add.
-     * @returns `true` if successful. `false` if another component already has this column name.
+     * @returns `true` if successful. `false` if another component already has this name.
      */
     public addComponent(component: FormComponent): boolean {
         if (this.components.some(c => c.columnData?.name && c.columnData?.name == component.columnData?.name)) return false;
-        component.setId(Math.max(...this.components.map(c => c.getId()), -1) + 1);
+        component.setId(this.maxComponentId++);
         this.components.push(component);
         return true;
     }
@@ -43,7 +47,7 @@ export default class Form {
     }
 
     public static fromJSON(json: SerializedForm): Form {
-        return new Form(json.name, json.components.map(c => FormComponent.fromJSON(c)))
+        return new Form(json.name, json.components.map(c => FormComponent.fromJSON(c)), json.maxComponentId)
     }
 
     public toJSON(): SerializedForm {
@@ -51,6 +55,7 @@ export default class Form {
             name: this.name,
             components: this.getComponents().map(c => c.toJSON()),
             id: this.id,
+            maxComponentId: this.maxComponentId,
             deployed: this.deployed
         }
     }

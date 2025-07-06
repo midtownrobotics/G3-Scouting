@@ -8,7 +8,7 @@ async function authHandler(req: AuthReq, res: Response, next: NextFunction) {
 
     const allUsers = await UserModel.findAll()
 
-    if (!allUsers[0] || !allUsers.find((user) => user.permissionId == 0)) {
+    if (allUsers.length == 0 || !allUsers.find((user) => user.permissionId == 0)) {
         UserModel.addUser("admin", "password", 0, true)
     }
 

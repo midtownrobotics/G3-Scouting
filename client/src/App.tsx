@@ -4,13 +4,13 @@ import { getPageFromKey, usePage } from "./pageManager";
 import OfflineBar from "./partials/offline-bar/OfflineBar";
 
 function App() {
-    const { pageKey } = usePage();
+    const { pageKey, pageInstance } = usePage();
 
     return (
         <div>
             <OfflineBar />
             <NavigationBar />
-            <main>
+            <main key={`${pageKey}-${pageInstance}`}>
                 {getPageFromKey(pageKey)}
             </main>
             <footer>

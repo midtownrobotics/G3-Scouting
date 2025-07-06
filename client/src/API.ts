@@ -1,13 +1,11 @@
-import { BASE_API_URL } from "@shared/constants";
-
 /** Fetch API data.
  * @param url The API url.
  * @returns `null` if fetch error and {@link Response} otherwise.
  */
 async function fetchAPI(url: string): Promise<Response | null> {
-    try { 
-        return await fetch(BASE_API_URL.concat(url));
-    } catch(err) {
+    try {
+        return await fetch("/api".concat(url));
+    } catch (err) {
         return null;
     };
 }
@@ -19,14 +17,14 @@ async function fetchAPI(url: string): Promise<Response | null> {
  */
 export async function postAPI(url: string, data: any): Promise<Response | null> {
     try {
-        return await fetch(BASE_API_URL.concat(url), {
+        return await fetch("/api".concat(url), {
             method: "POST",
             body: JSON.stringify(data),
             headers: {
                 "Content-Type": "application/json",
             }
         });
-    } catch(err) {
+    } catch (err) {
         return null;
     };
 }
