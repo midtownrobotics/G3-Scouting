@@ -1,6 +1,6 @@
 # G3 Scout-o-matic (v4.0)
 
-A **Node.js-based server** powering the G3 scouting system. This platform is designed for remote access and enables features such as **schedule deployment**, **match assignment**, and real-time form handling.
+An online scouting system powered by Node.JS and React. Our platform enables features such as **schedule deployment**, **match assignment**, and real-time form handling.
 
 ---
 
