@@ -20,12 +20,12 @@
     @media (min-width: 1200px) {
         #users-table {
             float: left;
-            width: calc(50% - 10px);
+            width: calc(60% - 10px);
         }
 
         #perms-table {
             float: right;
-            width: calc(50% - 10px);
+            width: calc(40% - 10px);
         }
     }
 

@@ -8,7 +8,7 @@ export type Day = {
     end: number;
 };
 
-/** Date stoted in the form `YYYY-MM-DD` */
+/** Date stored in the form `YYYY-MM-DD` */
 export type DateString = Brand<string, "DateString">;
-/** Time stoted in the form `MM:SS` */
+/** Time stored in the form `MM:SS` */
 export type TimeString = Brand<string, "TimeString">;

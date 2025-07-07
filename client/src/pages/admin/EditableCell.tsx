@@ -12,10 +12,16 @@ function EditableCell({ isEditing, children, onchange, checkbox, submit }: { che
             {
                 checkbox ? (
                     <input
+                    className="form-check-input"
                         type="checkbox"
-                        onChange={(e) => onchange(e.target.checked)}
+                        style={{ 
+                            backgroundColor: Boolean(children) ? (editable ? " #d66a6a" : "rgb(116, 31, 31)") : (editable ? " #6a9bd6" : "rgb(27, 43, 130)"), 
+                            pointerEvents: editable ? "all" : "none",
+                            border: "none",
+                            width: "30px"
+                        }}
+                        onChange={(e) => { if (editable) onchange(e.target.checked)}}
                         checked={Boolean(children)}
-                        disabled={!editable}
                     />
                 ) : (
                     editable ? (

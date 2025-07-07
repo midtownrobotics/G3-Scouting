@@ -14,12 +14,15 @@ export const Assignment = z.object({
 });
 export type Assignment = z.infer<typeof Assignment>;
 
+export const UserAssignment = z.object({
+    blockId: z.number(),
+    assignmentId: z.number()
+});
+export type UserAssignment = z.infer<typeof UserAssignment>;
+
 export const SendableSchedule = z.object({
     userId: z.number(),
-    assignments: z.array(z.object({
-        blockId: z.number(),
-        assignmentId: z.number()
-    }))
+    assignments: z.array(UserAssignment)
 });
 export type SendableSchedule = z.infer<typeof SendableSchedule>;
 
@@ -31,7 +34,7 @@ export const Block = z.object({
 /** A block of time with a specific date and time. Increments of 30mins. */
 export type Block = {
     date: DateString,
-    /** Time in minutes from 12:00 AM (0mins-1440mins). Increments of 30mins. */
+    /** Time in minutes from 12:00 AM (0-1440). Increments of 30. */
     time: number,
     /** Time since epoch for this block in ms. */
     id: number

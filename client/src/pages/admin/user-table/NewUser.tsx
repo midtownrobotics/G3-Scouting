@@ -35,11 +35,12 @@ function NewUser({ reload }: { reload: () => void }) {
 
     return (
         <tr>
-            <td></td>
+            <td />
             <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "username")}>{user.username}</EditableCell>
             <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "password")}>{user.password}</EditableCell>
             <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "permissionId")}>{user.permissionId}</EditableCell>
             <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "reliable")} checkbox>{user?.reliable ?? false}</EditableCell>
+            <td />
             <td onClick={() => saveUser()}>
                 <PlusCircle />
             </td>

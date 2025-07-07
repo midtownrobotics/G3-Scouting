@@ -8,11 +8,12 @@ export interface User {
     username: string;
     password: string;
     permissionId: number;
-    assignedAlliance: "blue" | "red";
+    redAlliance: boolean;
     nextMatch?: NextMatch;
     lastMatchScouted?: number;
     assignedMatches: number[];
     reliable: boolean;
+    schedule: InferAttributes<UserBlockAssignmentModel>
 }
 
 export interface UserCreationAttributes extends Optional<User, 'id'> { }

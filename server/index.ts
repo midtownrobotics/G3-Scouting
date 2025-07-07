@@ -5,6 +5,9 @@ import syncDatabase from "./models/syncDatabase";
 import { server } from "./routing/router";
 import { LogColors } from "./utils";
 import FormModel from "./models/forms/FormModel";
+import UserModel from "./models/users/UserModel";
+import UserBlockAssignmentModel from "./models/scheduling/UserBlockAssignmentModel";
+import { getCurrentBlockId } from "./scheduling/timeUtils";
 
 console.clear()
 console.log(``)
@@ -31,5 +34,8 @@ async function testCode() {
     form.addComponent(new formComponents.MultipleChoice("What is your favorite color?", "Color", ["Blue", "Red", "Purple"]))
     form.addComponent(new formComponents.ShortResponse("What is your name?", "Name"))
 
-    // FormModel.storeForm(form);
+    FormModel.storeForm(form);
+
+    const users = await UserModel.findAll()
+    console.log(await users[0].getCurrentAssignment())
 }

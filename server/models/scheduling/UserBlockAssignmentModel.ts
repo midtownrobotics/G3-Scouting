@@ -1,10 +1,18 @@
-import { BelongsTo, Column, DataType, ForeignKey, Table, Model, AutoIncrement } from "sequelize-typescript";
+import { InferAttributes } from "sequelize";
+import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
 import UserModel from "../users/UserModel";
-import BlockModel from "./BlockModel";
 import AssignmentModel from "./AssignmentModel";
-import { InferAttributes, InferCreationAttributes } from "sequelize";
+import BlockModel from "./BlockModel";
 
-@Table({ tableName: "user_block_assignments" })
+@Table({ 
+    tableName: "user_block_assignments", 
+    defaultScope: {
+        include: [
+            {model: BlockModel, as: "block"}, 
+            {model: AssignmentModel, as: "assignment"}
+        ] 
+    } 
+})
 class UserBlockAssignmentModel extends Model<
     InferAttributes<UserBlockAssignmentModel>,
     UserBlockAssignmentModelCreationAttributes

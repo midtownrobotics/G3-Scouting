@@ -1,5 +1,6 @@
 import { Permission } from "@shared/schemas/API";
 import { Request } from "express";
+import UserModel from "./models/users/UserModel";
 
 export type Settings = {
     keys: {

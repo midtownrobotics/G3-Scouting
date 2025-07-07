@@ -35,6 +35,7 @@ function UserTable({ setUsers }: { setUsers: (u: SimpleUser[]) => void }) {
                     <td>Password</td>
                     <td>PID</td>
                     <td>Reliable</td>
+                    <td>Alliance</td>
                     <td colSpan={2} />
                 </tr>
             </thead>
