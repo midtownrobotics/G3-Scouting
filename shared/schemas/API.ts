@@ -1,5 +1,5 @@
 import z from 'zod'
-import { Assignment, UserAssignment } from './schedule'
+import { Assignment, Block } from './schedule'
 
 export const SimpleUser = z.object({
     username: z.string(),
@@ -25,7 +25,10 @@ export type SaveableInputData = z.infer<typeof SaveableInputData>
 
 export const UserInformation = z.object({
     user: SimpleUser.and(z.object({
-        schedule: z.array(UserAssignment)
+        schedule: z.array(z.object({
+            block: Block,
+            assignment: Assignment
+        }))
     })),
     currentAssignment: Assignment.optional()
 });

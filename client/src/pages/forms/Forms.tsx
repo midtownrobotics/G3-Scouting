@@ -4,6 +4,7 @@ import { fetchAPIJSON } from "../../API";
 import { SerializedForm } from "@shared/schemas/forms";
 import MainPage from "./mainPage/MainPage";
 import FormPage from "./formPage/FormPage";
+import { Spinner } from "react-bootstrap";
 
 function Forms() {
     const [formId, setFormId] = useState<string>();
@@ -45,7 +46,7 @@ function Forms() {
         ? <MainPage setFormId={setFormId} />
         : form.current
             ? <FormPage form={form} />
-            : <h1 style={{ textAlign: "center" }}>Loading form...</h1>
+            : <h1 style={{ textAlign: "center" }}>Loading Form <Spinner></Spinner></h1>
 }
 
 export default Forms;

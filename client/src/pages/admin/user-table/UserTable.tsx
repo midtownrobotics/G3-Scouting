@@ -1,6 +1,6 @@
 import { SimpleUser } from "@shared/schemas/API";
 import { JSX, useEffect, useState } from "react";
-import { Table } from "react-bootstrap";
+import { Spinner, Table } from "react-bootstrap";
 import z from 'zod';
 import { fetchAPIJSON } from "../../../API";
 import NewUser from "./NewUser";
@@ -26,7 +26,9 @@ function UserTable({ setUsers }: { setUsers: (u: SimpleUser[]) => void }) {
 
     useEffect(reloadData, [])
 
-    return (
+    return userRows.length == 0 ? (
+        <Spinner style={{fontSize: "30px"}}></Spinner>
+    ) : (
         <Table className="rounded-3 overflow-hidden">
             <thead>
                 <tr>

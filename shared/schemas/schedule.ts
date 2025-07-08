@@ -14,15 +14,12 @@ export const Assignment = z.object({
 });
 export type Assignment = z.infer<typeof Assignment>;
 
-export const UserAssignment = z.object({
-    blockId: z.number(),
-    assignmentId: z.number()
-});
-export type UserAssignment = z.infer<typeof UserAssignment>;
-
 export const SendableSchedule = z.object({
     userId: z.number(),
-    assignments: z.array(UserAssignment)
+    assignments: z.array(z.object({
+        blockId: z.number(),
+        assignmentId: z.number()
+    }))
 });
 export type SendableSchedule = z.infer<typeof SendableSchedule>;
 

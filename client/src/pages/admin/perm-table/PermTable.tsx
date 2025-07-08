@@ -1,20 +1,20 @@
 import { Permission } from "@shared/schemas/API";
 import { JSX, useEffect, useState } from "react";
-import { Table } from "react-bootstrap";
+import { Spinner, Table } from "react-bootstrap";
 import z from 'zod';
 import { fetchAPIJSON } from "../../../API";
 import NewPerm from "./NewPerm";
 import PermRow from "./PermRow";
 
 function PermTable() {
-    const [userRows, setUserRows] = useState<JSX.Element[]>([])
+    const [permRows, setPermRows] = useState<JSX.Element[]>([])
 
     const reloadData = () => {
         fetchAPIJSON("/admin/getPerms").then((res) => {
             const body = z.array(Permission).safeParse(res)
 
             if (body.success && body.data) {
-                setUserRows([
+                setPermRows([
                     ...body.data.map((p, pi) => <PermRow key={pi} perm={p} reload={reloadData} />),
                     <NewPerm key={-1} reload={reloadData} />
                 ])
@@ -24,7 +24,9 @@ function PermTable() {
 
     useEffect(reloadData, [])
 
-    return (
+    return permRows.length == 0 ? (
+        <Spinner style={{ fontSize: "30px" }}></Spinner>
+    ) : (
         <Table className="rounded-3 overflow-hidden">
             <thead>
                 <tr>
@@ -35,7 +37,7 @@ function PermTable() {
                 </tr>
             </thead>
             <tbody>
-                {userRows}
+                {permRows}
             </tbody>
         </Table>
     )

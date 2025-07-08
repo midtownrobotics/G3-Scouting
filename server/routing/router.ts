@@ -1,16 +1,16 @@
+import { UserInformation } from '@shared/schemas/API';
+import { Assignment } from '@shared/schemas/schedule';
 import express from 'express';
 import http from 'http';
 import path from 'path';
 import { PRODUCTION } from '../../shared/constants';
+import AssignmentModel from '../models/scheduling/AssignmentModel';
+import UserBlockAssignmentModel from '../models/scheduling/UserBlockAssignmentModel';
+import UserModel from '../models/users/UserModel';
+import { AuthReq } from '../types';
 import adminAPIRouter from './adminAPI';
 import authHandler from './authHandler';
 import formAPIRouter from './formsAPI';
-import { AuthReq } from '../types';
-import { SimpleUser, UserInformation } from '@shared/schemas/API';
-import { Assignment, SendableSchedule, UserAssignment } from '@shared/schemas/schedule';
-import UserModel from '../models/users/UserModel';
-import UserBlockAssignmentModel from '../models/scheduling/UserBlockAssignmentModel';
-import AssignmentModel from '../models/scheduling/AssignmentModel';
 
 const app = express();
 export const server = http.createServer(app);

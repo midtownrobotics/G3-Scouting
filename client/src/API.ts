@@ -1,5 +1,5 @@
 /** Fetch API data.
- * @param url The API url.
+ * @param url The API url. Not including `/api`.
  * @returns `null` if fetch error and {@link Response} otherwise.
  */
 async function fetchAPI(url: string): Promise<Response | null> {
@@ -11,7 +11,7 @@ async function fetchAPI(url: string): Promise<Response | null> {
 }
 
 /** Post data to API.
- * @param url The API url.
+ * @param url The API url. Not including `/api`.
  * @param data The data to post
  * @returns `null` if fetch error and {@link Response} otherwise.
  */
@@ -31,7 +31,7 @@ export async function postAPI(url: string, data: any): Promise<Response | null> 
 
 /**
  * Fetches API data and parses it to JSON.
- * @param url The API url.
+ * @param url The API url. Not including `/api`.
  * @returns Parsed JSON data.
  */
 export async function fetchAPIJSON(url: string): Promise<unknown> {

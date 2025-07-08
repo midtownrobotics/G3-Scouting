@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from "react";
-import { Day } from "@shared/types";
-import { Assignment, Block, SendableSchedule } from "@shared/schemas/schedule";
-import DaySelector from "./DaySelector"
-import "./Scheduler.css"
-import Assignments from "./Assignments";
 import { SimpleUser } from "@shared/schemas/API";
+import { Assignment, Block, SendableSchedule } from "@shared/schemas/schedule";
+import { Day } from "@shared/types";
+import { useEffect, useRef, useState } from "react";
+import { Button } from "react-bootstrap";
 import { postAPI } from "../../../API";
+import Assignments from "./Assignments";
+import DaySelector from "./DaySelector";
+import "./Scheduler.css";
 import ScheduleTable from "./ScheduleTable";
 import { toFormattedTime } from "./utils";
-import { Button } from "react-bootstrap";
 
 function Scheduler({ users }: { users: SimpleUser[] }) {
     /** Maps user ids to a map of times to assignments. */

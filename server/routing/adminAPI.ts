@@ -1,16 +1,11 @@
-import { Assignment, Block, DeployPayload, SendableSchedule } from '@shared/schemas/schedule';
+import { DeployPayload } from '@shared/schemas/schedule';
 import express, { Request, Response } from 'express';
 import { z } from 'zod';
 import { Permission, SaveableInputData, SimpleUser } from '../../shared/schemas/API';
 import UserModel from '../models/users/UserModel';
 import { isValidUser } from '../models/users/userModelUtils';
-import { getSettings, writeSettings } from '../storage';
-import AssignmentModel from '../models/scheduling/AssignmentModel';
-import BlockModel from '../models/scheduling/BlockModel';
-import UserBlockAssignmentModel from '../models/scheduling/UserBlockAssignmentModel';
-import { DateString } from '@shared/types';
-import { managementDatabase } from '../models/sequelize';
 import deploySchedules from '../scheduling/deploySchedules';
+import { getSettings, writeSettings } from '../storage';
 
 const adminAPIRouter = express.Router();
 

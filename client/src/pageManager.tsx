@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import Home from "./pages/Home";
+import Home from "./pages/home/Home";
 import Settings from "./pages/Settings";
 import Admin from "./pages/admin/Admin";
 import Data from "./pages/Data";
