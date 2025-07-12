@@ -2,11 +2,9 @@ import { SectionBreak as SectionBreakComponent } from "@shared/forms/FormCompone
 
 export default function SectionBreak({ component }: { component: SectionBreakComponent }) {
     return (
-        <div>
+        <div className="my-4 mb-0">
             <hr />
-            <h2>
-                {component.title}
-            </h2>
+            <h3>{component.title}</h3>
         </div>
     );
 }

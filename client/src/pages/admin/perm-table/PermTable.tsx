@@ -27,7 +27,8 @@ function PermTable() {
     return permRows.length == 0 ? (
         <Spinner style={{ fontSize: "30px" }}></Spinner>
     ) : (
-        <Table className="rounded-3 overflow-hidden">
+        <div className="table-responsive">
+            <Table className="rounded-3 overflow-hidden" style={{ marginBottom: 0 }}>
             <thead>
                 <tr>
                     <td>ID</td>
@@ -36,10 +37,11 @@ function PermTable() {
                     <td />
                 </tr>
             </thead>
-            <tbody>
-                {permRows}
-            </tbody>
-        </Table>
+                <tbody>
+                    {permRows}
+                </tbody>
+            </Table>
+        </div>
     )
 }
 

@@ -2,16 +2,19 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "dev": "npx nodemon --require tsconfig-paths/register index.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@slack/web-api": "^7.9.3",
     "@types/express": "^5.0.1",
     "@types/sequelize": "^4.28.20",
     "@types/uuid": "^10.0.0",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "express": "^5.1.0",
     "react-bootstrap-icons": "^1.11.5",
     "sequelize": "^6.37.7",
@@ -20,5 +23,9 @@
     "tsconfig-paths": "^4.2.0",
     "uuid": "^11.1.0",
     "zod": "^3.24.3"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.9"
   }
 }

@@ -1,4 +1,4 @@
-import { PRODUCTION } from '@shared/constants';
+import { PRODUCTION } from '@shared/config';
 import { managementDatabase } from './sequelize';
 
 async function syncDatabase() {

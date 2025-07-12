@@ -1,21 +1,18 @@
+import { Assignment } from "@shared/schemas/schedule";
+import bcrypt from 'bcrypt';
 import { Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
-import * as uuid from "uuid";
 import { getCurrentBlockId } from "../../scheduling/timeUtils";
 import { NextMatch } from "../../types";
 import UserBlockAssignmentModel from "../scheduling/UserBlockAssignmentModel";
 import { User, UserCreationAttributes } from "../types";
-import { Assignment } from "@shared/schemas/schedule";
 
 @Table({ tableName: "users", defaultScope: { include: [{ model: UserBlockAssignmentModel, as: "schedule" }] } })
 class UserModel extends Model<User, UserCreationAttributes> {
     @Column({ type: DataType.INTEGER, primaryKey: true, autoIncrement: true })
     declare id: number;
 
-    @Column({ type: DataType.TEXT, allowNull: false })
+    @Column({ type: DataType.TEXT, allowNull: false, unique: true })
     public username!: string;
-
-    @Column({ type: DataType.TEXT, allowNull: false })
-    public slackLinkCode!: string;
 
     @Column({ type: DataType.TEXT, allowNull: true })
     public slackId?: string;
@@ -56,14 +53,17 @@ class UserModel extends Model<User, UserCreationAttributes> {
             UserModel.count({ where: { redAlliance: false } }),
         ]);
 
-        await UserModel.create({
-            username,
-            password,
-            permissionId,
-            reliable,
-            redAlliance: redCount < blueCount,
-            assignedMatches: [],
-            slackLinkCode: uuid.v4()
+        bcrypt.hash(password, 12, async function(err, hash) {
+            if (!err) {
+                await UserModel.create({
+                    username,
+                    permissionId,
+                    reliable,
+                    password: hash,
+                    redAlliance: redCount < blueCount,
+                    assignedMatches: []
+                });
+            }
         });
     }
 

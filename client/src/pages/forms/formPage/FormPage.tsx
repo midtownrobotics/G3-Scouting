@@ -1,6 +1,6 @@
 import Form from "@shared/forms/Form";
 import React, { useState } from "react";
-import { Button, Spinner } from "react-bootstrap";
+import { Button, Spinner, Form as BSForm } from "react-bootstrap";
 import './FormPage.css';
 import FormComponent from "./components/FormComponent";
 import { postAPI } from "../../../API";
@@ -14,7 +14,7 @@ function FormPage({ form }: { form: React.RefObject<Form | null> }) {
             const newAnswers = new Map(prev);
             newAnswers.set(componentId, value);
             return newAnswers;
-        });    
+        });
     };
 
     const submitForm = async () => {
@@ -42,14 +42,16 @@ function FormPage({ form }: { form: React.RefObject<Form | null> }) {
     return (
         <div id="form-page">
             <h1>{form.current?.name}</h1>
-            {form.current?.getComponents().map(c => (
-                <FormComponent
-                    key={c.id}
-                    component={c}
-                    onAnswerChange={handleAnswerChange}
-                    answer={answers.get(c.id)}
-                />
-            ))}
+            <BSForm>
+                {form.current?.getComponents().map(c => (
+                    <FormComponent
+                        key={c.id}
+                        component={c}
+                        onAnswerChange={handleAnswerChange}
+                        answer={answers.get(c.id)}
+                    />
+                ))}
+            </BSForm>
 
             <br />
 

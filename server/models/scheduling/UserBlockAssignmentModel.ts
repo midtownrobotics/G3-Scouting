@@ -13,6 +13,7 @@ import BlockModel from "./BlockModel";
         ] 
     } 
 })
+
 class UserBlockAssignmentModel extends Model<
     InferAttributes<UserBlockAssignmentModel>,
     UserBlockAssignmentModelCreationAttributes
@@ -21,7 +22,7 @@ class UserBlockAssignmentModel extends Model<
     declare id: number;
 
     @ForeignKey(() => UserModel)
-    @Column({ type: DataType.INTEGER })
+    @Column({ type: DataType.INTEGER, onDelete: "CASCADE" })
     declare userId: number;
 
     @ForeignKey(() => BlockModel)

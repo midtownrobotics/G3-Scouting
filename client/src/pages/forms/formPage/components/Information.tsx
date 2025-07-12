@@ -2,10 +2,11 @@ import { Information as InformationComponent } from "@shared/forms/FormComponent
 
 export default function Information({ component }: { component: InformationComponent }) {
     return (
-        <div>
-            <h4>
-                {component.text}
-            </h4>
+        <div className="w-100">
+            <h5
+                className="mb-0 mt-3 mx-auto"
+                style={{ maxWidth: "500px" }}
+            >{component.text}</h5>
         </div>
     );
 }

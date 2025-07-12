@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 type Brand<K, T> = K & { __brand: T };
 
 export type Day = {
@@ -10,5 +12,10 @@ export type Day = {
 
 /** Date stored in the form `YYYY-MM-DD` */
 export type DateString = Brand<string, "DateString">;
+export const DateString = z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format")
+    .transform((val) => val as DateString)
+
 /** Time stored in the form `MM:SS` */
 export type TimeString = Brand<string, "TimeString">;

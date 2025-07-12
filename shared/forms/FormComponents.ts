@@ -3,7 +3,7 @@ import { SerializedComponent } from "../schemas/forms";
 export type FormColumnData = {
     name: string,
     type: "string" | "number",
-    classification: "qualitative" | "quantitative" | "choice"
+    classification: "qualitative" | "quantitative" | "teamNumber" | "matchNumber"
 }
 
 export abstract class FormComponent {
@@ -78,7 +78,7 @@ export class MultipleChoice extends FormComponent {
         this.columnData = {
             name,
             type: "string",
-            classification: "choice"
+            classification: "quantitative"
         };
     }
 
@@ -143,12 +143,63 @@ export class Number extends FormComponent {
     }
 }
 
+export class TeamNumber extends FormComponent {
+    public columnData: FormColumnData;
+    
+    /**
+     * Constructs a team number question.
+     * @param name The form unique name of the question. Ex: `"TeamNumber"` or `"Station1"`
+     */
+    constructor(name: string) {
+        super();
+        this.columnData = {
+            name,
+            type: "number",
+            classification: "teamNumber"
+        };
+    }
+
+    public toJSON(): SerializedComponent {
+        return {
+            type: "TeamNumber",
+            creationArgs: [this.columnData.name],
+            id: this.id
+        }
+    }
+}
+
+export class MatchNumber extends FormComponent {
+    public columnData: FormColumnData;
+    
+    /**
+     * Constructs a match number question. Only one of these can exist per form.
+     */
+    constructor() {
+        super();
+        this.columnData = {
+            name: "MatchNumber",
+            type: "number",
+            classification: "teamNumber"
+        };
+    }
+
+    public toJSON(): SerializedComponent {
+        return {
+            type: "MatchNumber",
+            creationArgs: [],
+            id: this.id
+        }
+    }
+}
+
 const formComponents = {
     SectionBreak,
     Number,
     ShortResponse,
     MultipleChoice,
-    Information
+    Information,
+    TeamNumber,
+    MatchNumber
 } as const;
 
 export default formComponents;

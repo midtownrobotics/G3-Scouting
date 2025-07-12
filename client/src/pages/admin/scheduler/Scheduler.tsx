@@ -108,7 +108,7 @@ function Scheduler({ users }: { users: SimpleUser[] }) {
             <Assignments assignments={{ setAssignments, assignments, setSelectedAssignment, selectedAssignment }} />
             <br />
             <ScheduleTable userBlockMapRef={userBlockMapRef} users={users} assignmentIndex={selectedAssignment} blocks={blocks} assignments={assignments} />
-            <Button variant="danger" style={{ width: "20%" }} onClick={deploySchedules}>Deploy Schedule</Button>
+            <Button id="deployButton" className="w-100 w-sm-auto px-4 py-2" variant="danger" onClick={deploySchedules}>Deploy Schedule</Button>
         </div>
     )
 }

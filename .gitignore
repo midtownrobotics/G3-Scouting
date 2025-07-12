@@ -2,3 +2,4 @@ node_modules
 .replit
 .upm
 storage
+shared/config.ts

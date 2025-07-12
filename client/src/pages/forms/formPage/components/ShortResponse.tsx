@@ -1,5 +1,6 @@
 import { ShortResponse as ShortResponseComponent } from "@shared/forms/FormComponents";
 import { useEffect } from "react";
+import { Form } from "react-bootstrap";
 
 export default function ShortResponse({
     component,
@@ -13,18 +14,18 @@ export default function ShortResponse({
 
     useEffect(() => {
         if (value === undefined || value === null) onChange(component.id, "");
-    }, [value])
+    }, [value]);
 
     return (
-        <div>
-            <span>
-                {component.question}
-            </span>&nbsp;&nbsp;
-            <input
+        <Form.Group className="my-3">
+            <Form.Label>{component.question}</Form.Label>
+            <Form.Control
+                className="w-100 mx-auto text-center" 
+                style={{ maxWidth: "300px" }}
                 type="text"
-                onChange={(e) => onChange(component.id, e.target.value)}
                 value={value ?? ""}
+                onChange={(e) => onChange(component.id, e.target.value)}
             />
-        </div>
+        </Form.Group>
     );
 }

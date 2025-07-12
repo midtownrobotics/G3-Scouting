@@ -27,24 +27,26 @@ function UserTable({ setUsers }: { setUsers: (u: SimpleUser[]) => void }) {
     useEffect(reloadData, [])
 
     return userRows.length == 0 ? (
-        <Spinner style={{fontSize: "30px"}}></Spinner>
+        <Spinner style={{ fontSize: "30px" }}></Spinner>
     ) : (
-        <Table className="rounded-3 overflow-hidden">
-            <thead>
-                <tr>
-                    <td>ID</td>
-                    <td>Username</td>
-                    <td>Password</td>
-                    <td>PID</td>
-                    <td>Reliable</td>
-                    <td>Alliance</td>
-                    <td colSpan={2} />
-                </tr>
-            </thead>
-            <tbody>
-                {userRows}
-            </tbody>
-        </Table>
+        <div className="table-responsive">
+            <Table className="rounded-3 overflow-hidden" style={{ marginBottom: 0 }}>
+                <thead>
+                    <tr>
+                        <td>ID</td>
+                        <td>Username</td>
+                        <td>Password</td>
+                        <td>PID</td>
+                        <td>Reliable</td>
+                        <td>Alliance</td>
+                        <td colSpan={2} />
+                    </tr>
+                </thead>
+                <tbody>
+                    {userRows}
+                </tbody>
+            </Table>
+        </div>
     )
 }
 

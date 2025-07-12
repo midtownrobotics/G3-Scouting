@@ -26,5 +26,11 @@ export function getSettingsSync(): Settings {
 }
 
 export function writeSettings(data: Settings) {
+    if (
+        data.permissionLevels[0].blacklist.length != 0 || 
+        data.permissionLevels[0].id != 0 ||
+        data.permissionLevels[0].name != "admin"
+    ) return;
+    
     fs.writeFile(path.join(__dirname, "/storage/settings.json"), JSON.stringify(data), () => {})
 }

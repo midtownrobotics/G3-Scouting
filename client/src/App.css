@@ -1,4 +1,4 @@
-main, footer {
+main, footer, #login-page {
     background-color: rgb(216, 216, 216);
     padding: 15px;
 }
@@ -8,6 +8,11 @@ footer {
     text-align: center;
 }
 
-html, body, main {
+html, body, #root {
     height: 100%;
+    margin: 0;
+}
+
+.cursor-pointer {
+    cursor: pointer;
 }

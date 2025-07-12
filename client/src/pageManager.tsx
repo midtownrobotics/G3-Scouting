@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import Home from "./pages/home/Home";
-import Settings from "./pages/Settings";
+import Settings from "./pages/settings/Settings";
 import Admin from "./pages/admin/Admin";
 import Data from "./pages/Data";
 import Forms from "./pages/forms/Forms";
@@ -13,8 +13,10 @@ export const getPageFromKey = (pageKey: PageKey) => {
     if (pageKey == "settings") return <Settings />;
     if (pageKey == "data") return <Data />;
     if (pageKey == "forms") return <Forms />;
+    if (pageKey == "home") return <Home />;
 
-    return <Home />;
+    const { setPageKey } = usePage()
+    setPageKey("home")
 }
 
 const PageContext = createContext<{
@@ -43,7 +45,7 @@ export const PageProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
 
         const url = new URL(window.location.href);
-        url.searchParams.delete("form");
+        url.search = '';
         url.searchParams.set("page", key);
         window.history.pushState({}, "", url.toString());
     };

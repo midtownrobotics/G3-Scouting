@@ -4,7 +4,11 @@ import UserModel from "./models/users/UserModel";
 
 export type Settings = {
     keys: {
-        slack: string;
+        slack: {
+            clientId: string,
+            clientSecret: string,
+            token: string
+        }
         theBlueAlliance: string;
     }
     eventKey: string;

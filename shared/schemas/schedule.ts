@@ -24,18 +24,11 @@ export const SendableSchedule = z.object({
 export type SendableSchedule = z.infer<typeof SendableSchedule>;
 
 export const Block = z.object({
-    date: z.string(),
+    date: DateString,
     time: z.number(),
     id: z.number()
 })
-/** A block of time with a specific date and time. Increments of 30mins. */
-export type Block = {
-    date: DateString,
-    /** Time in minutes from 12:00 AM (0-1440). Increments of 30. */
-    time: number,
-    /** Time since epoch for this block in ms. */
-    id: number
-}
+export type Block = z.infer<typeof Block>
 
 export const DeployPayload = z.object({
     assignments: z.array(Assignment),

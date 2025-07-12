@@ -11,6 +11,7 @@ export type SerializedComponent = z.infer<typeof SerializedComponent>
 export const SerializedForm = z.object({
     name: z.string(),
     id: z.string(),
+    description: z.string(),
     deployed: z.boolean(),
     maxComponentId: z.number(),
 components: z.array(SerializedComponent)

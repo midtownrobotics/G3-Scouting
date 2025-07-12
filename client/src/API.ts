@@ -38,12 +38,12 @@ export async function fetchAPIJSON(url: string): Promise<unknown> {
     return fetchAPI(url).then(async (r) => r?.json())
 }
 
-/**
- * Checks if the API is reachable.
- * @returns `boolean` Whether client can reach the API.
- */
-export async function getConnected(): Promise<boolean> {
+export async function getApiStatus() {
     const result = await fetchAPI("/status")
     const text = await result?.text()
-    return (result != null && result.status == 200 && text == "ok")
+    
+    return {
+        ok: result != null && result.status == 200 && text == "ok",
+        statusCode: result?.status
+    }
 }

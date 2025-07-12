@@ -1,23 +1,26 @@
-import { SimpleUser } from "@shared/schemas/API"
+import { CreateUser } from "@shared/schemas/API"
 import { useState } from "react"
 import { PlusCircle } from "react-bootstrap-icons"
-import EditableCell from "../EditableCell"
 import { postAPI } from "../../../API"
+import EditableCell from "../EditableCell"
 
 function NewUser({ reload }: { reload: () => void }) {
     // id initalized as -1 because id field is auto incremented by sequelize
-    const [user, setUser] = useState<{ [key: string]: any }>({ id: -1 })
+    // redAlliance will be set by the backend
+    const [user, setUser] = useState<{ [key: string]: any }>({ id: -1, redAlliance: true })
     const [editing, setEditing] = useState(true);
 
     const saveUser = () => {
-        const result = SimpleUser.safeParse(user);
+        const result = CreateUser.safeParse(user);
         if (result.success) {
             setEditing(false);
             postAPI("/admin/addUser", result.data).then((res) => {
                 setEditing(true);
-                if (res?.status != 200) return;
+                if (res?.status != 200) {
+                    return alert("User not saved. Check user PID and API connectivity.")
+                };
                 reload();
-                setUser({ id: -1 })
+                setUser({ id: -1, redAlliance: true })
             })
             setUser(result.data)
         } else {
@@ -28,7 +31,7 @@ function NewUser({ reload }: { reload: () => void }) {
         }
     }
 
-    const setUserProp = (val: string | boolean, prop: keyof SimpleUser) => {
+    const setUserProp = (val: string | boolean, prop: keyof CreateUser) => {
         if (typeof val == "string") val = val.trim()
         setUser({ ...user, [prop]: val })
     }

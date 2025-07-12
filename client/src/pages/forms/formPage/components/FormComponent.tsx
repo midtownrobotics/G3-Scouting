@@ -4,6 +4,8 @@ import Information from "./Information";
 import MultipleChoice from "./MultipleChoice";
 import Number from "./Number";
 import ShortResponse from "./ShortResponse";
+import MatchNumber from "./MatchNumber";
+import TeamNumber from "./TeamNumber";
 
 function FormComponent({
     component,
@@ -32,6 +34,14 @@ function FormComponent({
 
     if (component instanceof formComponents.ShortResponse) {
         return <ShortResponse component={component} onChange={onAnswerChange} value={answer} />;
+    }
+
+    if (component instanceof formComponents.MatchNumber) {
+        return <MatchNumber component={component} onChange={onAnswerChange} value={answer} />;
+    }
+
+    if (component instanceof formComponents.TeamNumber) {
+        return <TeamNumber component={component} onChange={onAnswerChange} value={answer} />;
     }
 
     return <div>Unknown component type</div>;

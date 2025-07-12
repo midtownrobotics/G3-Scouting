@@ -11,6 +11,9 @@ export default class FormModel extends Model<SerializedForm> {
     @Column(DataType.STRING)
     name!: string;
 
+    @Column(DataType.STRING)
+    description!: string;
+
     @Column(DataType.BOOLEAN)
     deployed!: boolean;
 
@@ -32,7 +35,8 @@ export default class FormModel extends Model<SerializedForm> {
             name: form.name,
             components: form.getComponents().map(c => c.toJSON()),
             maxComponentId: form.maxComponentId,
-            deployed: form.deployed
+            deployed: form.deployed,
+            description: form.description
         })
     }
 

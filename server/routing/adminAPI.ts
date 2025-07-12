@@ -1,11 +1,13 @@
 import { DeployPayload } from '@shared/schemas/schedule';
 import express, { Request, Response } from 'express';
 import { z } from 'zod';
-import { Permission, SaveableInputData, SimpleUser } from '../../shared/schemas/API';
+import { CreateUser, Permission, SaveableInputData, SimpleUser } from '../../shared/schemas/API';
 import UserModel from '../models/users/UserModel';
 import { isValidUser } from '../models/users/userModelUtils';
 import deploySchedules from '../scheduling/deploySchedules';
 import { getSettings, writeSettings } from '../storage';
+import SessionModel from '../models/users/SessionModel';
+import bcrypt from 'bcrypt';
 
 const adminAPIRouter = express.Router();
 
@@ -42,12 +44,28 @@ createValueRoute(async () => {
 }, "EventKey")
 
 createValueRoute(async () => {
-    return (await getSettings()).keys.slack
+    return (await getSettings()).keys.slack.clientId
 }, async (val) => {
     const settings = await getSettings();
-    settings.keys.slack = val;
+    settings.keys.slack.clientId = val;
     writeSettings(settings)
-}, "SlackToken")
+}, "SlackClientId")
+
+createValueRoute(async () => {
+    return (await getSettings()).keys.slack.token
+}, async (val) => {
+    const settings = await getSettings();
+    settings.keys.slack.token = val;
+    writeSettings(settings)
+}, "SlackOathToken")
+
+createValueRoute(async () => {
+    return (await getSettings()).keys.slack.clientSecret
+}, async (val) => {
+    const settings = await getSettings();
+    settings.keys.slack.clientSecret = val;
+    writeSettings(settings)
+}, "SlackClientSecret")
 
 createValueRoute(async () => {
     return (await getSettings()).keys.theBlueAlliance
@@ -68,7 +86,7 @@ createValueRoute(async () => {
 }, "DayNumber")
 
 adminAPIRouter.post("/addUser", async (req: Request, res: Response) => {
-    const body = SimpleUser.safeParse(req.body);
+    const body = CreateUser.safeParse(req.body);
 
     if (body.success && body.data) {
         const settings = await getSettings()
@@ -112,18 +130,11 @@ adminAPIRouter.get("/getUsers", async (req: Request, res: Response) => {
 });
 
 adminAPIRouter.post("/editUser", async (req: Request, res: Response) => {
-
     const body = SimpleUser.safeParse(req.body);
-    if (!body.success || !body.data) {
-        res.sendStatus(400);
-        return;
-    }
+    if (!body.success || !body.data) { res.sendStatus(400); return; }
 
     const user = await UserModel.findOne({ where: { id: body.data.id } });
-    if (!user) {
-        res.sendStatus(400);
-        return;
-    }
+    if (!user) { res.sendStatus(400); return; }
 
     // Replaces all values in user with corresponding values of body.data
     user.set(body.data);
@@ -135,6 +146,24 @@ adminAPIRouter.post("/editUser", async (req: Request, res: Response) => {
     }
 
     res.sendStatus(400);
+});
+
+adminAPIRouter.post("/setUserPassword", async (req: Request, res: Response) => {
+    const body = z.object({ id: z.number(), password: z.string() }).safeParse(req.body);
+    if (!body.success || !body.data) { res.sendStatus(400); return; }
+
+    const user = await UserModel.findOne({ where: { id: body.data.id } });
+    if (!user) { res.sendStatus(400); return; }
+
+    await SessionModel.destroy({
+        where: { userId: user.id }
+    });
+
+    bcrypt.hash(body.data.password, 12, async function(err, hash) {
+        if (!err) user.update({ password: hash });
+    });
+
+    res.sendStatus(200);
 });
 
 adminAPIRouter.post("/addPerm", async (req: Request, res: Response) => {

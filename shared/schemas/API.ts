@@ -3,13 +3,17 @@ import { Assignment, Block } from './schedule'
 
 export const SimpleUser = z.object({
     username: z.string(),
-    password: z.string(),
     id: z.coerce.number(),
     permissionId: z.coerce.number(),
     reliable: z.coerce.boolean(),
     redAlliance: z.boolean()
 })
 export type SimpleUser = z.infer<typeof SimpleUser>
+
+export const CreateUser = SimpleUser.and(z.object({
+    password: z.string()
+}))
+export type CreateUser = z.infer<typeof CreateUser>
 
 export const Permission = z.object({
     id: z.number(),
@@ -32,4 +36,14 @@ export const UserInformation = z.object({
     })),
     currentAssignment: Assignment.optional()
 });
-export type UserInformation = z.infer<typeof UserInformation>;
+export type UserInformation = z.infer<typeof UserInformation>
+
+export const SlackData = z.object({
+    id: z.string(),
+    profile: z.object({
+        real_name: z.string(),
+        image_24: z.string(),
+        email: z.string()
+    })
+})
+export type SlackData = z.infer<typeof SlackData>

@@ -1,0 +1,29 @@
+import { UserInformation } from "@shared/schemas/API";
+import express from 'express';
+import UserModel from "../models/users/UserModel";
+import { AuthReq } from "../types";
+
+const genericAPIRouter = express.Router();
+
+genericAPIRouter.get("/status", (req, res) => {
+    res.send("ok")
+})
+
+genericAPIRouter.get("/me", async (req: AuthReq, res) => {
+
+    const user = await UserModel.findByPk(req.user?.id);
+
+    if (!user) {
+        res.sendStatus(500);
+        return;
+    }
+
+    const data: UserInformation = {
+        user: user.toJSON(),
+        currentAssignment: await user.getCurrentAssignment()
+    }
+
+    res.send(data)
+})
+
+export default genericAPIRouter;

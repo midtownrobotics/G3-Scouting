@@ -11,9 +11,9 @@ export default class Form {
 
     private components: FormComponent[] = [];
 
-    constructor(name: string)
-    constructor(name: string, components: FormComponent[], maxComponentId: number)
-    constructor(name: string, components?: FormComponent[], maxComponentId?: number) {
+    constructor(name: string, description: string)
+    constructor(name: string, description: string, components: FormComponent[], maxComponentId: number)
+    constructor(name: string, public description: string, components?: FormComponent[], maxComponentId?: number) {
         this.name = name;
         this.id = toSqlAcceptableString(name);
 
@@ -47,7 +47,7 @@ export default class Form {
     }
 
     public static fromJSON(json: SerializedForm): Form {
-        return new Form(json.name, json.components.map(c => FormComponent.fromJSON(c)), json.maxComponentId)
+        return new Form(json.name, json.description, json.components.map(c => FormComponent.fromJSON(c)), json.maxComponentId)
     }
 
     public toJSON(): SerializedForm {
@@ -56,7 +56,8 @@ export default class Form {
             components: this.getComponents().map(c => c.toJSON()),
             id: this.id,
             maxComponentId: this.maxComponentId,
-            deployed: this.deployed
+            deployed: this.deployed,
+            description: this.description
         }
     }
 }

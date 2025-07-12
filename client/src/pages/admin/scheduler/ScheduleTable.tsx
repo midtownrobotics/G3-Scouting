@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Table } from "react-bootstrap";
 import UserRow from "./UserRow";
 import { toFormattedTime } from "./utils";
+import useEdgeAutoScroll from "./autoScroll";
 
 function ScheduleTable({
     userBlockMapRef,
@@ -79,44 +80,54 @@ function ScheduleTable({
         }
     }
 
+    const { containerRef, handleMouseMove, stopScroll } = useEdgeAutoScroll();
+
     return (
-        <Table bordered>
-            <thead>
-                <tr>
-                    <td></td>
-                    {Array.from(
-                        blocks.reduce((map, block) => {
-                            const date = block.date;
-                            map.set(date, (map.get(date) || 0) + 1);
-                            return map;
-                        }, new Map<string, number>())
-                    ).map(([date, count], i) => (
-                        <td key={i} colSpan={count}>{date}</td>
+        <div
+            className="table-responsive"
+            ref={containerRef}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={stopScroll}
+            style={{ overflowX: "auto", maxWidth: "100%", position: "relative" }}
+        >
+            <Table bordered style={{ marginBottom: 0 }}>
+                <thead>
+                    <tr>
+                        <td></td>
+                        {Array.from(
+                            blocks.reduce((map, block) => {
+                                const date = block.date;
+                                map.set(date, (map.get(date) || 0) + 1);
+                                return map;
+                            }, new Map<string, number>())
+                        ).map(([date, count], i) => (
+                            <td key={i} colSpan={count}>{date}</td>
+                        ))}
+                    </tr>
+                    <tr>
+                        <td></td>
+                        {blocks.map((b, bi) => <td key={bi}>{toFormattedTime(b.time)}</td>)}
+                    </tr>
+                </thead>
+                <tbody>
+                    {users.map((u, ui) => (
+                        <UserRow
+                            key={ui}
+                            cellMouseHandler={cellMouseHandler}
+                            index={ui}
+                            user={u}
+                            blocks={blocks}
+                            userBlockMapRef={userBlockMapRef}
+                            cellIdsMapRef={cellIdsMapRef}
+                            setCurrentMousePosition={setCurrentMousePosition}
+                            selectedCells={selectedCells}
+                            selectedAssignment={assignmentIndex}
+                            assignments={assignments}
+                        />
                     ))}
-                </tr>
-                <tr>
-                    <td></td>
-                    {blocks.map((b, bi) => <td key={bi}>{toFormattedTime(b.time)}</td>)}
-                </tr>
-            </thead>
-            <tbody>
-                {users.map((u, ui) => (
-                    <UserRow
-                        key={ui}
-                        cellMouseHandler={cellMouseHandler}
-                        index={ui}
-                        user={u}
-                        blocks={blocks}
-                        userBlockMapRef={userBlockMapRef}
-                        cellIdsMapRef={cellIdsMapRef}
-                        setCurrentMousePosition={setCurrentMousePosition}
-                        selectedCells={selectedCells}
-                        selectedAssignment={assignmentIndex}
-                        assignments={assignments}
-                    />
-                ))}
-            </tbody>
-        </Table>
+                </tbody>
+            </Table>
+        </div>
     )
 }
 

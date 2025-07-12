@@ -4,9 +4,6 @@
 
     #head {
         text-align: center;
-    }
-
-    h1 {
         font-size: 60px;
     }
 
@@ -19,11 +16,13 @@
 
     @media (min-width: 1200px) {
         #users-table {
+            margin-top: 20px;
             float: left;
             width: calc(60% - 10px);
         }
 
         #perms-table {
+            margin-top: 20px;
             float: right;
             width: calc(40% - 10px);
         }
@@ -62,5 +61,9 @@
 
     #scheduler {
         text-align: center;
+
+        #deployButton {
+            margin-top: 20px;
+        }
     }
 }
