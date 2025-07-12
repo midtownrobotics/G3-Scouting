@@ -17,6 +17,7 @@ export function createLinkCode(userId: number): string {
     const part = () => generateCode(4);
     const code = `${part()}-${part()}`;
     const expiresAt = Date.now() + 10 * 60 * 1000;
+    slackCmdLinkCodes.forEach((v, k) => v.userId == userId && slackCmdLinkCodes.delete(k));
     slackCmdLinkCodes.set(code, { userId, expiresAt });
     return code;
 }
