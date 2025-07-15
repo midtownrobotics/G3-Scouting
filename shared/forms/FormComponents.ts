@@ -1,17 +1,12 @@
+import { FormQuestionMeta } from "@shared/schemas/data";
 import { SerializedComponent } from "../schemas/forms";
 
-export type FormColumnData = {
-    name: string,
-    type: "string" | "number",
-    classification: "qualitative" | "quantitative" | "teamNumber" | "matchNumber"
-}
-
 export abstract class FormComponent {
-    public id: number = -1;
+    public id: string = "unknown";
     getId = () => this.id;
-    setId = (id: number) => this.id = id;
+    setId = (id: string) => this.id = id;
 
-    public abstract columnData: FormColumnData | null;
+    public abstract columnData: FormQuestionMeta | null;
 
     public abstract toJSON(): SerializedComponent;
 
@@ -65,7 +60,7 @@ export class Information extends FormComponent {
 }
 
 export class MultipleChoice extends FormComponent {
-    public columnData: FormColumnData;
+    public columnData: FormQuestionMeta;
 
     /**
      * Constructs a multiple choice question.
@@ -92,7 +87,7 @@ export class MultipleChoice extends FormComponent {
 }
 
 export class ShortResponse extends FormComponent {
-    public columnData: FormColumnData;
+    public columnData: FormQuestionMeta;
     
     /**
      * Constructs a short response question.
@@ -118,7 +113,7 @@ export class ShortResponse extends FormComponent {
 }
 
 export class Number extends FormComponent {
-    public columnData: FormColumnData;
+    public columnData: FormQuestionMeta;
     
     /**
      * Constructs a number based question.
@@ -144,7 +139,7 @@ export class Number extends FormComponent {
 }
 
 export class TeamNumber extends FormComponent {
-    public columnData: FormColumnData;
+    public columnData: FormQuestionMeta;
     
     /**
      * Constructs a team number question.
@@ -169,7 +164,7 @@ export class TeamNumber extends FormComponent {
 }
 
 export class MatchNumber extends FormComponent {
-    public columnData: FormColumnData;
+    public columnData: FormQuestionMeta;
     
     /**
      * Constructs a match number question. Only one of these can exist per form.
@@ -179,7 +174,7 @@ export class MatchNumber extends FormComponent {
         this.columnData = {
             name: "MatchNumber",
             type: "number",
-            classification: "teamNumber"
+            classification: "matchNumber"
         };
     }
 

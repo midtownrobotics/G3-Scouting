@@ -1,7 +1,8 @@
 import Form from "@shared/forms/Form";
 import { FormComponent } from "@shared/forms/FormComponents";
 import { SerializedComponent, SerializedForm } from "@shared/schemas/forms";
-import { Column, CreatedAt, DataType, Model, Table, UpdatedAt } from "sequelize-typescript";
+import { Column, CreatedAt, DataType, HasMany, Model, Table, UpdatedAt } from "sequelize-typescript";
+import FormResponseModel from "./FormResponseModel";
 
 @Table({ tableName: "forms" })
 export default class FormModel extends Model<SerializedForm> {
@@ -23,6 +24,9 @@ export default class FormModel extends Model<SerializedForm> {
     @Column(DataType.JSON)
     components!: SerializedComponent[];
 
+    @HasMany(() => FormResponseModel)
+    responses!: FormResponseModel[];
+
     @CreatedAt
     createdAt!: Date;
 
@@ -40,27 +44,35 @@ export default class FormModel extends Model<SerializedForm> {
         })
     }
 
-    public static async getForms() {
-        const models = await FormModel.findAll();
+    public static async getForms(includeResponses?: boolean) {
+        const models = await FormModel.findAll(includeResponses ? {include: { model: FormResponseModel, as: "responses" }} : undefined);
         return models.map(m => m.toForm())
     }
 
-    public static async getForm(id: string) {
-        const model = await FormModel.findByPk(id);
+    public static async getForm(id: string, includeResponses?: boolean) {
+        const model = await FormModel.findByPk(id, includeResponses ? {include: { model: FormResponseModel, as: "responses" }} : undefined);
         return model?.toForm();
     }
 
-    public static async getSerializedForms(): Promise<SerializedForm[]> {
-        const models = await FormModel.findAll();
+    public static async getSerializedForms(includeResponses?: boolean): Promise<SerializedForm[]> {
+        const models = await FormModel.findAll(includeResponses ? {include: { model: FormResponseModel, as: "responses" }} : undefined);
         return models.map(m => m.toJSON())
     }
 
-    public static async getSerializedForm(id: string): Promise<SerializedForm | undefined> {
-        const model = await FormModel.findByPk(id);
+    public static async getSerializedForm(id: string, includeResponses?: boolean): Promise<SerializedForm | undefined> {
+        const model = await FormModel.findByPk(id, includeResponses ? {include: { model: FormResponseModel, as: "responses" }} : undefined);
         return model?.toJSON()
     }
 
     public toForm(): Form {
-        return Form.fromJSON(this);
+        return Form.fromJSON({
+            responses: this.responses?.map(r => r.response),
+            name: this.name,
+            id: this.id,
+            description: this.description,
+            deployed: this.deployed,
+            maxComponentId: this.maxComponentId,
+            components: this.components
+        });
     }
 }

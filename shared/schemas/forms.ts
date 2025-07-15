@@ -3,10 +3,18 @@ import formComponents from '../forms/FormComponents';
 
 export const SerializedComponent = z.object({
     type: z.enum(Object.keys(formComponents) as [keyof typeof formComponents, ...(keyof typeof formComponents)[]]),
-    id: z.number().int(),
+    id: z.string(),
     creationArgs: z.array(z.any())
 });
-export type SerializedComponent = z.infer<typeof SerializedComponent>
+export type SerializedComponent = z.infer<typeof SerializedComponent>;
+
+export const SerializedResponse = z.array(
+    z.tuple([
+        z.string(),
+        z.string()
+    ])
+);
+export type SerializedResponse = z.infer<typeof SerializedResponse>;
 
 export const SerializedForm = z.object({
     name: z.string(),
@@ -14,14 +22,7 @@ export const SerializedForm = z.object({
     description: z.string(),
     deployed: z.boolean(),
     maxComponentId: z.number(),
-components: z.array(SerializedComponent)
-})
-export type SerializedForm = z.infer<typeof SerializedForm>
-
-export const SerializedResponse = z.array(
-    z.tuple([
-        z.number(), 
-        z.string()
-    ])
-)
-export type SerializedResponse = z.infer<typeof SerializedResponse>
+    components: z.array(SerializedComponent),
+    responses: z.array(SerializedResponse).optional()
+});
+export type SerializedForm = z.infer<typeof SerializedForm>;

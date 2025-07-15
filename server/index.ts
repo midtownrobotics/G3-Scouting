@@ -8,6 +8,9 @@ import { server } from "./routing/router";
 import { getSettings, writeSettings } from "./storage";
 import { Settings } from "./types";
 import { LogColors } from "./utils";
+import FormResponseModel from "./models/forms/FormResponseModel";
+import Papa from 'papaparse';
+import fs from 'fs'
 
 console.clear()
 console.log(``)
@@ -19,7 +22,7 @@ console.log(``)
 console.log(`Started — ${LogColors.TX.Blue}${new Date().toLocaleString()}${LogColors.TX.White}`)
 console.log(``)
 
-syncDatabase().then(async () => {
+syncDatabase().then(() => {
     server.listen(PORT, async () => {
         const allUsers = await UserModel.findAll()
         if (allUsers.length == 0 || !allUsers.find((user) => user.permissionId === 0)) {
@@ -47,7 +50,6 @@ async function testCode() {
     form.addComponent(new formComponents.Number("L2", "AutoL2"))
     form.addComponent(new formComponents.Number("L3", "AutoL3"))
     form.addComponent(new formComponents.Number("L4", "AutoL4"))
-    form.addComponent(new formComponents.Number("Barge", "AutoBarge"))
     form.addComponent(new formComponents.SectionBreak("Match"))
     form.addComponent(new formComponents.Number("L1", "MatchL1"))
     form.addComponent(new formComponents.Number("L2", "MatchL2"))
@@ -60,6 +62,6 @@ async function testCode() {
     form.addComponent(new formComponents.SectionBreak("Post-Game"))
     form.addComponent(new formComponents.MultipleChoice("Can the robot dealgify?", "Dealgify", ["No", "Yes"]))
     form.addComponent(new formComponents.ShortResponse("Additional Notes", "Notes"))
-
+    
     FormModel.storeForm(form);
 }

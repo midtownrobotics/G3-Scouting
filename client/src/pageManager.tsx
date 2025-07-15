@@ -1,8 +1,8 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import Home from "./pages/home/Home";
 import Settings from "./pages/settings/Settings";
 import Admin from "./pages/admin/Admin";
-import Data from "./pages/Data";
+import Data from "./pages/data/Data";
 import Forms from "./pages/forms/Forms";
 
 export type PageKey = "home" | "admin" | "data" | "forms" | "settings";
@@ -15,9 +15,9 @@ export const getPageFromKey = (pageKey: PageKey) => {
     if (pageKey == "forms") return <Forms />;
     if (pageKey == "home") return <Home />;
 
-    const { setPageKey } = usePage()
-    setPageKey("home")
-}
+    const { setPageKey } = usePage();
+    setPageKey("home");
+};
 
 const PageContext = createContext<{
     pageKey: PageKey;
@@ -25,12 +25,25 @@ const PageContext = createContext<{
     pageInstance: number;
 }>({} as any);
 
-export const PageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export function PageProvider({ children }: { children: React.ReactNode; }) {
     const urlParam = new URLSearchParams(window.location.search).get("page") as PageKey | null;
     const defaultKey = urlParam ?? "" as PageKey;
 
     const [pageKey, setPageKeyState] = useState<PageKey>(defaultKey);
     const [pageInstance, setPageInstance] = useState(0);
+
+    useEffect(() => {
+        const handlePopState = () => {
+            const url = new URL(window.location.href);
+            setPageKey((url.searchParams.get("page") ?? "") as PageKey)
+        };
+
+        window.addEventListener("popstate", handlePopState);
+
+        return () => {
+            window.removeEventListener("popstate", handlePopState);
+        };
+    }, []);
 
     const setPageKey = (key: PageKey) => {
         setPageKeyState(prev => {

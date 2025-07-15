@@ -13,7 +13,7 @@ function App() {
 
     const setLoggedIn = (val: boolean) => {
         setLoggedInState(val);
-        setApiConnection(true);
+        val == false && setApiConnection(true);
     }
 
     async function apiStatusRefresh() {

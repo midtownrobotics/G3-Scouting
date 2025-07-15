@@ -9,6 +9,7 @@ import formAPIRouter from './formsAPI';
 import genericAPIRouter from './genericAPI';
 import slackAPIRouter from './slackAPI';
 import userSettingsAPIRouter from './userSettingsAPI';
+import dataApiRouter from './dataAPI';
 
 const app = express();
 export const server = http.createServer(app);
@@ -25,5 +26,6 @@ app.use("/api", authHandler);
 app.use("/api", genericAPIRouter);
 app.use("/api/admin", adminAPIRouter);
 app.use("/api/forms", formAPIRouter);
+app.use("/api/data", dataApiRouter)
 app.use("/api/slack", slackAPIRouter);
 app.use("/api/userSettings", userSettingsAPIRouter);

@@ -11,6 +11,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/styled": "^11.14.1",
+    "@mui/x-charts": "^8.8.0",
     "@types/papaparse": "^5.3.16",
     "@types/react-router-dom": "^5.3.3",
     "bootstrap": "^5.3.5",
