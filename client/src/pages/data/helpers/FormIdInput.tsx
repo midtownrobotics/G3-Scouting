@@ -2,7 +2,7 @@ import { SerializedForm } from "@shared/schemas/forms";
 import { useEffect, useState } from "react";
 import { Button, Form, InputGroup } from "react-bootstrap";
 import { z } from "zod";
-import { fetchAPIJSON } from "../../API";
+import { fetchAPIJSON } from "../../../API";
 
 export default function FormIdInput({ onSubmit }: { onSubmit: (value: string) => void; }) {
     const [value, setValue] = useState<string>();

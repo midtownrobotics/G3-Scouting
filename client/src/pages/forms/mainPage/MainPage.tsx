@@ -1,21 +1,21 @@
 import { SerializedForm } from "@shared/schemas/forms";
 import { useEffect, useState } from "react";
-import { Button, Card, Col, Container, Row, Spinner } from "react-bootstrap";
+import { Card, Col, Container, Row, Spinner } from "react-bootstrap";
 import z from 'zod';
 import { fetchAPIJSON } from "../../../API";
 import "./MainPage.css";
 
-function MainPage({ setFormId }: { setFormId: (id: string) => void }) {
-    const [forms, setForms] = useState<SerializedForm[]>()
+function MainPage({ setFormId }: { setFormId: (id: string) => void; }) {
+    const [forms, setForms] = useState<SerializedForm[]>();
 
     useEffect(() => {
         fetchAPIJSON("/forms/getForms").then(u => {
-            const parsed = z.array(SerializedForm).safeParse(u)
+            const parsed = z.array(SerializedForm).safeParse(u);
             if (parsed.success && parsed.data) {
-                setForms(parsed.data)
+                setForms(parsed.data);
             }
-        })
-    }, [])
+        });
+    }, []);
 
     return !forms ? (
         <h1>Loading Forms <Spinner></Spinner></h1>
@@ -26,20 +26,13 @@ function MainPage({ setFormId }: { setFormId: (id: string) => void }) {
                 {forms.map((form, idx) => (
                     <Col key={idx}>
                         <Card
-                            className="h-100 shadow-sm border-light"
-                            style={{
-                                backgroundColor: "white",
-                                transition: "0.2s",
-                            }}
+                            onClick={() => setFormId(form.id)}
+                            className="h-100 shadow-sm hover-shadow transition card-hover"
+                            style={{ cursor: "pointer" }}
                         >
                             <Card.Body>
-                                <Card.Title className="d-flex justify-content-between align-items-start">
-                                    {form.name}
-                                </Card.Title>
-                                <Card.Text className="text-muted">{form.description}</Card.Text>
-                                <Button variant="outline-primary" onClick={() => setFormId(form.id)}>
-                                    Open
-                                </Button>
+                                <Card.Title>{form.name}</Card.Title>
+                                <Card.Text>{form.description}</Card.Text>
                             </Card.Body>
                         </Card>
                     </Col>

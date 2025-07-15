@@ -6,11 +6,16 @@ import { AuthReq } from "../types";
 const genericAPIRouter = express.Router();
 
 genericAPIRouter.get("/status", (req, res) => {
-    res.send("ok")
-})
+    res.send("ok");
+});
+
+genericAPIRouter.get("/nameFromId/:userId", async (req, res) => {
+    const user = await UserModel.findByPk(req.params.userId);
+    if (!user) { res.send(400); return; }
+    res.send({ name: user.username });
+});
 
 genericAPIRouter.get("/me", async (req: AuthReq, res) => {
-
     const user = await UserModel.findByPk(req.user?.id);
 
     if (!user) {
@@ -21,9 +26,9 @@ genericAPIRouter.get("/me", async (req: AuthReq, res) => {
     const data: UserInformation = {
         user: user.toJSON(),
         currentAssignment: await user.getCurrentAssignment()
-    }
+    };
 
-    res.send(data)
-})
+    res.send(data);
+});
 
 export default genericAPIRouter;

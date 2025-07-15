@@ -1,9 +1,9 @@
 import { TeamRowsResponse } from "@shared/schemas/data";
 import { useEffect, useState } from "react";
-import { fetchAPIJSON } from "../../API";
-import FormDataTable from "./FormDataTable";
 import { z } from "zod";
-import TeamNumberInput from "./TeamNumberInput";
+import FormDataTable from "../helpers/FormDataTable";
+import TeamNumberInput from "../helpers/TeamNumberInput";
+import { fetchAPIJSON } from "../../../API";
 
 function TeamDataPage() {
     const [teamRowsResponse, setTeamRowsResponse] = useState<TeamRowsResponse>();

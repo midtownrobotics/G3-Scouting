@@ -1,28 +1,37 @@
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import { Card, Col, Row } from "react-bootstrap";
 import "./Data.css";
-import FormView from "./FormView";
-import TeamDataCard from "./TeamDataCard";
-import TeamDataPage from "./TeamDataPage";
-import TeamView from "./TeamView";
+import FormView from "./viewers/FormView";
+import TeamDataCard from "./viewers/TeamDataCard";
+import TeamDataPage from "./viewers/TeamDataPage";
+import TeamView from "./viewers/TeamView";
 
-const VIEW_OPTIONS: { title: string; description: string; }[] = [
+const VIEW_OPTIONS: { title: string; description: string; component: JSX.Element }[] = [
     {
-        title: "Raw Form View",
-        description: "View all individual form submissions exactly as they were entered."
+        title: "Team Summary View",
+        description: "Get a summary of a team's performance and compare with others.",
+        component: <TeamDataCard />
     },
     {
+        title: "Team Compare View",
+        description: "Compare the summaries of two teams.",
+        component: <h1>WIP</h1>
+    },
+        {
         title: "Raw Team View",
-        description: "View all raw scouting data for a single team, across all forms."
+        description: "View all raw scouting data for a single team, across all forms.",
+        component: <TeamDataPage />
     },
     {
         title: "Team Averages View",
-        description: "See averaged stats for each team across all their matches."
+        description: "See averaged stats for each team across all their matches.",
+        component: <TeamView />
     },
     {
-        title: "Team Summary View",
-        description: "Get a summary of each team's performance in a more readable format."
-    }
+        title: "Raw Form View",
+        description: "View all individual form submissions exactly as they were entered.",
+        component: <FormView />
+    },
 ];
 
 export default function Data() {
@@ -61,10 +70,7 @@ export default function Data() {
                 </Row>
             </>) : (
                 <div className="mt-4">
-                    {viewer === 0 && <FormView />}
-                    {viewer === 1 && <TeamDataPage />}
-                    {viewer === 2 && <TeamView />}
-                    {viewer === 3 && <TeamDataCard />}
+                    {VIEW_OPTIONS[viewer].component}
                 </div>
             )}
         </div>

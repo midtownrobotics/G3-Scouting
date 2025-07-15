@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Button, FormControl, InputGroup } from "react-bootstrap";
 
-export default function TeamNumberInput({ onSubmit }: { onSubmit: (value: number) => void; }) {
+export default function TeamNumberInput({ onSubmit, second }: { onSubmit: (value: number) => void, second?: boolean }) {
     const [value, setValue] = useState<number>();
 
     useEffect(() => {
-        const team = new URLSearchParams(window.location.search).get("team");
+        const team = new URLSearchParams(window.location.search).get(second ? "team2" : "team");
         if (team && !Number.isNaN(parseInt(team))) onSubmit(parseInt(team));
     }, []);
 
@@ -22,7 +22,7 @@ export default function TeamNumberInput({ onSubmit }: { onSubmit: (value: number
         onSubmit(value);
 
         const url = new URL(window.location.href);
-        url.searchParams.set("team", value.toString() ?? "");
+        url.searchParams.set(second ? "team2" : "teame", value.toString() ?? "");
         window.history.pushState({}, "", url.toString());
     };
 
@@ -31,7 +31,7 @@ export default function TeamNumberInput({ onSubmit }: { onSubmit: (value: number
             <FormControl
                 placeholder={placeholder}
                 aria-label={placeholder}
-                value={value}
+                value={!value ? "" : value}
                 onChange={(e) => setValue(parseInt(e.target.value))}
                 onKeyDown={(e) => e.key == "Enter" && handleSubmit()}
             />

@@ -3,29 +3,29 @@ import { QuestionData } from "@shared/schemas/data";
 import { useEffect, useRef, useState } from "react";
 import { Card, Col, Form, Row, Table } from "react-bootstrap";
 import { z } from "zod";
-import { fetchAPIJSON } from "../../API";
-import TeamNumberInput from "./TeamNumberInput";
+import { fetchAPIJSON } from "../../../API";
+import TeamNumberInput from "../helpers/TeamNumberInput";
 
 function TeamDataCard() {
     const [_, forceUpdate] = useState(0);
     const [questionData, setQuestionData] = useState<QuestionData[]>();
     const questionsLineGraphSelected = useRef(new Map<string, boolean>());
     const [selectedPieGraphQuestion, setSelectedPieGraphQuestion] = useState<string>();
-    const [team, setTeam] = useState<number>();
+    const [team1, setTeam1] = useState<number>();
 
     useEffect(() => {
-        if (team === undefined) return;
-        fetchAPIJSON(`/data/getTeamData/${team}`).then((data) => {
+        if (team1 === undefined) return;
+        fetchAPIJSON(`/data/getTeamData/${team1}`).then((data) => {
             const parsed = z.object({ data: z.array(QuestionData) }).safeParse(data);
             if (parsed.success) setQuestionData(parsed.data.data);
         });
-    }, [team]);
+    }, [team1]);
 
     if (!questionData) return (
         <div className="p-3">
             <h1>Team Data Summary</h1>
             <br />
-            <TeamNumberInput onSubmit={v => setTeam(v)} />
+            <TeamNumberInput onSubmit={v => setTeam1(v)} />
         </div>
     );
 
@@ -68,8 +68,8 @@ function TeamDataCard() {
 
     return (
         <div className="p-3">
-            <TeamNumberInput onSubmit={v => setTeam(v)} />
-            <h2 className="mb-4">Team {team} Summary</h2>
+            <TeamNumberInput onSubmit={v => setTeam1(v)} />
+            <h2 className="mb-4">Team {team1} Summary</h2>
 
             <Card className="mb-4">
                 <Card.Header as="h5">Averages</Card.Header>
