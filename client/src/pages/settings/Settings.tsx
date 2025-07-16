@@ -59,16 +59,18 @@ export default function Settings() {
                             />
                         }
                     </Card.Title>
-                    {
-                        slackData ? (
+                    {slackData ? (
+                        <div>
                             <span>Slack account with email "{slackData.profile.email}" linked!</span>
-                        ) : (
-                            <>
-                                <p className="text-muted mb-2">Link your Slack to receive notifications and quick-access features.</p>
-                                <SlackLink />
-                            </>
-                        )
-                    }
+                            <br />
+                            <span>Slack ID: {slackData.id}</span>
+                        </div>
+                    ) : (
+                        <div>
+                            <p className="text-muted mb-2">Link your Slack to receive notifications and quick-access features.</p>
+                            <SlackLink />
+                        </div>
+                    )}
                 </Card.Body>
             </Card>
 

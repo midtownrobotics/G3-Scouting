@@ -22,7 +22,7 @@ export async function getSettings(): Promise<Settings> {
 }
 
 export function getSettingsSync(): Settings {
-    return JSON.parse(fs.readFileSync(path.join(__dirname, "../storage/settings.json")).toString()) as Settings
+    return JSON.parse(fs.readFileSync(path.join(__dirname, "/storage/settings.json")).toString()) as Settings
 }
 
 export function writeSettings(data: Settings) {

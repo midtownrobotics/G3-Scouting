@@ -22,7 +22,7 @@ export default function TeamNumberInput({ onSubmit, second }: { onSubmit: (value
         onSubmit(value);
 
         const url = new URL(window.location.href);
-        url.searchParams.set(second ? "team2" : "teame", value.toString() ?? "");
+        url.searchParams.set(second ? "team2" : "team", value.toString() ?? "");
         window.history.pushState({}, "", url.toString());
     };
 

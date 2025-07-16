@@ -5,7 +5,6 @@ import { z } from "zod";
 import { fetchAPIJSON } from "../../API";
 
 export default function SlackLink() {
-    const [slackIdSet, setSlackIdSet] = useState(false);
     const [command, setCommand] = useState<string>();
     const [commandCopied, setCommandCopied] = useState(false);
 
