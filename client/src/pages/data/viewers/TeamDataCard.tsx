@@ -1,15 +1,17 @@
-import { LineChart } from "@mui/x-charts";
+import { LineChart, RadarChart } from "@mui/x-charts";
 import { QuestionData } from "@shared/schemas/data";
 import { useEffect, useRef, useState } from "react";
 import { Card, Col, Form, Row, Table } from "react-bootstrap";
 import { z } from "zod";
 import { fetchAPIJSON } from "../../../API";
 import TeamNumberInput from "../helpers/TeamNumberInput";
+import TeamDataPage from "./TeamDataPage";
 
 function TeamDataCard() {
     const [_, forceUpdate] = useState(0);
     const [questionData, setQuestionData] = useState<QuestionData[]>();
     const questionsLineGraphSelected = useRef(new Map<string, boolean>());
+    const questionsSkillChartSelected = useRef(new Map<string, boolean>());
     const [selectedPieGraphQuestion, setSelectedPieGraphQuestion] = useState<string>();
     const [team1, setTeam1] = useState<number>();
 
@@ -30,13 +32,14 @@ function TeamDataCard() {
     );
 
     const averageableQuestions = questionData.filter((q) => q.average !== undefined);
-    const pieGraphableQuestions = questionData.filter(
-        (q) => q.questionMeta.classification == "quantitative" && q.questionMeta.type == "string"
-    );
-    const lineGraphableQuestions = questionData.filter(
-        (q) => q.questionMeta.classification == "quantitative" && q.questionMeta.type == "number"
-    );
-    const lineGraphSelectedQuestions = questionData
+
+    const skillCharableQuestions = questionData.filter((q) => q.average !== undefined && q.questionMeta.classification == "quantitative" && q.questionMeta.type == "number");
+    const skillChartSelectedQuestions = skillCharableQuestions.filter(q => questionsSkillChartSelected.current.get(q.questionFormId));
+
+    const quanitativeStringQuestions = questionData.filter((q) => q.questionMeta.classification == "quantitative" && q.questionMeta.type == "string");
+
+    const lineGraphableQuestions = questionData.filter((q) => q.questionMeta.classification == "quantitative" && q.questionMeta.type == "number");
+    const lineGraphSelectedQuestions = lineGraphableQuestions
         .filter((q) => questionsLineGraphSelected.current.get(q.questionFormId))
         .map((q) => {
             const grouped = q.responses.reduce((acc, curr) => {
@@ -60,8 +63,9 @@ function TeamDataCard() {
         new Set(lineGraphSelectedQuestions.flatMap((q) => q.responses.map((r) => r.matchNumber)))
     ).sort((a, b) => a - b);
 
-    const pieGraphQuestion = pieGraphableQuestions.find((q) => q.questionFormId == selectedPieGraphQuestion);
+    const pieGraphQuestion = quanitativeStringQuestions.find((q) => q.questionFormId == selectedPieGraphQuestion);
     const pieGraphResponses = pieGraphQuestion?.responses.sort((a, b) => a.matchNumber - b.matchNumber);
+
     const qualitativeQuestions = questionData.filter(
         (q) => q.questionMeta.classification == "qualitative" && q.questionId !== "UserId" && q.questionId !== "SubmittedAt"
     );
@@ -110,19 +114,57 @@ function TeamDataCard() {
                         ))}
                     </Row>
 
-                    <div className="bg-light rounded p-3">
-                        <LineChart
-                            height={300}
-                            xAxis={[{ data: lineGraphMatchNumbers, label: "Match" }]}
-                            series={lineGraphSelectedQuestions.map((q) => ({
-                                label: q.questionMeta.name,
-                                data: lineGraphMatchNumbers.map((matchNumber) => {
-                                    const res = q.responses.find((r) => r.matchNumber === matchNumber);
-                                    return res ? parseFloat(res.response) : null;
-                                }),
-                            }))}
-                        />
-                    </div>
+                    {lineGraphSelectedQuestions.length > 0 &&
+                        <div className="bg-light rounded p-3">
+                            <LineChart
+                                height={300}
+                                xAxis={[{ data: lineGraphMatchNumbers, label: "Match" }]}
+                                series={lineGraphSelectedQuestions.map((q) => ({
+                                    label: q.questionMeta.name,
+                                    data: lineGraphMatchNumbers.map((matchNumber) => {
+                                        const res = q.responses.find((r) => r.matchNumber === matchNumber);
+                                        return res ? parseFloat(res.response) : null;
+                                    }),
+                                }))}
+                            />
+                        </div>
+                    }
+                </Card.Body>
+            </Card>
+
+            <Card className="mb-4">
+                <Card.Header as="h5">Skill Graph</Card.Header>
+                <Card.Body>
+                    <Row className="mb-3">
+                        {skillCharableQuestions.map((q, i) => (
+                            <Col xs={6} md={4} lg={3} key={i}>
+                                <Form.Check
+                                    type="checkbox"
+                                    id={`skqs-${i}`}
+                                    label={q.questionMeta.name}
+                                    checked={questionsSkillChartSelected.current.get(q.questionFormId) ?? false}
+                                    onChange={() => {
+                                        const current = questionsSkillChartSelected.current.get(q.questionFormId) ?? false;
+                                        questionsSkillChartSelected.current.set(q.questionFormId, !current);
+                                        forceUpdate((x) => x + 1);
+                                    }}
+                                />
+                            </Col>
+                        ))}
+                    </Row>
+
+                    {skillChartSelectedQuestions.length >= 3 &&
+                        <div className="bg-light rounded p-3">
+                            <RadarChart
+                                height={300}
+                                series={[{ label: team1?.toString(), data: skillChartSelectedQuestions.map(q => parseFloat(q.average ?? "0")) }]}
+                                radar={{
+                                    max: 120,
+                                    metrics: skillChartSelectedQuestions.map(q => ({ name: q.questionMeta.name, max: Math.ceil((parseInt(q.average ?? "0") + 1) / 2) * 2 })),
+                                }}
+                            />
+                        </div>
+                    }
                 </Card.Body>
             </Card>
 
@@ -130,7 +172,7 @@ function TeamDataCard() {
                 <Card.Header as="h5">Multiselect Responses</Card.Header>
                 <Card.Body>
                     <Row className="mb-3">
-                        {pieGraphableQuestions.map((q, i) => (
+                        {quanitativeStringQuestions.map((q, i) => (
                             <Col xs={12} md={6} lg={4} key={i}>
                                 <Form.Check
                                     type="radio"
@@ -195,6 +237,13 @@ function TeamDataCard() {
                             ))}
                         </div>
                     ))}
+                </Card.Body>
+            </Card>
+
+            <Card>
+                <Card.Header as="h5">Form Data</Card.Header>
+                <Card.Body>
+                    <TeamDataPage hideSelector={true} />
                 </Card.Body>
             </Card>
         </div>

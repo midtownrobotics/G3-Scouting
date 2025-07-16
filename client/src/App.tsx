@@ -14,16 +14,16 @@ function App() {
     const setLoggedIn = (val: boolean) => {
         setLoggedInState(val);
         val == false && setApiConnection(true);
-    }
+    };
 
     async function apiStatusRefresh() {
         const apiStatus = await getApiStatus();
-        setApiConnection(apiStatus.ok)
-        setLoggedIn(apiStatus.statusCode !== 401)
+        setApiConnection(apiStatus.ok);
+        setLoggedIn(apiStatus.statusCode !== 401);
     }
 
     useEffect(() => {
-        apiStatusRefresh()
+        apiStatusRefresh();
         const interval = setInterval(apiStatusRefresh, 5000);
         return () => clearInterval(interval);
     }, []);

@@ -57,6 +57,7 @@ export default function FormDataTable({ formRowResponse }: { formRowResponse: Fo
             <Table bordered hover size="sm" className="mb-0">
                 <thead className="sticky-top bg-white shadow-sm">
                     <tr>
+                        <th />
                         {questions.map((q) => (
                             <th
                                 key={q.id}
@@ -77,6 +78,7 @@ export default function FormDataTable({ formRowResponse }: { formRowResponse: Fo
 
                         return (
                             <tr key={i}>
+                                <th>{i+1}</th>
                                 {questions.map((q) => (
                                     <td
                                         key={q.id}

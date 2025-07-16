@@ -5,7 +5,7 @@ import FormDataTable from "../helpers/FormDataTable";
 import TeamNumberInput from "../helpers/TeamNumberInput";
 import { fetchAPIJSON } from "../../../API";
 
-function TeamDataPage() {
+function TeamDataPage({ hideSelector }: { hideSelector?: boolean; }) {
     const [teamRowsResponse, setTeamRowsResponse] = useState<TeamRowsResponse>();
     const [team, setTeam] = useState<number>(parseInt(new URLSearchParams(window.location.search).get("team") ?? "0"));
 
@@ -28,12 +28,14 @@ function TeamDataPage() {
 
     return (
         <div className="p-3">
-            <h1>Raw Team Data</h1>
-            <br />
-            <TeamNumberInput onSubmit={v => setTeam(v)} />
+            {!hideSelector && <>
+                <h1>Raw Team Data</h1>
+                <br />
+                <TeamNumberInput onSubmit={v => setTeam(v)} />
+            </>}
             {teamRowsResponse.map((f, i) =>
                 <div key={i}>
-                    <h2>{f.form}</h2>
+                    <h3>{f.form}</h3>
                     <FormDataTable formRowResponse={f.responses} />
                 </div>
             )}

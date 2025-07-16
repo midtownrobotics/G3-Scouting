@@ -1,7 +1,9 @@
 #offlineBar {
+    background-color: #ff9800;
     color: black;
-    background-color: orange;
-    height: 25px;
-    text-align: center;
-    font-weight: bold;
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 1.4;
+    word-break: break-word;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
