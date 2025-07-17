@@ -7,7 +7,7 @@ import { fetchAPIJSON } from "../../../API";
 import TeamNumberInput from "../helpers/TeamNumberInput";
 import TeamDataPage from "./TeamDataPage";
 
-function TeamDataSummary() {
+function TeamDataSummary({ sendTeamNumber, second}: { sendTeamNumber?: React.Dispatch<React.SetStateAction<number>>, second?: boolean}) {
     const [_, forceUpdate] = useState(0);
     const [questionData, setQuestionData] = useState<QuestionData[]>();
     const questionsLineGraphSelected = useRef(new Map<string, boolean>());
@@ -27,7 +27,7 @@ function TeamDataSummary() {
         <div className="p-3">
             <h1>Team Data Summary</h1>
             <br />
-            <TeamNumberInput onSubmit={v => setTeam1(v)} />
+            <TeamNumberInput second={second} onSubmit={v => {setTeam1(v); sendTeamNumber && sendTeamNumber(v)}} />
         </div>
     );
 
@@ -72,7 +72,7 @@ function TeamDataSummary() {
 
     return (
         <div className="p-3">
-            <TeamNumberInput onSubmit={v => setTeam1(v)} />
+            <TeamNumberInput second={second} onSubmit={v => {setTeam1(v); sendTeamNumber && sendTeamNumber(v)}} />
             <h2 className="mb-4">Team {team1} Summary</h2>
 
             <Card className="mb-4">
