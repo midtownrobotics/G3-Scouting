@@ -7,7 +7,7 @@ import { fetchAPIJSON } from "../../../API";
 import TeamNumberInput from "../helpers/TeamNumberInput";
 import TeamDataPage from "./TeamDataPage";
 
-function TeamDataSummary({ sendTeamNumber, second}: { sendTeamNumber?: React.Dispatch<React.SetStateAction<number>>, second?: boolean}) {
+function TeamDataSummary({ sendTeamNumber, second, displayTeamNumberInputOnly}: { sendTeamNumber?: React.Dispatch<React.SetStateAction<number | undefined>>, second?: boolean, displayTeamNumberInputOnly?: boolean}) {
     const [_, forceUpdate] = useState(0);
     const [questionData, setQuestionData] = useState<QuestionData[]>();
     const questionsLineGraphSelected = useRef(new Map<string, boolean>());
@@ -21,13 +21,14 @@ function TeamDataSummary({ sendTeamNumber, second}: { sendTeamNumber?: React.Dis
             const parsed = z.object({ data: z.array(QuestionData) }).safeParse(data);
             if (parsed.success) setQuestionData(parsed.data.data);
         });
+        sendTeamNumber && sendTeamNumber(team1)
     }, [team1]);
 
-    if (!questionData) return (
+    if (!questionData || displayTeamNumberInputOnly) return (
         <div className="p-3">
             <h1>Team Data Summary</h1>
             <br />
-            <TeamNumberInput second={second} onSubmit={v => {setTeam1(v); sendTeamNumber && sendTeamNumber(v)}} />
+            <TeamNumberInput second={second} onSubmit={v => {setTeam1(v)}} />
         </div>
     );
 
@@ -243,7 +244,7 @@ function TeamDataSummary({ sendTeamNumber, second}: { sendTeamNumber?: React.Dis
             <Card>
                 <Card.Header as="h5">Form Data</Card.Header>
                 <Card.Body>
-                    <TeamDataPage hideSelector={true} />
+                    <TeamDataPage hideSelector={true} teamNumber={team1}/>
                 </Card.Body>
             </Card>
         </div>

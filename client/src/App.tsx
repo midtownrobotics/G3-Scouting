@@ -39,6 +39,7 @@ function App() {
 
             <footer className="bg-light text-center py-3 mt-auto border-top">
                 <h5>Made by Gray Jackson-Noell</h5>
+                <h6>Featuring Woodward Theron Spivey</h6>
             </footer>
         </div>
     );
