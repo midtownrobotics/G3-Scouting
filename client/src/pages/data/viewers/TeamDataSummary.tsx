@@ -33,8 +33,8 @@ function TeamDataSummary({ sendTeamNumber, second}: { sendTeamNumber?: React.Dis
 
     const averageableQuestions = questionData.filter((q) => q.average !== undefined);
 
-    const skillCharableQuestions = questionData.filter((q) => q.average !== undefined && q.questionMeta.classification == "quantitative" && q.questionMeta.type == "number");
-    const skillChartSelectedQuestions = skillCharableQuestions.filter(q => questionsSkillChartSelected.current.get(q.questionFormId));
+    const skillChartableQuestions = questionData.filter((q) => q.average !== undefined && q.questionMeta.classification == "quantitative" && q.questionMeta.type == "number");
+    const skillChartSelectedQuestions = skillChartableQuestions.filter(q => questionsSkillChartSelected.current.get(q.questionFormId));
 
     const quanitativeStringQuestions = questionData.filter((q) => q.questionMeta.classification == "quantitative" && q.questionMeta.type == "string");
 
@@ -132,11 +132,11 @@ function TeamDataSummary({ sendTeamNumber, second}: { sendTeamNumber?: React.Dis
                 </Card.Body>
             </Card>
 
-            <Card className="mb-4">
+            {!sendTeamNumber && <Card className="mb-4">
                 <Card.Header as="h5">Skill Graph</Card.Header>
                 <Card.Body>
                     <Row className="mb-3">
-                        {skillCharableQuestions.map((q, i) => (
+                        {skillChartableQuestions.map((q, i) => (
                             <Col xs={6} md={4} lg={3} key={i}>
                                 <Form.Check
                                     type="checkbox"
@@ -166,7 +166,7 @@ function TeamDataSummary({ sendTeamNumber, second}: { sendTeamNumber?: React.Dis
                         </div>
                     }
                 </Card.Body>
-            </Card>
+            </Card>}
 
             <Card className="mb-4">
                 <Card.Header as="h5">Multiselect Responses</Card.Header>

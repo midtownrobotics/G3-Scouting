@@ -1,11 +1,34 @@
 import { Container, Row, Col } from 'react-bootstrap';
 import TeamDataSummary from './TeamDataSummary';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { fetchAPIJSON } from '../../../API';
+import {z} from "zod";
+import { QuestionData } from '@shared/schemas/data';
 
 export default function CompareView() {
-    const [teamNumberLeft, setTeamNumberLeft] = useState(0)
-    const [teamNumberRight, setTeamNumberRight] = useState(0)
+    const [teamNumberLeft, setTeamNumberLeft] = useState(0);
+    const [teamNumberRight, setTeamNumberRight] = useState(0);
+    const [questionDataLeft, setQuestionDataLeft] = useState<QuestionData[]>();
+    const [questionDataRight, setQuestionDataRight] = useState<QuestionData[]>();
 
+    useEffect(() => {
+        if (teamNumberLeft === undefined) return;
+        fetchAPIJSON(`/data/getTeamData/${teamNumberLeft}`).then((data) => {
+            const parsed = z.object({ data: z.array(QuestionData) }).safeParse(data);
+            if (parsed.success) setQuestionDataLeft(parsed.data.data);
+        }
+        );
+    }, [teamNumberLeft]);
+
+    
+    useEffect(() => {
+        if (teamNumberRight === undefined) return;
+        fetchAPIJSON(`/data/getTeamData/${teamNumberRight}`).then((data) => {
+            const parsed = z.object({ data: z.array(QuestionData) }).safeParse(data);
+            if (parsed.success) setQuestionDataRight(parsed.data.data);
+        }
+        );
+    }, [teamNumberRight]);
 
     return (
         <Container fluid className="p-0">
