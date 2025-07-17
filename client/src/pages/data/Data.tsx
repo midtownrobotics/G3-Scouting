@@ -2,20 +2,21 @@ import { JSX, useEffect, useState } from "react";
 import { Card, Col, Row } from "react-bootstrap";
 import "./Data.css";
 import FormView from "./viewers/FormView";
-import TeamDataCard from "./viewers/TeamDataCard";
+import TeamDataSummary from "./viewers/TeamDataSummary";
 import TeamDataPage from "./viewers/TeamDataPage";
 import TeamView from "./viewers/TeamView";
+import CompareView from "./viewers/CompareView";
 
 const VIEW_OPTIONS: { title: string; description: string; component: JSX.Element }[] = [
     {
         title: "Team Summary View",
         description: "Get a summary of a team's performance and compare with others.",
-        component: <TeamDataCard />
+        component: <TeamDataSummary />
     },
     {
         title: "Team Compare View",
         description: "Compare the summaries of two teams.",
-        component: <h1>WIP</h1>
+        component: <CompareView />
     },
         {
         title: "Raw Team View",

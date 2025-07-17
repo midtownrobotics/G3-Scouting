@@ -7,7 +7,7 @@ import { fetchAPIJSON } from "../../../API";
 import TeamNumberInput from "../helpers/TeamNumberInput";
 import TeamDataPage from "./TeamDataPage";
 
-function TeamDataCard() {
+function TeamDataSummary() {
     const [_, forceUpdate] = useState(0);
     const [questionData, setQuestionData] = useState<QuestionData[]>();
     const questionsLineGraphSelected = useRef(new Map<string, boolean>());
@@ -101,7 +101,7 @@ function TeamDataCard() {
                             <Col xs={6} md={4} lg={3} key={i}>
                                 <Form.Check
                                     type="checkbox"
-                                    id={`lgqs-${i}`}
+                                    id={`lgqs-${i}-${team1}`}
                                     label={q.questionMeta.name}
                                     checked={questionsLineGraphSelected.current.get(q.questionFormId) ?? false}
                                     onChange={() => {
@@ -140,7 +140,7 @@ function TeamDataCard() {
                             <Col xs={6} md={4} lg={3} key={i}>
                                 <Form.Check
                                     type="checkbox"
-                                    id={`skqs-${i}`}
+                                    id={`skqs-${i}-${team1}`}
                                     label={q.questionMeta.name}
                                     checked={questionsSkillChartSelected.current.get(q.questionFormId) ?? false}
                                     onChange={() => {
@@ -177,7 +177,7 @@ function TeamDataCard() {
                                 <Form.Check
                                     type="radio"
                                     name="pie-question"
-                                    id={`pgqs-${i}`}
+                                    id={`pgqs-${i}-${team1}`}
                                     label={q.questionMeta.name}
                                     checked={selectedPieGraphQuestion === q.questionFormId}
                                     onChange={() => setSelectedPieGraphQuestion(
@@ -250,4 +250,4 @@ function TeamDataCard() {
     );
 }
 
-export default TeamDataCard;
+export default TeamDataSummary;

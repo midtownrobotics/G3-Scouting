@@ -3,3 +3,4 @@ node_modules
 .upm
 storage
 shared/config.ts
+packagelock.json
