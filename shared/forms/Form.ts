@@ -1,6 +1,6 @@
-import { FormQuestionMeta, RowData } from "@shared/schemas/data";
-import FormResponseModel from "../../server/models/forms/FormResponseModel";
-import { SerializedForm, SerializedResponse } from "../schemas/forms";
+import { FormResponse, FormResponseData, QuestionMetadata } from "@shared/schemas/data";
+import FormResponseByTeamModel from "../../server/models/forms/FormResponseModel";
+import { SerializedForm } from "../schemas/forms";
 import { FormComponent } from "./FormComponents";
 import { removeDuplicatesByKey, toSqlAcceptableString } from "./FormUtils";
 
@@ -14,8 +14,8 @@ export default class Form {
     private components: FormComponent[] = [];
 
     constructor(name: string, description: string);
-    constructor(name: string, description: string, components: FormComponent[], maxComponentId: number, responses?: SerializedResponse[]);
-    constructor(name: string, public description: string, components?: FormComponent[], maxComponentId?: number, private responses?: SerializedResponse[]) {
+    constructor(name: string, description: string, components: FormComponent[], maxComponentId: number, responses?: FormResponse[]);
+    constructor(name: string, public description: string, components?: FormComponent[], maxComponentId?: number, private responses?: FormResponse[]) {
         this.name = name;
         this.id = toSqlAcceptableString(name);
 
@@ -33,8 +33,8 @@ export default class Form {
      * @returns `true` if successful. `false` if another component already has this name.
      */
     public addComponent(component: FormComponent): boolean {
-        if (this.components.some(c => c.columnData?.name && c.columnData?.name == component.columnData?.name)) return false;
-        component.setId(`${component.columnData?.name}-${this.maxComponentId++}`);
+        if (this.components.some(c => c.metadata?.name && c.metadata?.name == component.metadata?.name)) return false;
+        component.addToForm(`${component.metadata?.name}-${this.maxComponentId++}`, this.id);
         this.components.push(component);
         return true;
     }
@@ -50,45 +50,25 @@ export default class Form {
         this.components.splice(toIndex, 0, item);
     }
 
-
-    public updateResponseData(models: FormResponseModel[]) {
-        this.responses = models.map(rm => rm.response);
+    public updateResponseData(models: FormResponseByTeamModel[]) {
+        this.responses = models;
     }
 
-    /** Gets response data for this form, if form has associated data. Each response will have a `!UserId` and `!SubmittedAt` questions, aswell as questions for all question asking form components. */
-    public getResponseData() {
-        const questions = new Map<string, FormQuestionMeta>();
-        questions.set("UserId", { name: "UserId", type: "number", classification: "qualitative" });
-        questions.set("SubmittedAt", { name: "SubmittedAt", type: "string", classification: "qualitative" });
-        this.components.forEach(c => c.columnData && questions.set(c.id, c.columnData));
-
-        const rows: RowData[] = [];
-        
-        this.responses?.forEach(r => {
-            const fieldResponses: {question: string, response: string}[] = []
-            let teamNumber: number | undefined;
-            let matchNumber: number | undefined;
-            r.forEach(q => {
-                const questionData = questions.get(q[0])
-                if (!questionData) return;
-                if (questionData.classification == "matchNumber") matchNumber = parseInt(q[1]);
-                if (questionData.classification == "teamNumber") teamNumber = parseInt(q[1]);
-                fieldResponses.push({ question: q[0], response: q[1] });
-            });
-            if (teamNumber === undefined || matchNumber === undefined) return;
-            rows.push({ fieldResponses, teamNumber, matchNumber });
-        });
-
-        const ids = Array.from(questions.keys())
+    /** Gets response data for this form, if form has associated data. 
+     * @returns `null` if there are no reponses. Try passing `true` into FormModle.getForm(). */
+    public getResponseData(): FormResponseData | null {
+        if (!this.responses) return null;
+        const questions = this.components.filter(c => c.metadata !== null).map(q => q.metadata!)
 
         return {
-            questions: Array.from(questions.values()).map((v, i) => ({id: ids[i], ...v})),
-            responses: rows
+            formId: this.id,
+            questions,
+            responses: this.responses
         };
     }
 
     public static fromJSON(json: SerializedForm): Form {
-        return new Form(json.name, json.description, json.components.map(c => FormComponent.fromJSON(c)), json.maxComponentId, json.responses);
+        return new Form(json.name, json.description, json.components.map(c => FormComponent.fromJSON(c, json.id)), json.maxComponentId, json.responses);
     }
 
     public toJSON(): SerializedForm {

@@ -67,7 +67,7 @@ function TeamDataCard() {
     const pieGraphResponses = pieGraphQuestion?.responses.sort((a, b) => a.matchNumber - b.matchNumber);
 
     const qualitativeQuestions = questionData.filter(
-        (q) => q.questionMeta.classification == "qualitative" && q.questionId !== "UserId" && q.questionId !== "SubmittedAt"
+        (q) => q.questionMeta.classification == "qualitative"
     );
 
     return (

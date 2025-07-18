@@ -1,11 +1,9 @@
 import formComponents, { FormComponent as FormComponentClass } from "@shared/forms/FormComponents";
-import SectionBreak from "./SectionBreak";
 import Information from "./Information";
 import MultipleChoice from "./MultipleChoice";
 import Number from "./Number";
+import SectionBreak from "./SectionBreak";
 import ShortResponse from "./ShortResponse";
-import MatchNumber from "./MatchNumber";
-import TeamNumber from "./TeamNumber";
 
 function FormComponent({
     component,
@@ -13,7 +11,7 @@ function FormComponent({
     answer,
 }: {
     component: FormComponentClass;
-    onAnswerChange: (id: number, value: string) => void;
+    onAnswerChange: (id: string, value: string) => void;
     answer: any;
 }) {
     if (component instanceof formComponents.SectionBreak) {
@@ -34,14 +32,6 @@ function FormComponent({
 
     if (component instanceof formComponents.ShortResponse) {
         return <ShortResponse component={component} onChange={onAnswerChange} value={answer} />;
-    }
-
-    if (component instanceof formComponents.MatchNumber) {
-        return <MatchNumber component={component} onChange={onAnswerChange} value={answer} />;
-    }
-
-    if (component instanceof formComponents.TeamNumber) {
-        return <TeamNumber component={component} onChange={onAnswerChange} value={answer} />;
     }
 
     return <div>Unknown component type</div>;

@@ -1,50 +1,55 @@
 import { z } from "zod";
 
-export const FieldResponse = z.object({
+/** A question: response pair. Contains the **NON-NAMESPACED** questionId and a response. */
+export const QuestionResponse = z.object({
     question: z.string(),
     response: z.string()
 });
-export type FieldResponse = z.infer<typeof FieldResponse>;
+export type QuestionResponse = z.infer<typeof QuestionResponse>;
 
-export const RowData = z.object({
-    fieldResponses: z.array(FieldResponse),
-    teamNumber: z.number(),
-    matchNumber: z.number()
+/** A response to a form, including a team, match, and the question: response pairs. If sent from the server, will contain `userId` and `submittedAt`. */
+export const FormResponse = z.object({
+    responses: z.array(QuestionResponse),
+    formId: z.string(),
+    team: z.number(),
+    match: z.number(),
+    userId: z.number().optional(),
+    submittedAt: z.string().optional()
 });
-export type RowData = z.infer<typeof RowData>;
+export type FormResponse = z.infer<typeof FormResponse>;
 
-export const FormQuestionMeta = z.object({
+/** Metadata for form questions. */
+export const QuestionMetadata = z.object({
     name: z.string(),
-    type: z.enum(["string", "number"]),
-    classification: z.enum(["qualitative", "quantitative", "teamNumber", "matchNumber"]),
-});
-export type FormQuestionMeta = z.infer<typeof FormQuestionMeta>;
-
-export const FormQuestionMetaWithId = FormQuestionMeta.extend({
     id: z.string(),
+    formId: z.string(),
+    type: z.enum(["string", "number"]),
+    classification: z.enum(["qualitative", "quantitative"]),
 });
-export type FormQuestionMetaWithId = z.infer<typeof FormQuestionMetaWithId>;
+export type QuestionMetadata = z.infer<typeof QuestionMetadata>;
 
-export const FormRowResponse = z.object({
-    rows: z.array(RowData),
-    questions: z.array(FormQuestionMetaWithId)
+/** Contains information about the form responses including the form id, the questions, and the responses themselves. */
+export const FormResponseData = z.object({
+    formId: z.string(),
+    responses: z.array(FormResponse),
+    questions: z.array(QuestionMetadata)
 });
-export type FormRowResponse = z.infer<typeof FormRowResponse>;
+export type FormResponseData = z.infer<typeof FormResponseData>;
 
-export const TeamRowsResponse = z.array(z.object({
-    form: z.string(),
-    responses: FormRowResponse
-}));
-export type TeamRowsResponse = z.infer<typeof TeamRowsResponse>;
-
+/** Data about a question, including its responses, average, and metadata. */
 export const QuestionData = z.object({
-    questionMeta: FormQuestionMeta,
-    questionId: z.string(),
-    questionFormId: z.string(),
-    average: z.string().optional(),
+    metadata: QuestionMetadata,
+    average: z.string().or(z.number()).optional(),
     responses: z.array(z.object({
-        matchNumber: z.number(),
         response: z.string(),
+        match: z.number()
     })),
 });
 export type QuestionData = z.infer<typeof QuestionData>;
+
+/** The data for all questions for a certain team. */
+export const TeamQuestionData = z.object({
+    team: z.number(),
+    questionData: z.array(QuestionData)
+});
+export type TeamQuestionData = z.infer<typeof TeamQuestionData>;

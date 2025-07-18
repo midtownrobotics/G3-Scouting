@@ -1,14 +1,10 @@
-import { TeamRowsResponse } from "@shared/schemas/data";
+import { FormResponseData } from "@shared/schemas/data";
 import FormModel from "../models/forms/FormModel";
-import getFormRows from "./getFormRows";
 
-export default async function getTeamRows(team: number): Promise<TeamRowsResponse> {
-    const data = await Promise.all(
-        (await FormModel.getForms(true)).map(async (f) => ({
-            form: f.name,
-            responses: await getFormRows(f),
-        }))
-    );
+export default async function getTeamRows(team: number): Promise<FormResponseData[]> {
+    const formDatas = (await Promise.all(
+        (await FormModel.getForms(true)).map(f => f.getResponseData())
+    )).filter(formData => formData !== null);
     
-    return data.map(f => ({ form: f.form, responses: { questions: f.responses.questions, rows: f.responses.rows.filter(r => r.teamNumber === team) } }))
+    return formDatas.map(formData => ({...formData, responses: formData.responses.filter(d => d.team == team)}))
 }

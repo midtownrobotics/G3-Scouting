@@ -1,32 +1,36 @@
-import { FormQuestionMeta } from "@shared/schemas/data";
+import { QuestionMetadata } from "../schemas/data";
 import { SerializedComponent } from "../schemas/forms";
 
 export abstract class FormComponent {
     public id: string = "unknown";
     getId = () => this.id;
-    setId = (id: string) => this.id = id;
 
-    public abstract columnData: FormQuestionMeta | null;
+    public abstract metadata: QuestionMetadata | null;
+
+    public abstract addToForm(id: string, formId: string): void;
 
     public abstract toJSON(): SerializedComponent;
 
-    public static fromJSON(json: SerializedComponent): FormComponent {
+    public static fromJSON(json: SerializedComponent, formId: string): FormComponent {
         const instance = new formComponents[json.type](...(json.creationArgs as [any, any, any]));
-        instance.setId(json.id);
+        instance.addToForm(json.id, formId);
         return instance;
     }
 }
 
 export class SectionBreak extends FormComponent {
-    public columnData = null;
+    public metadata = null;
 
     /**
      * Constructs an section break component.
      * @param title The section title.
      */
     constructor(public title: string) {
-        super()
-        this.columnData = null;
+        super();
+    }
+
+    public addToForm(id: string, formId: string): void {
+        this.id = id;
     }
 
     public toJSON(): SerializedComponent {
@@ -34,20 +38,23 @@ export class SectionBreak extends FormComponent {
             type: "SectionBreak",
             creationArgs: [this.title],
             id: this.id
-        }
+        };
     }
 }
 
 export class Information extends FormComponent {
-    public columnData = null;
+    public metadata = null;
 
     /**
      * Constructs an info component (block of text like a description or explination).
      * @param text The text.
      */
     constructor(public text: string) {
-        super()
-        this.columnData = null;
+        super();
+    }
+
+    public addToForm(id: string, formId: string): void {
+        this.id = id;
     }
 
     public toJSON(): SerializedComponent {
@@ -55,12 +62,12 @@ export class Information extends FormComponent {
             type: "Information",
             creationArgs: [this.text],
             id: this.id
-        }
+        };
     }
 }
 
 export class MultipleChoice extends FormComponent {
-    public columnData: FormQuestionMeta;
+    public metadata: QuestionMetadata | null = null;
 
     /**
      * Constructs a multiple choice question.
@@ -68,122 +75,93 @@ export class MultipleChoice extends FormComponent {
      * @param name The form unique name of the question. Ex: `"Color"`
      * @param choices The choices. Ex: `["red", "blue", "green"]`
      */
-    constructor(public question: string, name: string, public choices: string[]) {
+    constructor(public question: string, private name: string, public choices: string[]) {
         super();
-        this.columnData = {
-            name,
+    }
+
+    public addToForm(id: string, formId: string): void {
+        this.id = id;
+        this.metadata = {
             type: "string",
-            classification: "quantitative"
+            classification: "quantitative",
+            id,
+            formId,
+            name: this.name
         };
     }
 
     public toJSON(): SerializedComponent {
+        if (!this.metadata) throw new Error("Cannot serialize component without adding it to a form.");
         return {
             type: "MultipleChoice",
-            creationArgs: [this.question, this.columnData.name, this.choices],
+            creationArgs: [this.question, this.metadata.name, this.choices],
             id: this.id
-        }
+        };
     }
 }
 
 export class ShortResponse extends FormComponent {
-    public columnData: FormQuestionMeta;
-    
+    public metadata: QuestionMetadata | null = null;
+
     /**
      * Constructs a short response question.
      * @param question The question itself. Ex: `"What is your favorite color?"`
      * @param name The form unique name of the question. Ex: `"Color"`
      */
-    constructor(public question: string, name: string) {
+    constructor(public question: string, private name: string) {
         super();
-        this.columnData = {
-            name,
+    }
+
+    public addToForm(id: string, formId: string): void {
+        this.id = id;
+        this.metadata = {
+            name: this.name,
             type: "string",
-            classification: "qualitative"
+            classification: "qualitative",
+            id,
+            formId
         };
     }
 
     public toJSON(): SerializedComponent {
+        if (!this.metadata) throw new Error("Cannot serialize component without adding it to a form.");
         return {
             type: "ShortResponse",
-            creationArgs: [this.question, this.columnData.name],
+            creationArgs: [this.question, this.metadata.name],
             id: this.id
-        }
+        };
     }
 }
 
 export class Number extends FormComponent {
-    public columnData: FormQuestionMeta;
-    
+    public metadata: QuestionMetadata | null = null;
+
     /**
      * Constructs a number based question.
      * @param question The question itself. Ex: `"How old are you?"`
      * @param name The form unique name of the question. Ex: `"Age"`
      */
-    constructor(public question: string, name: string) {
+    constructor(public question: string, private name: string) {
         super();
-        this.columnData = {
-            name,
+    }
+
+    public addToForm(id: string, formId: string): void {
+        this.metadata = {
             type: "number",
-            classification: "quantitative"
-        };
+            classification: "quantitative",
+            name: this.name,
+            id,
+            formId
+        }
     }
 
     public toJSON(): SerializedComponent {
+        if (!this.metadata) throw new Error("Cannot serialize component without adding it to a form.");
         return {
             type: "Number",
-            creationArgs: [this.question, this.columnData.name],
+            creationArgs: [this.question, this.metadata.name],
             id: this.id
-        }
-    }
-}
-
-export class TeamNumber extends FormComponent {
-    public columnData: FormQuestionMeta;
-    
-    /**
-     * Constructs a team number question.
-     * @param name The form unique name of the question. Ex: `"TeamNumber"` or `"Station1"`
-     */
-    constructor(name: string) {
-        super();
-        this.columnData = {
-            name,
-            type: "number",
-            classification: "teamNumber"
         };
-    }
-
-    public toJSON(): SerializedComponent {
-        return {
-            type: "TeamNumber",
-            creationArgs: [this.columnData.name],
-            id: this.id
-        }
-    }
-}
-
-export class MatchNumber extends FormComponent {
-    public columnData: FormQuestionMeta;
-    
-    /**
-     * Constructs a match number question. Only one of these can exist per form.
-     */
-    constructor() {
-        super();
-        this.columnData = {
-            name: "MatchNumber",
-            type: "number",
-            classification: "matchNumber"
-        };
-    }
-
-    public toJSON(): SerializedComponent {
-        return {
-            type: "MatchNumber",
-            creationArgs: [],
-            id: this.id
-        }
     }
 }
 
@@ -192,9 +170,7 @@ const formComponents = {
     Number,
     ShortResponse,
     MultipleChoice,
-    Information,
-    TeamNumber,
-    MatchNumber
+    Information
 } as const;
 
 export default formComponents;

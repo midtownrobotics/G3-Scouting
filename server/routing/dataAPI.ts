@@ -1,7 +1,7 @@
 import express from 'express';
-import getAverageForAllTeams from '../data/getAverageForAllTeams';
+import getAverageForAllTeams from '../data/getQuestionDataForAllTeams';
 import getFormRows from '../data/getFormRows';
-import getTeamData from '../data/getTeamData';
+import getTeamData from '../data/getQuestionDataForTeam';
 import getTeamRows from '../data/getTeamRows';
 
 const dataApiRouter = express.Router();
