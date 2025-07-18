@@ -1,5 +1,5 @@
 import { SerializedResponse } from "@shared/schemas/forms";
-import { BelongsTo, Column, CreatedAt, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
+import { AllowNull, BelongsTo, Column, CreatedAt, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
 import UserModel from "../users/UserModel";
 import FormModel from "./FormModel";
 import { InferAttributes, InferCreationAttributes } from "sequelize";
@@ -15,9 +15,9 @@ export default class FormResponseModel extends Model<InferAttributes<FormRespons
     userId!: number;
 
     @ForeignKey(() => FormModel)
-    @Column({ type: DataType.STRING })
+    @Column({ type: DataType.STRING, onDelete: "SET NULL", allowNull: true })
     formId!: string;
-
+ 
     @BelongsTo(() => FormModel)
     form!: CreationOptional<FormModel>;
 
@@ -28,8 +28,8 @@ export default class FormResponseModel extends Model<InferAttributes<FormRespons
     createdAt!: CreationOptional<Date>;
 
     public static async submitResponse(response: SerializedResponse, formId: string, userId: number) {
-        response.push(["UserId", userId.toString()])
-        response.push(["SubmittedAt", Date.now().toString()])
+        response.push(["UserId", userId.toString()]);
+        response.push(["SubmittedAt", Date.now().toString()]);
 
         try {
             await FormResponseModel.create({

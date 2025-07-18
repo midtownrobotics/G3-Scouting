@@ -11,11 +11,11 @@ export const managementDatabase = new Sequelize({
     dialect: 'sqlite',
     storage: './storage/management.db',
     models: [
-        UserModel, 
-        AssignmentModel, 
-        BlockModel, 
-        UserBlockAssignmentModel, 
-        FormModel, 
+        UserModel,
+        AssignmentModel,
+        BlockModel,
+        UserBlockAssignmentModel,
+        FormModel,
         FormResponseModel,
         SessionModel
     ],
