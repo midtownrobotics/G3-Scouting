@@ -7,6 +7,7 @@ import { fetchAPIJSON } from "../../API";
 export default function SlackLink() {
     const [command, setCommand] = useState<string>();
     const [commandCopied, setCommandCopied] = useState(false);
+    const [btnDisabled, setBtnDisabled] = useState(true)
 
     useEffect(() => {
         fetchAPIJSON("/slack/getLinkCode").then((res) => {
@@ -16,6 +17,8 @@ export default function SlackLink() {
                 setCommand("/link " + body.data.code);
             }
         });
+
+        setTimeout(() => setBtnDisabled(false), 5000);
     }, []);
 
     const openSlack = () => {
@@ -26,6 +29,7 @@ export default function SlackLink() {
     const copyCommand = () => {
         navigator.clipboard.writeText(command || "");
         setCommandCopied(true);
+        setBtnDisabled(false);
     };
 
     return (
@@ -42,7 +46,7 @@ export default function SlackLink() {
                 <p>
                     Paste this command into any slack channel and send it.
                 </p>
-                <Button variant="primary" onClick={openSlack}>
+                <Button variant="primary" onClick={openSlack} disabled={btnDisabled}>
                     Open Slack
                 </Button>
             </Card.Body>

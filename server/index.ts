@@ -1,44 +1,40 @@
 import { PORT, PRODUCTION } from "@shared/config";
-import Form from "../shared/forms/Form";
-import formComponents from "../shared/forms/FormComponents";
-import FormModel from "./models/forms/FormModel";
 import syncDatabase from "./models/syncDatabase";
 import UserModel from "./models/users/UserModel";
 import { server } from "./routing/router";
+import { scheduleReminders } from "./slack/shiftReminders";
 import { getSettings, writeSettings } from "./storage";
 import { Settings } from "./types";
 import { LogColors } from "./utils";
-import FormResponseModel from "./models/forms/FormResponseModel";
-import Papa from 'papaparse';
-import fs from 'fs'
-import sendSlackMessage from "./slack/sendSlackMsg";
 
-console.clear()
-console.log(``)
-console.log(`${LogColors.TX.Red} G³ ${LogColors.TX.White}Scout-o-matic`)
-console.log(``)
-console.log(` ${LogColors.TX.Red}➜  ${LogColors.TX.White}Port ${PORT}`)
-console.log(` ${LogColors.TX.Red}➜  ${LogColors.TX.White}${PRODUCTION ? "Production" : "Development"} mode`)
-console.log(``)
-console.log(`Started — ${LogColors.TX.Blue}${new Date().toLocaleString()}${LogColors.TX.White}`)
-console.log(``)
+console.clear();
+console.log(``);
+console.log(`${LogColors.TX.Red} G³ ${LogColors.TX.White}Scout-o-matic`);
+console.log(``);
+console.log(` ${LogColors.TX.Red}➜  ${LogColors.TX.White}Port ${PORT}`);
+console.log(` ${LogColors.TX.Red}➜  ${LogColors.TX.White}${PRODUCTION ? "Production" : "Development"} mode`);
+console.log(``);
+console.log(`Started — ${LogColors.TX.Blue}${new Date().toLocaleString()}${LogColors.TX.White}`);
+console.log(``);
 
 syncDatabase().then(() => {
     server.listen(PORT, async () => {
-        const allUsers = await UserModel.findAll()
+        scheduleReminders();
+
+        const allUsers = await UserModel.findAll();
         if (allUsers.length == 0 || !allUsers.find((user) => user.permissionId === 0)) {
-            UserModel.addUser("admin", "password", 0, true)
-        }
-    
-        const settings: Settings = await getSettings();
-        if (!settings.permissionLevels.find(p => p.blacklist.length == 0)) {
-            settings.permissionLevels.push({ name: "admin", blacklist: [], id: 0 })
-            writeSettings(settings)
+            UserModel.addUser("admin", "password", 0, true);
         }
 
-        testCode()
+        const settings: Settings = await getSettings();
+        if (!settings.permissionLevels.find(p => p.blacklist.length == 0)) {
+            settings.permissionLevels.push({ name: "admin", blacklist: [], id: 0 });
+            writeSettings(settings);
+        }
+
+        testCode();
     });
-})
+});
 
 async function testCode() {
     // const form = new Form("Quantitative", "A quantitative scouting form.");
@@ -63,7 +59,7 @@ async function testCode() {
     // form.addComponent(new formComponents.SectionBreak("Post-Game"))
     // form.addComponent(new formComponents.MultipleChoice("Can the robot dealgify?", "Dealgify", ["No", "Yes"]))
     // form.addComponent(new formComponents.ShortResponse("Additional Notes", "Notes"))
-    
+
     // FormModel.storeForm(form);
 
     // console.log(await sendSlackMessage("U096JVA9VEV", "Hello from your bot!"));

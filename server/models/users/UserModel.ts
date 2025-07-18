@@ -72,7 +72,11 @@ class UserModel extends Model<User, UserCreationAttributes> {
     }
 
     public async getAssignment(blockId: number): Promise<Assignment | undefined> {
-        return this.schedule.find(a => a.blockId == blockId)?.assignment.toJSON();
+        const fromMemory = this.schedule.find(a => a.blockId === blockId)?.assignment;
+        if (fromMemory) return fromMemory.toJSON();
+    
+        const record = await UserBlockAssignmentModel.findOne({ where: { userId: this.id, blockId } });
+        return record?.assignment?.toJSON();
     }
 }
 
