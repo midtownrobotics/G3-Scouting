@@ -1,8 +1,9 @@
-import { FormResponse, FormResponseData, QuestionMetadata } from "@shared/schemas/data";
+import { FormResponse, FormResponseData } from "@shared/schemas/data";
+import { randomBytes } from "crypto";
 import FormResponseByTeamModel from "../../server/models/forms/FormResponseModel";
 import { SerializedForm } from "../schemas/forms";
 import { FormComponent } from "./FormComponents";
-import { removeDuplicatesByKey, toSqlAcceptableString } from "./FormUtils";
+import { toSqlAcceptableString } from "./FormUtils";
 
 export default class Form {
     public readonly name: string;
@@ -21,11 +22,18 @@ export default class Form {
 
         this.maxComponentId = maxComponentId ?? 0;
 
-        if (components) this.components = removeDuplicatesByKey(components, "id");
+        const uniqueMap = new Map<string, FormComponent>();
+        for (const component of this.components) {
+            const id = component.getId();
+            if (!uniqueMap.has(id)) {
+                uniqueMap.set(id, component);
+            }
+        }
+        this.components = Array.from(uniqueMap.values());
     }
 
     getComponents = (): FormComponent[] => [...this.components];
-    getComponent = (id: string): FormComponent | undefined => this.components.find(c => c.id === id);
+    getComponent = (id: string): FormComponent | undefined => this.components.find(c => c.getId() === id);
 
     /**
      * Adds a component to this form.
@@ -33,8 +41,8 @@ export default class Form {
      * @returns `true` if successful. `false` if another component already has this name.
      */
     public addComponent(component: FormComponent): boolean {
-        if (this.components.some(c => c.metadata?.name && c.metadata?.name == component.metadata?.name)) return false;
-        component.addToForm(`${component.metadata?.name}-${this.maxComponentId++}`, this.id);
+        if (this.components.some(c => c.name && c.name == component.name)) return false;
+        component.createMetadata(`${component.name || randomBytes(4).toString('hex')}-${this.maxComponentId++}`, this.id);
         this.components.push(component);
         return true;
     }
@@ -58,7 +66,7 @@ export default class Form {
      * @returns `null` if there are no reponses. Try passing `true` into FormModle.getForm(). */
     public getResponseData(): FormResponseData | null {
         if (!this.responses) return null;
-        const questions = this.components.filter(c => c.metadata !== null).map(q => q.metadata!)
+        const questions = this.components.filter(c => c.metadata !== null).map(q => q.metadata!);
 
         return {
             formId: this.id,

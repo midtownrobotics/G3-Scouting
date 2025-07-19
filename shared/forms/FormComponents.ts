@@ -2,24 +2,29 @@ import { QuestionMetadata } from "../schemas/data";
 import { SerializedComponent } from "../schemas/forms";
 
 export abstract class FormComponent {
-    public id: string = "unknown";
-    getId = () => this.id;
+    protected id: string = "none";
+    public getId = () => this.id;
+    public createMetadata(id: string, formId: string) {
+        this.id = id;
+        this.setMetadata(id, formId);
+    }
 
+    protected abstract setMetadata(id: string, formId: string): void;
+    public abstract name: string | null;
     public abstract metadata: QuestionMetadata | null;
-
-    public abstract addToForm(id: string, formId: string): void;
-
     public abstract toJSON(): SerializedComponent;
 
     public static fromJSON(json: SerializedComponent, formId: string): FormComponent {
         const instance = new formComponents[json.type](...(json.creationArgs as [any, any, any]));
-        instance.addToForm(json.id, formId);
+        instance.setMetadata(json.id, formId);
         return instance;
     }
 }
 
 export class SectionBreak extends FormComponent {
     public metadata = null;
+    public setMetadata() { };
+    public name = null;
 
     /**
      * Constructs an section break component.
@@ -27,10 +32,6 @@ export class SectionBreak extends FormComponent {
      */
     constructor(public title: string) {
         super();
-    }
-
-    public addToForm(id: string, formId: string): void {
-        this.id = id;
     }
 
     public toJSON(): SerializedComponent {
@@ -44,6 +45,8 @@ export class SectionBreak extends FormComponent {
 
 export class Information extends FormComponent {
     public metadata = null;
+    public setMetadata() { };
+    public name = null;
 
     /**
      * Constructs an info component (block of text like a description or explination).
@@ -51,10 +54,6 @@ export class Information extends FormComponent {
      */
     constructor(public text: string) {
         super();
-    }
-
-    public addToForm(id: string, formId: string): void {
-        this.id = id;
     }
 
     public toJSON(): SerializedComponent {
@@ -75,12 +74,11 @@ export class MultipleChoice extends FormComponent {
      * @param name The form unique name of the question. Ex: `"Color"`
      * @param choices The choices. Ex: `["red", "blue", "green"]`
      */
-    constructor(public question: string, private name: string, public choices: string[]) {
+    constructor(public question: string, public name: string, public choices: string[]) {
         super();
     }
 
-    public addToForm(id: string, formId: string): void {
-        this.id = id;
+    public setMetadata(id: string, formId: string): void {
         this.metadata = {
             type: "string",
             classification: "quantitative",
@@ -108,12 +106,11 @@ export class ShortResponse extends FormComponent {
      * @param question The question itself. Ex: `"What is your favorite color?"`
      * @param name The form unique name of the question. Ex: `"Color"`
      */
-    constructor(public question: string, private name: string) {
+    constructor(public question: string, public name: string) {
         super();
     }
 
-    public addToForm(id: string, formId: string): void {
-        this.id = id;
+    public setMetadata(id: string, formId: string): void {
         this.metadata = {
             name: this.name,
             type: "string",
@@ -141,18 +138,18 @@ export class Number extends FormComponent {
      * @param question The question itself. Ex: `"How old are you?"`
      * @param name The form unique name of the question. Ex: `"Age"`
      */
-    constructor(public question: string, private name: string) {
+    constructor(public question: string, public name: string) {
         super();
     }
 
-    public addToForm(id: string, formId: string): void {
+    public setMetadata(id: string, formId: string): void {
         this.metadata = {
             type: "number",
             classification: "quantitative",
             name: this.name,
             id,
             formId
-        }
+        };
     }
 
     public toJSON(): SerializedComponent {
