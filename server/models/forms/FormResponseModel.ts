@@ -15,9 +15,6 @@ export default class FormResponseByTeamModel extends Model<InferAttributes<FormR
     @Column({ type: DataType.STRING, onDelete: "SET NULL", allowNull: true })
     formId!: string;
 
-    @BelongsTo(() => FormModel)
-    form!: CreationOptional<FormModel>;
-
     @Column({ type: DataType.INTEGER })
     team!: number;
 

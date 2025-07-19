@@ -10,6 +10,9 @@ import Form from "@shared/forms/Form";
 import formComponents from "@shared/forms/FormComponents";
 import FormModel from "./models/forms/FormModel";
 import { parse } from "papaparse";
+import fs from "fs";
+import path from "path";
+import FormResponseByTeamModel from "./models/forms/FormResponseModel";
 
 console.clear();
 console.log(``);
@@ -41,29 +44,50 @@ syncDatabase().then(() => {
 });
 
 async function testCode() {
-    const form = new Form("Quantitative", "A quantitative scouting form.");
+    // const form = new Form("Quantitative", "A quantitative scouting form.");
 
-    form.addComponent(new formComponents.SectionBreak("Autonomous"))
-    form.addComponent(new formComponents.Number("L1", "AutoL1"))
-    form.addComponent(new formComponents.Number("L2", "AutoL2"))
-    form.addComponent(new formComponents.Number("L3", "AutoL3"))
-    form.addComponent(new formComponents.Number("L4", "AutoL4"))
-    form.addComponent(new formComponents.SectionBreak("Match"))
-    form.addComponent(new formComponents.Number("L1", "MatchL1"))
-    form.addComponent(new formComponents.Number("L2", "MatchL2"))
-    form.addComponent(new formComponents.Number("L3", "MatchL3"))
-    form.addComponent(new formComponents.Number("L4", "MatchL4"))
-    form.addComponent(new formComponents.Number("Barge", "MatchBarge"))
-    form.addComponent(new formComponents.Number("Processor", "Processor"))
-    form.addComponent(new formComponents.SectionBreak("Endgame"))
-    form.addComponent(new formComponents.MultipleChoice("Robot Climbing", "Climbing", ["None", "Park", "Shallow", "Deep"]))
-    form.addComponent(new formComponents.SectionBreak("Post-Game"))
-    form.addComponent(new formComponents.MultipleChoice("Can the robot dealgify?", "Dealgify", ["No", "Yes"]))
-    form.addComponent(new formComponents.ShortResponse("Additional Notes", "Notes"))
+    // form.addComponent(new formComponents.SectionBreak("Autonomous"))
+    // form.addComponent(new formComponents.Number("L1", "AutoL1"))
+    // form.addComponent(new formComponents.Number("L2", "AutoL2"))
+    // form.addComponent(new formComponents.Number("L3", "AutoL3"))
+    // form.addComponent(new formComponents.Number("L4", "AutoL4"))
+    // form.addComponent(new formComponents.SectionBreak("Match"))
+    // form.addComponent(new formComponents.Number("L1", "MatchL1"))
+    // form.addComponent(new formComponents.Number("L2", "MatchL2"))
+    // form.addComponent(new formComponents.Number("L3", "MatchL3"))
+    // form.addComponent(new formComponents.Number("L4", "MatchL4"))
+    // form.addComponent(new formComponents.Number("Barge", "MatchBarge"))
+    // form.addComponent(new formComponents.Number("Processor", "Processor"))
+    // form.addComponent(new formComponents.SectionBreak("Endgame"))
+    // form.addComponent(new formComponents.MultipleChoice("Robot Climbing", "Climbing", ["None", "Park", "Shallow", "Deep"]))
+    // form.addComponent(new formComponents.SectionBreak("Post-Game"))
+    // form.addComponent(new formComponents.MultipleChoice("Can the robot dealgify?", "Dealgify", ["No", "Yes"]))
+    // form.addComponent(new formComponents.ShortResponse("Additional Notes", "Notes"))
 
-    FormModel.storeForm(form);
+    // FormModel.storeForm(form);
 
     // console.log(await sendSlackMessage("U096JVA9VEV", "Hello from your bot!"));
 
-    
+    // const ppData = parse(fs.readFileSync(path.join(__dirname, "/../data.csv")).toString(), {
+    //     header: true
+    // });
+
+    // ppData.data.forEach((row: any) => {
+    //     const team = parseInt(row.TeamNumber);
+    //     const match = parseInt(row.MatchNumber);
+    //     const userId = parseInt(row.UserId);
+    //     const submittedAt = row.SubmittedAt;
+    //     const responses = Object.entries(row)
+    //         .filter(e => e[0] !== "TeamNumber" && e[0] !== "MatchNumber" && e[0] !== "UserId" && e[0] !== "SubmittedAt")
+    //         .map(r => ({ question: r[0], response: r[1] as string }));
+
+    //     FormResponseByTeamModel.create({
+    //         match,
+    //         userId,
+    //         formId: "Quantitative",
+    //         team,
+    //         responses,
+    //         submittedAt
+    //     });
+    // });
 }
