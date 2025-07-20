@@ -17,23 +17,35 @@ export function useSortableTable<T>(rows: T[]) {
         if (!sortKey) return rows;
 
         return [...rows].sort((a, b) => {
-            const aVal = a[sortKey as keyof T];
-            const bVal = b[sortKey as keyof T];
+            const aVal = String(a[sortKey as keyof T]);
+            const bVal = String(b[sortKey as keyof T]);
 
-            const toNum = (v: any): number => {
-                const n = typeof v === "number" ? v : parseFloat(v);
-                return isNaN(n) || !isFinite(n) ? 0 : n;
+            const parseSpecial = (val: string): { label: string; num: number | null } => {
+                const match = val.match(/^(.+?)\s*-\s*(\d+(?:\.\d+)?)%?$/);
+                if (match) return { label: match[1].trim(), num: parseFloat(match[2]) };
+        
+                const num = parseFloat(val);
+                return isNaN(num)
+                    ? { label: val.trim(), num: null }
+                    : { label: "", num };
             };
-
-            if (typeof aVal === "string" || typeof bVal === "string") {
-                return sortAsc
-                    ? String(aVal).localeCompare(String(bVal))
-                    : String(bVal).localeCompare(String(aVal));
+        
+            const aParsed = parseSpecial(aVal);
+            const bParsed = parseSpecial(bVal);
+        
+            // 1. Compare labels
+            const labelCompare = aParsed.label.localeCompare(bParsed.label);
+            if (labelCompare !== 0) return sortAsc ? labelCompare : -labelCompare;
+        
+            // 2. Compare numeric part if present
+            if (aParsed.num !== null && bParsed.num !== null) {
+                return sortAsc ? aParsed.num - bParsed.num : bParsed.num - aParsed.num;
             }
-
+        
+            // 3. Fallback to string comparison
             return sortAsc
-                ? toNum(aVal) - toNum(bVal)
-                : toNum(bVal) - toNum(aVal);
+                ? aVal.localeCompare(bVal)
+                : bVal.localeCompare(aVal);
         });
     }, [rows, sortKey, sortAsc]);
 
