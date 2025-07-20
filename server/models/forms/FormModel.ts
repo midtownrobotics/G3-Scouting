@@ -1,12 +1,11 @@
 import Form from "@shared/forms/Form";
-import { FormComponent } from "@shared/forms/FormComponents";
 import { SerializedComponent, SerializedForm } from "@shared/schemas/forms";
 import { Column, CreatedAt, DataType, HasMany, Model, Table, UpdatedAt } from "sequelize-typescript";
-import FormResponseModel from "./FormResponseModel";
+import FormResponseByTeamModel from "./FormResponseModel";
 
 @Table({ tableName: "forms" })
 export default class FormModel extends Model<SerializedForm> {
-    @Column({ type: DataType.STRING, primaryKey: true, autoIncrement: false})
+    @Column({ type: DataType.STRING, primaryKey: true, autoIncrement: false })
     id!: string;
 
     @Column(DataType.STRING)
@@ -24,8 +23,8 @@ export default class FormModel extends Model<SerializedForm> {
     @Column(DataType.JSON)
     components!: SerializedComponent[];
 
-    @HasMany(() => FormResponseModel)
-    responses!: FormResponseModel[];
+    @HasMany(() => FormResponseByTeamModel)
+    responses!: FormResponseByTeamModel[];
 
     @CreatedAt
     createdAt!: Date;
@@ -41,38 +40,30 @@ export default class FormModel extends Model<SerializedForm> {
             maxComponentId: form.maxComponentId,
             deployed: form.deployed,
             description: form.description
-        })
+        });
     }
 
     public static async getForms(includeResponses?: boolean) {
-        const models = await FormModel.findAll(includeResponses ? {include: { model: FormResponseModel, as: "responses" }} : undefined);
-        return models.map(m => m.toForm())
+        const models = await FormModel.findAll(includeResponses ? { include: { model: FormResponseByTeamModel, as: "responses" } } : undefined);
+        return models.map(m => m.toForm());
     }
 
     public static async getForm(id: string, includeResponses?: boolean) {
-        const model = await FormModel.findByPk(id, includeResponses ? {include: { model: FormResponseModel, as: "responses" }} : undefined);
+        const model = await FormModel.findByPk(id, includeResponses ? { include: { model: FormResponseByTeamModel, as: "responses" } } : undefined);
         return model?.toForm();
     }
 
     public static async getSerializedForms(includeResponses?: boolean): Promise<SerializedForm[]> {
-        const models = await FormModel.findAll(includeResponses ? {include: { model: FormResponseModel, as: "responses" }} : undefined);
-        return models.map(m => m.toJSON())
+        const models = await FormModel.findAll(includeResponses ? { include: { model: FormResponseByTeamModel, as: "responses" } } : undefined);
+        return models.map(m => m.toJSON());
     }
 
     public static async getSerializedForm(id: string, includeResponses?: boolean): Promise<SerializedForm | undefined> {
-        const model = await FormModel.findByPk(id, includeResponses ? {include: { model: FormResponseModel, as: "responses" }} : undefined);
-        return model?.toJSON()
+        const model = await FormModel.findByPk(id, includeResponses ? { include: { model: FormResponseByTeamModel, as: "responses" } } : undefined);
+        return model?.toJSON();
     }
 
     public toForm(): Form {
-        return Form.fromJSON({
-            responses: this.responses?.map(r => r.response),
-            name: this.name,
-            id: this.id,
-            description: this.description,
-            deployed: this.deployed,
-            maxComponentId: this.maxComponentId,
-            components: this.components
-        });
+        return Form.fromJSON(this);
     }
 }

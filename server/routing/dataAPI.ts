@@ -1,31 +1,59 @@
+import { FormResponseData, QuestionData, MultiTeamQuestionData } from "@shared/schemas/data";
 import express from 'express';
-import getAverageForAllTeams from '../data/getAverageForAllTeams';
-import getFormRows from '../data/getFormRows';
-import getTeamData from '../data/getTeamData';
+import getQuestionDataForAllTeams from '../data/getQuestionDataForAllTeams';
+import getQuestionDataForTeam from '../data/getQuestionDataForTeam';
 import getTeamRows from '../data/getTeamRows';
+import FormModel from '../models/forms/FormModel';
+import getAllQuestionData from "../data/getAllQuestionData";
 
 const dataApiRouter = express.Router();
 
-dataApiRouter.get("/getFormRows/:formId", async (req, res) => {
-    const rows = await getFormRows(req.params.formId);
-    if (!rows) { res.sendStatus(400); return; }
-    res.send({ ...rows });
+/** 
+ * Gets the form response data for one form. 
+ * {@link FormResponseData} 
+ */
+dataApiRouter.get("/getFormData/:formId", async (req, res) => {
+    const data = (await FormModel.getForm(req.params.formId, true))?.getResponseData();
+    if (!data) { res.sendStatus(400); return; }
+    res.send({ ...data });
 });
 
+/** 
+ * Gets the form response data for all forms where responses are about a certain team. 
+ * {@link FormResponseData[]} 
+ */
 dataApiRouter.get("/getTeamRows/:teamNumber", async (req, res) => {
     const data = await getTeamRows(parseInt(req.params.teamNumber));
     if (!data) { res.sendStatus(400); return; }
     res.send({ data });
 });
 
-dataApiRouter.get("/getAggregatedRows/:formId", async (req, res) => {
-    const data = await getAverageForAllTeams(req.params.formId);
+/** 
+ * Gets data about each question as it pertains to a certain team.
+ * {@link QuestionData} 
+ */
+dataApiRouter.get("/getTeamData/:teamNumber", async (req, res) => {
+    const data = await getQuestionDataForTeam(parseInt(req.params.teamNumber));
     if (!data) { res.sendStatus(400); return; }
-    res.send({ ...data });
+    res.send({ data });
 });
 
-dataApiRouter.get("/getTeamData/:teamNumber", async (req, res) => {
-    const data = await getTeamData(parseInt(req.params.teamNumber));
+/** 
+ * Gets the question data as it pertains to each team, and overall, for a single form.
+ * {@link MultiTeamQuestionData[]} 
+ */
+dataApiRouter.get("/getQuestionData/:formId", async (req, res) => {
+    const data = await getQuestionDataForAllTeams(req.params.formId);
+    if (!data) { res.sendStatus(400); return; }
+    res.send({ data });
+});
+
+/** 
+ * Gets the question data as it pertains to each team, and overall, for all forms.
+ * {@link MultiTeamQuestionData[]} 
+ */
+dataApiRouter.get("/getAllQuestionData", async (req, res) => {
+    const data = await getAllQuestionData();
     if (!data) { res.sendStatus(400); return; }
     res.send({ data });
 });

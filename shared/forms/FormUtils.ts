@@ -8,15 +8,15 @@ export function toSqlAcceptableString(str: string) {
         .trim()
         .replace(/\s+/g, '_')
         .replace(/[^a-zA-Z0-9_]/g, '')
-        .replace(/^(\d)/, '_$1')
+        .replace(/^(\d)/, '_$1');
 }
 
-export function removeDuplicatesByKey<T>(array: T[], key: keyof T) {
-    const seen = new Set();
-    return array.filter(item => {
-        const val = item[key];
-        if (seen.has(val)) return false;
-        seen.add(val);
-        return true;
-    });
+export function generateRandomString(length: number) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
 }

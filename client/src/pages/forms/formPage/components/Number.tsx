@@ -8,7 +8,7 @@ export default function Number({
     value,
 }: {
     component: NumberComponent;
-    onChange: (id: number, value: string) => void;
+    onChange: (id: string, value: string) => void;
     value: string;
 }) {
 

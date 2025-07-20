@@ -8,7 +8,7 @@ export default function MultipleChoice({
     value,
 }: {
     component: MultipleChoiceComponent;
-    onChange: (id: number, value: string) => void;
+    onChange: (id: string, value: string) => void;
     value: string;
 }) {
 

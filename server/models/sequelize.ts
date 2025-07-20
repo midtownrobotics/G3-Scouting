@@ -4,7 +4,7 @@ import AssignmentModel from './scheduling/AssignmentModel';
 import BlockModel from './scheduling/BlockModel';
 import UserBlockAssignmentModel from './scheduling/UserBlockAssignmentModel';
 import FormModel from './forms/FormModel';
-import FormResponseModel from './forms/FormResponseModel';
+import FormResponseByTeamModel from './forms/FormResponseModel';
 import SessionModel from './users/SessionModel';
 
 export const managementDatabase = new Sequelize({
@@ -16,7 +16,7 @@ export const managementDatabase = new Sequelize({
         BlockModel,
         UserBlockAssignmentModel,
         FormModel,
-        FormResponseModel,
+        FormResponseByTeamModel,
         SessionModel
     ],
     logging: false

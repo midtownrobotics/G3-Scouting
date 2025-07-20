@@ -1,13 +1,10 @@
-import { SerializedResponse } from "@shared/schemas/forms";
-import { AllowNull, BelongsTo, Column, CreatedAt, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
-import UserModel from "../users/UserModel";
+import { CreationOptional, InferAttributes, InferCreationAttributes } from "sequelize";
+import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
 import FormModel from "./FormModel";
-import { InferAttributes, InferCreationAttributes } from "sequelize";
-import { DateString } from "@shared/types";
-import { CreationOptional } from "sequelize";
+import { QuestionResponse } from "@shared/schemas/data";
 
-@Table({ tableName: "form_responses" })
-export default class FormResponseModel extends Model<InferAttributes<FormResponseModel>, InferCreationAttributes<FormResponseModel>> {
+@Table({ tableName: "form_responses_by_team" })
+export default class FormResponseByTeamModel extends Model<InferAttributes<FormResponseByTeamModel>, InferCreationAttributes<FormResponseByTeamModel>> {
     @Column({ type: DataType.INTEGER, primaryKey: true, autoIncrement: true })
     id!: CreationOptional<number>;
 
@@ -17,25 +14,28 @@ export default class FormResponseModel extends Model<InferAttributes<FormRespons
     @ForeignKey(() => FormModel)
     @Column({ type: DataType.STRING, onDelete: "SET NULL", allowNull: true })
     formId!: string;
- 
-    @BelongsTo(() => FormModel)
-    form!: CreationOptional<FormModel>;
+
+    @Column({ type: DataType.INTEGER })
+    team!: number;
+
+    @Column({ type: DataType.INTEGER })
+    match!: number;
 
     @Column({ type: DataType.JSON })
-    response!: SerializedResponse;
+    responses!: QuestionResponse[];
 
-    @CreatedAt
-    createdAt!: CreationOptional<Date>;
+    @Column({ type: DataType.STRING })
+    submittedAt!: string;
 
-    public static async submitResponse(response: SerializedResponse, formId: string, userId: number) {
-        response.push(["UserId", userId.toString()]);
-        response.push(["SubmittedAt", Date.now().toString()]);
-
+    public static async submitResponse(responses: QuestionResponse[], formId: string, userId: number, team: number, match: number) {
         try {
-            await FormResponseModel.create({
-                response,
+            await FormResponseByTeamModel.create({
+                responses,
                 formId,
-                userId
+                userId,
+                submittedAt: new Date().toString(),
+                team,
+                match
             });
         } catch (err: any) { }
     }

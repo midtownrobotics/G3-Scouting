@@ -5,9 +5,9 @@ import { Card, Col, Form, Row, Table } from "react-bootstrap";
 import { z } from "zod";
 import { fetchAPIJSON } from "../../../API";
 import TeamNumberInput from "../helpers/TeamNumberInput";
-import TeamDataPage from "./TeamDataPage";
+import TeamDataPage from "./TeamRows";
 
-function TeamDataCard() {
+export default function TeamSummary() {
     const [_, forceUpdate] = useState(0);
     const [questionData, setQuestionData] = useState<QuestionData[]>();
     const questionsLineGraphSelected = useRef(new Map<string, boolean>());
@@ -67,7 +67,7 @@ function TeamDataCard() {
     const pieGraphResponses = pieGraphQuestion?.responses.sort((a, b) => a.matchNumber - b.matchNumber);
 
     const qualitativeQuestions = questionData.filter(
-        (q) => q.questionMeta.classification == "qualitative" && q.questionId !== "UserId" && q.questionId !== "SubmittedAt"
+        (q) => q.questionMeta.classification == "qualitative"
     );
 
     return (
@@ -249,5 +249,3 @@ function TeamDataCard() {
         </div>
     );
 }
-
-export default TeamDataCard;
