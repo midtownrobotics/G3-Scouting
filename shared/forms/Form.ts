@@ -1,5 +1,5 @@
-import { FormResponse, FormResponseData } from "@shared/schemas/data";
 import FormResponseByTeamModel from "../../server/models/forms/FormResponseModel";
+import { FormResponse, FormResponseData } from "../schemas/data";
 import { SerializedForm } from "../schemas/forms";
 import { FormComponent } from "./FormComponents";
 import { generateRandomString, toSqlAcceptableString } from "./FormUtils";
@@ -8,7 +8,6 @@ export default class Form {
     public readonly name: string;
     public readonly id: string;
     public deployed: boolean = true;
-
     public maxComponentId: number;
 
     private components: FormComponent[] = [];

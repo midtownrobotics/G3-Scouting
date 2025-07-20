@@ -18,6 +18,13 @@ export const FormResponse = z.object({
 });
 export type FormResponse = z.infer<typeof FormResponse>;
 
+/** Data about how to validate question data. */
+export const QuestionValidationData = z.object({
+    type: z.literal("tba"),
+    path: z.string()
+})
+export type QuestionValidationData = z.infer<typeof QuestionValidationData>;
+
 /** Metadata for form questions. */
 export const QuestionMetadata = z.object({
     name: z.string(),
@@ -26,6 +33,7 @@ export const QuestionMetadata = z.object({
     namespaceId: z.string(),
     type: z.enum(["string", "number"]),
     classification: z.enum(["qualitative", "quantitative"]),
+    validation: QuestionValidationData
 });
 export type QuestionMetadata = z.infer<typeof QuestionMetadata>;
 
