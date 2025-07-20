@@ -1,4 +1,4 @@
-import { FormResponseData, TeamQuestionData } from "@shared/schemas/data";
+import { FormResponseData, QuestionData, MultiTeamQuestionData } from "@shared/schemas/data";
 import express from 'express';
 import getQuestionDataForAllTeams from '../data/getQuestionDataForAllTeams';
 import getQuestionDataForTeam from '../data/getQuestionDataForTeam';
@@ -9,7 +9,7 @@ const dataApiRouter = express.Router();
 
 /** {@link FormResponseData} */
 dataApiRouter.get("/getFormData/:formId", async (req, res) => {
-    const data = (await FormModel.getForm(req.params.formId))?.getResponseData();
+    const data = (await FormModel.getForm(req.params.formId, true))?.getResponseData();
     if (!data) { res.sendStatus(400); return; }
     res.send({ ...data });
 });
@@ -21,18 +21,18 @@ dataApiRouter.get("/getTeamRows/:teamNumber", async (req, res) => {
     res.send({ data });
 });
 
-/** {@link TeamQuestionData} */
+/** {@link QuestionData} */
 dataApiRouter.get("/getTeamData/:teamNumber", async (req, res) => {
     const data = await getQuestionDataForTeam(parseInt(req.params.teamNumber));
     if (!data) { res.sendStatus(400); return; }
-    res.send({ ...data });
+    res.send({ data });
 });
 
-/** {@link TeamQuestionData[]} */
+/** {@link MultiTeamQuestionData[]} */
 dataApiRouter.get("/getAveragedFormData/:formId", async (req, res) => {
     const data = await getQuestionDataForAllTeams(req.params.formId);
     if (!data) { res.sendStatus(400); return; }
-    res.send({ ...data });
+    res.send({ data });
 });
 
 export default dataApiRouter;

@@ -1,36 +1,35 @@
 import { JSX, useEffect, useState } from "react";
 import { Card, Col, Row } from "react-bootstrap";
 import "./Data.css";
-import FormView from "./viewers/FormView";
-import TeamDataCard from "./viewers/TeamDataCard";
-import TeamDataPage from "./viewers/TeamDataPage";
-import TeamView from "./viewers/TeamView";
+import FormRows from "./viewers/FormRows";
+import AveragedRows from "./viewers/AveragedRows";
+import TeamRows from "./viewers/TeamRows";
 
 const VIEW_OPTIONS: { title: string; description: string; component: JSX.Element }[] = [
     {
         title: "Team Summary View",
         description: "Get a summary of a team's performance and compare with others.",
-        component: <TeamDataCard />
+        component: <h1 children="WIP" /> // <TeamSummary />
     },
     {
         title: "Team Compare View",
         description: "Compare the summaries of two teams.",
-        component: <h1>WIP</h1>
+        component: <h1 children="WIP" /> //
     },
         {
-        title: "Raw Team View",
+        title: "Raw Team Data",
         description: "View all raw scouting data for a single team, across all forms.",
-        component: <TeamDataPage />
+        component: <TeamRows />
     },
     {
-        title: "Team Averages View",
+        title: "Team Averages",
         description: "See averaged stats for each team across all their matches.",
-        component: <TeamView />
+        component: <AveragedRows />
     },
     {
-        title: "Raw Form View",
+        title: "Raw Form Data",
         description: "View all individual form submissions exactly as they were entered.",
-        component: <FormView />
+        component: <FormRows />
     },
 ];
 

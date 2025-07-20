@@ -1,24 +1,23 @@
-import { TeamRowsResponse } from "@shared/schemas/data";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import FormDataTable from "../helpers/FormDataTable";
 import TeamNumberInput from "../helpers/TeamNumberInput";
 import { fetchAPIJSON } from "../../../API";
+import { FormResponseData } from "@shared/schemas/data";
+import FormResponseTable from "../helpers/FormResponseTable";
 
-function TeamDataPage({ hideSelector }: { hideSelector?: boolean; }) {
-    const [teamRowsResponse, setTeamRowsResponse] = useState<TeamRowsResponse>();
+export default function TeamRows({ hideSelector }: { hideSelector?: boolean; }) {
+    const [formsResponseData, setFormsResponseData] = useState<FormResponseData[]>();
     const [team, setTeam] = useState<number>(parseInt(new URLSearchParams(window.location.search).get("team") ?? "0"));
 
     useEffect(() => {
-        console.log(team);
         if (team === undefined) return;
         fetchAPIJSON(`/data/getTeamRows/${team}`).then(data => {
-            const parsed = z.object({ data: TeamRowsResponse }).safeParse(data);
-            if (parsed.success) setTeamRowsResponse(parsed.data.data);
+            const parsed = z.object({ data: z.array(FormResponseData) }).safeParse(data);
+            if (parsed.success) setFormsResponseData(parsed.data.data);
         });
     }, [team]);
 
-    if (!teamRowsResponse || !team) return (
+    if (!formsResponseData || !team) return (
         <div className="p-3">
             <h1>Raw Team Data</h1>
             <br />
@@ -33,14 +32,12 @@ function TeamDataPage({ hideSelector }: { hideSelector?: boolean; }) {
                 <br />
                 <TeamNumberInput onSubmit={v => setTeam(v)} />
             </>}
-            {teamRowsResponse.map((f, i) =>
-                <div key={i}>
-                    <h3>{f.form}</h3>
-                    <FormDataTable formRowResponse={f.responses} />
+            {formsResponseData.map(f =>
+                <div key={f.formId}>
+                    <h3>{f.formId}</h3>
+                    <FormResponseTable formResponseData={f} />
                 </div>
             )}
         </div>
     );
 }
-
-export default TeamDataPage;

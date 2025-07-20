@@ -1,9 +1,8 @@
 import { FormResponse, FormResponseData } from "@shared/schemas/data";
-import { randomBytes } from "crypto";
 import FormResponseByTeamModel from "../../server/models/forms/FormResponseModel";
 import { SerializedForm } from "../schemas/forms";
 import { FormComponent } from "./FormComponents";
-import { toSqlAcceptableString } from "./FormUtils";
+import { generateRandomString, toSqlAcceptableString } from "./FormUtils";
 
 export default class Form {
     public readonly name: string;
@@ -23,7 +22,7 @@ export default class Form {
         this.maxComponentId = maxComponentId ?? 0;
 
         const uniqueMap = new Map<string, FormComponent>();
-        for (const component of this.components) {
+        for (const component of components ?? []) {
             const id = component.getId();
             if (!uniqueMap.has(id)) {
                 uniqueMap.set(id, component);
@@ -42,7 +41,7 @@ export default class Form {
      */
     public addComponent(component: FormComponent): boolean {
         if (this.components.some(c => c.name && c.name == component.name)) return false;
-        component.createMetadata(`${component.name || randomBytes(4).toString('hex')}-${this.maxComponentId++}`, this.id);
+        component.createMetadata(`${component.name || generateRandomString(6)}-${this.maxComponentId++}`, this.id);
         this.components.push(component);
         return true;
     }

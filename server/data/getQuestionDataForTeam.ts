@@ -1,8 +1,8 @@
-import { QuestionData, QuestionMetadata, TeamQuestionData } from "@shared/schemas/data";
+import { QuestionData, QuestionMetadata } from "@shared/schemas/data";
 import FormModel from "../models/forms/FormModel";
-import { aggregateResponse, AggregationEntry, computeAverage, namespacedId } from "./getQuestionDataUtils";
+import { aggregateResponse, AggregationEntry, computeAverage } from "./getQuestionDataUtils";
 
-export default async function getQuestionDataForTeam(team: number): Promise<TeamQuestionData | null> {
+export default async function getQuestionDataForTeam(team: number): Promise<QuestionData[] | null> {
     const allForms = await FormModel.getForms(true);
     const metadataMap = new Map<string, QuestionMetadata>();
     const aggregation = new Map<string, AggregationEntry>();
@@ -13,14 +13,14 @@ export default async function getQuestionDataForTeam(team: number): Promise<Team
 
         for (const q of formData.questions) {
             if (q.classification !== "quantitative") continue;
-            metadataMap.set(namespacedId(q.formId, q.id), q);
+            metadataMap.set(q.namespaceId, q);
         }
 
         for (const formResponse of formData.responses) {
             if (formResponse.team !== team) continue;
 
             for (const { question, response } of formResponse.responses) {
-                aggregateResponse(aggregation, metadataMap, formResponse.formId, question, response, formResponse.match);
+                aggregateResponse(aggregation, metadataMap, `${formResponse.formId}-${question}`, response, formResponse.match);
             }
         }
     }
@@ -36,8 +36,5 @@ export default async function getQuestionDataForTeam(team: number): Promise<Team
         });
     }
 
-    return {
-        questionData,
-        team
-    };
+    return questionData;
 }

@@ -16,7 +16,7 @@ export abstract class FormComponent {
 
     public static fromJSON(json: SerializedComponent, formId: string): FormComponent {
         const instance = new formComponents[json.type](...(json.creationArgs as [any, any, any]));
-        instance.setMetadata(json.id, formId);
+        instance.createMetadata(json.id, formId);
         return instance;
     }
 }
@@ -84,6 +84,7 @@ export class MultipleChoice extends FormComponent {
             classification: "quantitative",
             id,
             formId,
+            namespaceId: `${formId}-${id}`,
             name: this.name
         };
     }
@@ -116,7 +117,8 @@ export class ShortResponse extends FormComponent {
             type: "string",
             classification: "qualitative",
             id,
-            formId
+            formId,
+            namespaceId: `${formId}-${id}`,
         };
     }
 
@@ -148,7 +150,8 @@ export class Number extends FormComponent {
             classification: "quantitative",
             name: this.name,
             id,
-            formId
+            formId,
+            namespaceId: `${formId}-${id}`,
         };
     }
 

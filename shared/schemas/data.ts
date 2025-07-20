@@ -23,6 +23,7 @@ export const QuestionMetadata = z.object({
     name: z.string(),
     id: z.string(),
     formId: z.string(),
+    namespaceId: z.string(),
     type: z.enum(["string", "number"]),
     classification: z.enum(["qualitative", "quantitative"]),
 });
@@ -47,9 +48,17 @@ export const QuestionData = z.object({
 });
 export type QuestionData = z.infer<typeof QuestionData>;
 
-/** The data for all questions for a certain team. */
-export const TeamQuestionData = z.object({
-    team: z.number(),
-    questionData: z.array(QuestionData)
+/** Data about a question, including its responses and average for multiple teams. */
+export const MultiTeamQuestionData = z.object({
+    metadata: QuestionMetadata,
+    totalAverage: z.number().optional(),
+    maxAverage: z.object({
+        average: z.number(),
+        team: z.number()
+    }).optional(),
+    teamData: z.array(z.object({
+        questionData: QuestionData,
+        team: z.number()
+    }))
 });
-export type TeamQuestionData = z.infer<typeof TeamQuestionData>;
+export type MultiTeamQuestionData = z.infer<typeof MultiTeamQuestionData>;

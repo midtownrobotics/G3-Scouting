@@ -4,11 +4,6 @@ type StringAggregation = { values: Map<string, number>, responses: { response: s
 type NumberAggregation = { sum: number, count: number, responses: { response: string, match: number; }[]; };
 export type AggregationEntry = StringAggregation | NumberAggregation;
 
-/** Get a namespaced key for a question */
-export function namespacedId(formId: string, questionId: string): string {
-    return `${formId}:${questionId}`;
-}
-
 /** Compute averages */
 export function computeAverage(metadata: QuestionMetadata, data: AggregationEntry): string | number {
     if (metadata.type === "string" && "values" in data) {
@@ -27,12 +22,11 @@ export function computeAverage(metadata: QuestionMetadata, data: AggregationEntr
 export function aggregateResponse(
     aggregation: Map<string, AggregationEntry>,
     metadataMap: Map<string, QuestionMetadata>,
-    formId: string,
-    questionId: string,
+    namespacedId: string,
     response: string,
     match: number
 ) {
-    const key = namespacedId(formId, questionId);
+    const key = namespacedId;
     const metadata = metadataMap.get(key);
     if (!metadata) return;
 
