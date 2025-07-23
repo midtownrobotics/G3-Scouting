@@ -1,5 +1,5 @@
-import { MultiTeamQuestionData, QuestionResponse } from "@shared/schemas/data";
-import FormModel from "../models/forms/FormModel";
+import { MultiTeamQuestionData } from "@shared/schemas/data";
+import FormModel from "../../models/forms/FormModel";
 import getQuestionDataForAllTeams from "./getQuestionDataForAllTeams";
 
 export default async function getAllQuestionData() {

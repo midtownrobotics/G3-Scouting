@@ -22,19 +22,29 @@ export type FormResponse = z.infer<typeof FormResponse>;
 export const QuestionValidationData = z.object({
     type: z.literal("tba"),
     path: z.string()
-})
+});
 export type QuestionValidationData = z.infer<typeof QuestionValidationData>;
 
 /** Metadata for form questions. */
-export const QuestionMetadata = z.object({
-    name: z.string(),
-    id: z.string(),
-    formId: z.string(),
-    namespaceId: z.string(),
-    type: z.enum(["string", "number"]),
-    classification: z.enum(["qualitative", "quantitative"]),
-    validation: QuestionValidationData
-});
+export const QuestionMetadata = z.union([
+    z.object({
+        name: z.string(),
+        id: z.string(),
+        formId: z.string(),
+        namespaceId: z.string(),
+        type: z.enum(["string", "number"]),
+        classification: z.enum(["qualitative", "quantitative"])
+    }),
+    z.object({
+        name: z.string(),
+        id: z.string(),
+        formId: z.string(),
+        namespaceId: z.string(),
+        type: z.literal("number"),
+        classification: z.literal("quantitative"),
+        validation: QuestionValidationData
+    })
+]);
 export type QuestionMetadata = z.infer<typeof QuestionMetadata>;
 
 /** Contains information about the form responses including the form id, the questions, and the responses themselves. */

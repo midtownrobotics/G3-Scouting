@@ -1,5 +1,5 @@
 import { FormResponseData } from "@shared/schemas/data";
-import FormModel from "../models/forms/FormModel";
+import FormModel from "../../models/forms/FormModel";
 
 export default async function getTeamRows(team: number): Promise<FormResponseData[]> {
     const formDatas = (await Promise.all(

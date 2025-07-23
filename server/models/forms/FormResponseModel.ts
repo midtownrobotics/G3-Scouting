@@ -30,12 +30,12 @@ export default class FormResponseByTeamModel extends Model<InferAttributes<FormR
     public static async submitResponse(responses: QuestionResponse[], formId: string, userId: number, team: number, match: number) {
         try {
             await FormResponseByTeamModel.create({
-                responses,
-                formId,
-                userId,
                 submittedAt: new Date().toString(),
+                match,
+                userId,
+                formId,
                 team,
-                match
+                responses
             });
         } catch (err: any) { }
     }

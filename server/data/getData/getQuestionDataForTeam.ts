@@ -1,5 +1,5 @@
 import { QuestionData, QuestionMetadata } from "@shared/schemas/data";
-import FormModel from "../models/forms/FormModel";
+import FormModel from "../../models/forms/FormModel";
 import { aggregateResponse, AggregationEntry, computeAverage } from "./getQuestionDataUtils";
 
 export default async function getQuestionDataForTeam(team: number): Promise<QuestionData[] | null> {

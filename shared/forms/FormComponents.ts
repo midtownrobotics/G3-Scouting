@@ -1,4 +1,4 @@
-import { QuestionMetadata } from "../schemas/data";
+import { QuestionMetadata, QuestionValidationData } from "../schemas/data";
 import { SerializedComponent } from "../schemas/forms";
 
 export abstract class FormComponent {
@@ -140,7 +140,7 @@ export class Number extends FormComponent {
      * @param question The question itself. Ex: `"How old are you?"`
      * @param name The form unique name of the question. Ex: `"Age"`
      */
-    constructor(public question: string, public name: string) {
+    constructor(public question: string, public name: string, public validation?: QuestionValidationData) {
         super();
     }
 
@@ -152,6 +152,7 @@ export class Number extends FormComponent {
             id,
             formId,
             namespaceId: `${formId}-${id}`,
+            validation: this.validation
         };
     }
 
@@ -159,7 +160,7 @@ export class Number extends FormComponent {
         if (!this.metadata) throw new Error("Cannot serialize component without adding it to a form.");
         return {
             type: "Number",
-            creationArgs: [this.question, this.metadata.name],
+            creationArgs: [this.question, this.metadata.name, this.validation],
             id: this.id
         };
     }

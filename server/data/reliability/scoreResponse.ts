@@ -1,0 +1,67 @@
+import { FormResponseData } from "@shared/schemas/data";
+import { getValueByPath } from "../../externalApis/tba/getValueByPath";
+import { getMatchData } from "../../externalApis/tba/tba";
+
+export default async function scoreAllianceData(
+    match: number,
+    alliance: "red" | "blue",
+    formData: FormResponseData
+): Promise<number | false> {
+    const matchTbaData = await getMatchData(match);
+    if (!matchTbaData) return false;
+
+    const alliances = {
+        blue: matchTbaData.alliances.blue.team_keys.map(t => parseInt(t.slice(3))),
+        red: matchTbaData.alliances.red.team_keys.map(t => parseInt(t.slice(3)))
+    };
+
+    const matchData = formData.responses.filter(r =>
+        r.match === match &&
+        alliances[alliance].includes(r.team)
+    );
+    const teams = new Set(matchData.map(r => r.team));
+
+    if (teams.size !== 3) return false;
+
+    let totalAccuracy = 0;
+    let scoredQuestions = 0;
+    for (const question of formData.questions) {
+        if (!("validation" in question) || question.validation === undefined) continue;
+
+        const realValue = question.validation.type === "tba"
+            ? getValueByPath(matchTbaData, question.validation.path, alliance)
+            : undefined;
+        if (!realValue) continue;
+
+        let totalValue = 0;
+        for (const team of teams) {
+            const teamData = matchData.filter(r => r.team === team);
+            let teamValue = 0;
+            for (const response of teamData) {
+                const value = response.responses.find(r => r.question === question.id)?.response;
+                teamValue += parseInt(value ?? "0");
+            }
+            totalValue += teamValue / teamData.length;
+        }
+
+        totalAccuracy += weightedAccuracy(totalValue, realValue);
+        scoredQuestions++;
+    }
+
+    return +(totalAccuracy / scoredQuestions).toFixed(2);
+}
+
+function weightedAccuracy(input: number, real: number): number {
+    if (real === 0 && input === 0) return 100;
+
+    const diff = Math.abs(input - real);
+
+    if (diff <= 0.5) return 95;
+    if (diff <= 1) return 90;
+    if (diff <= 2) return 80;
+
+    const scale = Math.max(real, input, 3);
+
+    const accuracy = Math.min(Math.max(0, 1 - diff / scale), 0.8);
+    return +(accuracy * 100).toFixed(2);
+}

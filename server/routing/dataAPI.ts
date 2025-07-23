@@ -1,10 +1,10 @@
 import { FormResponseData, QuestionData, MultiTeamQuestionData } from "@shared/schemas/data";
 import express from 'express';
-import getQuestionDataForAllTeams from '../data/getQuestionDataForAllTeams';
-import getQuestionDataForTeam from '../data/getQuestionDataForTeam';
-import getTeamRows from '../data/getTeamRows';
+import getQuestionDataForAllTeams from '../data/getData/getQuestionDataForAllTeams';
+import getQuestionDataForTeam from '../data/getData/getQuestionDataForTeam';
+import getTeamRows from '../data/getData/getTeamRows';
 import FormModel from '../models/forms/FormModel';
-import getAllQuestionData from "../data/getAllQuestionData";
+import getAllQuestionData from "../data/getData/getAllQuestionData";
 
 const dataApiRouter = express.Router();
 
