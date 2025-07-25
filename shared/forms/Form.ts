@@ -1,5 +1,5 @@
-import { FormResponse, FormResponseData } from "@shared/schemas/data";
 import FormResponseByTeamModel from "../../server/models/forms/FormResponseModel";
+import { FormResponse, FormResponseData } from "../schemas/data";
 import { SerializedForm } from "../schemas/forms";
 import { FormComponent } from "./FormComponents";
 import { generateRandomString, toSqlAcceptableString } from "./FormUtils";
@@ -8,17 +8,19 @@ export default class Form {
     public readonly name: string;
     public readonly id: string;
     public deployed: boolean = true;
-
     public maxComponentId: number;
 
     private components: FormComponent[] = [];
+
+    public get needsValidation(): boolean {
+        return this.components.some(c => c.needsValidation);
+    }
 
     constructor(name: string, description: string);
     constructor(name: string, description: string, components: FormComponent[], maxComponentId: number, responses?: FormResponse[]);
     constructor(name: string, public description: string, components?: FormComponent[], maxComponentId?: number, private responses?: FormResponse[]) {
         this.name = name;
         this.id = toSqlAcceptableString(name);
-
         this.maxComponentId = maxComponentId ?? 0;
 
         const uniqueMap = new Map<string, FormComponent>();
@@ -41,7 +43,7 @@ export default class Form {
      */
     public addComponent(component: FormComponent): boolean {
         if (this.components.some(c => c.name && c.name == component.name)) return false;
-        component.createMetadata(`${component.name || generateRandomString(6)}-${this.maxComponentId++}`, this.id);
+        component.setMetadata(`${component.name || generateRandomString(6)}-${this.maxComponentId++}`, this.id);
         this.components.push(component);
         return true;
     }
@@ -58,19 +60,25 @@ export default class Form {
     }
 
     public updateResponseData(models: FormResponseByTeamModel[]) {
-        this.responses = models;
+        this.responses = models.map(m => m.toJSON());
     }
 
     /** Gets response data for this form, if form has associated data. 
-     * @returns `null` if there are no reponses. Try passing `true` into FormModle.getForm(). */
-    public getResponseData(): FormResponseData | null {
+     * @param minAccuracy The minimum accuracy for responses to be included in the data result.
+     * @returns `null` if there are no reponses. Be sure to pass `true` into FormModel.getForm(s).
+     */
+    public getResponseData(minAccuracy?: number): FormResponseData | null {
         if (!this.responses) return null;
         const questions = this.components.filter(c => c.metadata !== null).map(q => q.metadata!);
 
         return {
             formId: this.id,
             questions,
-            responses: this.responses
+            responses: (
+                minAccuracy === undefined
+                    ? this.responses
+                    : this.responses.filter(r => (r.accuracyScore || 0) >= minAccuracy)
+            )
         };
     }
 

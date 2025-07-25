@@ -1,7 +1,7 @@
-import { CreationOptional, InferAttributes, InferCreationAttributes } from "sequelize";
-import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
-import FormModel from "./FormModel";
 import { QuestionResponse } from "@shared/schemas/data";
+import { CreationOptional, InferAttributes, InferCreationAttributes } from "sequelize";
+import { Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
+import FormModel from "./FormModel";
 
 @Table({ tableName: "form_responses_by_team" })
 export default class FormResponseByTeamModel extends Model<InferAttributes<FormResponseByTeamModel>, InferCreationAttributes<FormResponseByTeamModel>> {
@@ -27,15 +27,18 @@ export default class FormResponseByTeamModel extends Model<InferAttributes<FormR
     @Column({ type: DataType.STRING })
     submittedAt!: string;
 
+    @Column({type: DataType.FLOAT, defaultValue: null})
+    accuracyScore!: number | null;
+
     public static async submitResponse(responses: QuestionResponse[], formId: string, userId: number, team: number, match: number) {
         try {
             await FormResponseByTeamModel.create({
-                responses,
-                formId,
-                userId,
                 submittedAt: new Date().toString(),
+                match,
+                userId,
+                formId,
                 team,
-                match
+                responses
             });
         } catch (err: any) { }
     }

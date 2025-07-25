@@ -1,14 +1,14 @@
 import { QuestionData, QuestionMetadata } from "@shared/schemas/data";
-import FormModel from "../models/forms/FormModel";
+import FormModel from "../../models/forms/FormModel";
 import { aggregateResponse, AggregationEntry, computeAverage } from "./getQuestionDataUtils";
 
-export default async function getQuestionDataForTeam(team: number): Promise<QuestionData[] | null> {
+export default async function getQuestionDataForTeam(team: number, minAccuracy?: number): Promise<QuestionData[] | null> {
     const allForms = await FormModel.getForms(true);
     const metadataMap = new Map<string, QuestionMetadata>();
     const aggregation = new Map<string, AggregationEntry>();
 
     for (const form of allForms) {
-        const formData = form.getResponseData();
+        const formData = form.getResponseData(minAccuracy);
         if (!formData) continue;
 
         for (const q of formData.questions) {

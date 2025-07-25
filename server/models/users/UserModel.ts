@@ -1,10 +1,12 @@
 import { Assignment } from "@shared/schemas/schedule";
 import bcrypt from 'bcrypt';
-import { Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
+import { BelongsToMany, Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
 import { getCurrentBlockId } from "../../scheduling/timeUtils";
 import { NextMatch } from "../../types";
 import UserBlockAssignmentModel from "../scheduling/UserBlockAssignmentModel";
 import { User, UserCreationAttributes } from "../types";
+import AccuracyScoreModel from "../validation/AccuracyScoreModel";
+import ScoutAccuracyScoreModel from "../validation/ScoutAccuracyScoreModel";
 
 @Table({ tableName: "users", defaultScope: { include: [{ model: UserBlockAssignmentModel, as: "schedule" }] } })
 class UserModel extends Model<User, UserCreationAttributes> {
@@ -53,7 +55,7 @@ class UserModel extends Model<User, UserCreationAttributes> {
             UserModel.count({ where: { redAlliance: false } }),
         ]);
 
-        bcrypt.hash(password, 12, async function(err, hash) {
+        bcrypt.hash(password, 12, async function (err, hash) {
             if (!err) {
                 await UserModel.create({
                     username,
@@ -68,13 +70,13 @@ class UserModel extends Model<User, UserCreationAttributes> {
     }
 
     public getCurrentAssignment() {
-        return this.getAssignment(getCurrentBlockId())
+        return this.getAssignment(getCurrentBlockId());
     }
 
     public async getAssignment(blockId: number): Promise<Assignment | undefined> {
         const fromMemory = this.schedule.find(a => a.blockId === blockId)?.assignment;
         if (fromMemory) return fromMemory.toJSON();
-    
+
         const record = await UserBlockAssignmentModel.findOne({ where: { userId: this.id, blockId } });
         return record?.assignment?.toJSON();
     }

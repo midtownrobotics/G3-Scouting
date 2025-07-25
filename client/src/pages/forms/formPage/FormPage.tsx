@@ -28,8 +28,8 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
         if (!form.current) return submittingFail();
 
         const res = await postAPI("/forms/submitForm", {
-            response: Array.from(answers),
-            form: form.current.id,
+            responses: Array.from(answers).map(([question, response]) => ({ question, response })),
+            formId: form.current.id,
             match,
             team
         });
@@ -55,10 +55,10 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
                 <DisabledInput val={team}>Team Number</DisabledInput>
                 {form.current?.getComponents().map(c => (
                     <FormComponent
-                        key={c.id}
+                        key={c.getId()}
                         component={c}
                         onAnswerChange={handleAnswerChange}
-                        answer={answers.get(c.id)}
+                        answer={answers.get(c.getId())}
                     />
                 ))}
             </BSForm>

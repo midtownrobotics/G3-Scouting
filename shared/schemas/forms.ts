@@ -3,7 +3,7 @@ import formComponents from '../forms/FormComponents';
 import { FormResponse } from './data';
 
 export const SerializedComponent = z.object({
-    type: z.enum(Object.keys(formComponents) as [keyof typeof formComponents, ...(keyof typeof formComponents)[]]),
+type: z.enum(Object.keys(formComponents) as [keyof typeof formComponents, ...(keyof typeof formComponents)[]]),
     id: z.string(),
     creationArgs: z.array(z.any())
 });
