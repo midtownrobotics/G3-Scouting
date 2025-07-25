@@ -20,3 +20,15 @@ export const LogColors = {
         White: "\x1b[37m"
     }
 } as const;
+
+export function renderProgress(current: number, total: number, barWidth: number = 40) {
+    const progress = current / total;
+    const filled = Math.round(barWidth * progress);
+    const empty = barWidth - filled;
+
+    const bar = "█".repeat(filled) + "-".repeat(empty);
+    const percent = (progress * 100).toFixed(1).padStart(5, " ");
+
+    process.stdout.write(`\r[${bar}] ${percent}% (${current}/${total})`);
+    if (current === total) process.stdout.write('\n');
+}

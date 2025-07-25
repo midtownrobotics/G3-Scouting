@@ -12,12 +12,15 @@ export default class Form {
 
     private components: FormComponent[] = [];
 
+    public get needsValidation(): boolean {
+        return this.components.some(c => c.needsValidation);
+    }
+
     constructor(name: string, description: string);
     constructor(name: string, description: string, components: FormComponent[], maxComponentId: number, responses?: FormResponse[]);
     constructor(name: string, public description: string, components?: FormComponent[], maxComponentId?: number, private responses?: FormResponse[]) {
         this.name = name;
         this.id = toSqlAcceptableString(name);
-
         this.maxComponentId = maxComponentId ?? 0;
 
         const uniqueMap = new Map<string, FormComponent>();
@@ -40,7 +43,7 @@ export default class Form {
      */
     public addComponent(component: FormComponent): boolean {
         if (this.components.some(c => c.name && c.name == component.name)) return false;
-        component.createMetadata(`${component.name || generateRandomString(6)}-${this.maxComponentId++}`, this.id);
+        component.setMetadata(`${component.name || generateRandomString(6)}-${this.maxComponentId++}`, this.id);
         this.components.push(component);
         return true;
     }
@@ -61,7 +64,7 @@ export default class Form {
     }
 
     /** Gets response data for this form, if form has associated data. 
-     * @returns `null` if there are no reponses. Try passing `true` into FormModle.getForm(). */
+     * @returns `null` if there are no reponses. Try passing `true` into FormModel.getForm(). */
     public getResponseData(): FormResponseData | null {
         if (!this.responses) return null;
         const questions = this.components.filter(c => c.metadata !== null).map(q => q.metadata!);

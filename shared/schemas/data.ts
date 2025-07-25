@@ -7,14 +7,16 @@ export const QuestionResponse = z.object({
 });
 export type QuestionResponse = z.infer<typeof QuestionResponse>;
 
-/** A response to a form, including a team, match, and the question: response pairs. If sent from the server, will contain `userId` and `submittedAt`. */
+/** A response to a form, including a team, match, and the question: response pairs. If sent from the server, will contain `userId`, `submittedAt`, `id`, and `accuracyScore`. */
 export const FormResponse = z.object({
     responses: z.array(QuestionResponse),
     formId: z.string(),
     team: z.number(),
     match: z.number(),
     userId: z.number().optional(),
-    submittedAt: z.string().optional()
+    submittedAt: z.string().optional(),
+    id: z.number().optional(),
+    accuracyScore: z.number().nullable().optional()
 });
 export type FormResponse = z.infer<typeof FormResponse>;
 

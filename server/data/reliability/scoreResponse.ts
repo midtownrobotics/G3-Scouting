@@ -1,12 +1,19 @@
 import { FormResponseData } from "@shared/schemas/data";
 import { getValueByPath } from "../../externalApis/tba/getValueByPath";
 import { getMatchData } from "../../externalApis/tba/tba";
+import { keepTryingQuery } from "../../models/modelUtils";
+import AccuracyScoreModel from "../../models/validation/AccuracyScoreModel";
+import FormResponseByTeamModel from "../../models/forms/FormResponseModel";
+import ScoutAccuracyScoreModel from "../../models/validation/ScoutAccuracyScoreModel";
 
 export default async function scoreAllianceData(
     match: number,
     alliance: "red" | "blue",
     formData: FormResponseData
 ): Promise<number | false> {
+    const currentModel = await keepTryingQuery(() => AccuracyScoreModel.findOne({ where: { match, alliance } }));
+    if (currentModel !== null && currentModel.score !== null) return currentModel.score;
+
     const matchTbaData = await getMatchData(match);
     if (!matchTbaData) return false;
 
@@ -20,18 +27,19 @@ export default async function scoreAllianceData(
         alliances[alliance].includes(r.team)
     );
     const teams = new Set(matchData.map(r => r.team));
+    const users = new Set(matchData.map(r => r.userId));
 
     if (teams.size !== 3) return false;
 
     let totalAccuracy = 0;
     let scoredQuestions = 0;
     for (const question of formData.questions) {
-        if (!("validation" in question) || question.validation === undefined) continue;
+        if (!("validation" in question) || question.validation === null) continue;
 
         const realValue = question.validation.type === "tba"
             ? getValueByPath(matchTbaData, question.validation.path, alliance)
             : undefined;
-        if (!realValue) continue;
+        if (realValue === undefined) continue;
 
         let totalValue = 0;
         for (const team of teams) {
@@ -48,7 +56,34 @@ export default async function scoreAllianceData(
         scoredQuestions++;
     }
 
-    return +(totalAccuracy / scoredQuestions).toFixed(2);
+    const score = +(totalAccuracy / scoredQuestions).toFixed(2);
+
+    const [model, created] = await keepTryingQuery(() => AccuracyScoreModel.findOrCreate({
+        where: { match, alliance },
+        defaults: { score }
+    }));
+
+    if (!created) {
+        model.score = score;
+        await keepTryingQuery(() => model.save());
+    }
+
+    for (const userId of users) {
+        if (userId === undefined) continue;
+        await keepTryingQuery(() => ScoutAccuracyScoreModel.findOrCreate({
+            where: {
+                userId: userId,
+                accuracyScoreId: model.id
+            }
+        }));
+    };
+
+    for (const response of matchData) {
+        const responseModel = await FormResponseByTeamModel.findByPk(response.id)
+        responseModel?.update({ accuracyScore: score });
+    };
+
+    return score;
 }
 
 function weightedAccuracy(input: number, real: number): number {
