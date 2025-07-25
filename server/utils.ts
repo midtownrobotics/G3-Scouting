@@ -32,3 +32,14 @@ export function renderProgress(current: number, total: number, barWidth: number 
     process.stdout.write(`\r[${bar}] ${percent}% (${current}/${total})`);
     if (current === total) process.stdout.write('\n');
 }
+
+/** Parses a number and rounds if decimal is defined. */
+export function numberParser(val: string | number | undefined, decimal?: number) {
+    if (val === undefined) return undefined;
+
+    if (typeof val === "string") val = parseFloat(val);
+    if (decimal === undefined) return val;
+
+    decimal = 10**decimal;
+    return Math.round(val*decimal)/decimal;
+}

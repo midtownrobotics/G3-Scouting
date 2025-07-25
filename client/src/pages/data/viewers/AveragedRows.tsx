@@ -20,12 +20,12 @@ export default function AveragedRows() {
 
     const { rows, columns } = useMemo(() => {
         const table = new Map<number, { [key: string]: number | string | undefined; }>();
-        const columns = [{ key: "team", label: "Team" }];
-
+        const columns = [{ key: "team", label: "Team" }, { key: "responsesLength", label: "Responses" }];
+        
         for (const { metadata, teamData } of teamQuestionData ?? []) {
             columns.push({ key: metadata.namespaceId, label: metadata.name });
             for (const { team, questionData } of teamData) {
-                if (!table.has(team)) table.set(team, { team });
+                if (!table.has(team)) table.set(team, { team, responsesLength: questionData.responses.length });
                 let average = questionData.average;
                 if (typeof average === "number") average = Math.round(average*100)/100
                 table.get(team)![metadata.namespaceId] = average;

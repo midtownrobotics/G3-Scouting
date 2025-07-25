@@ -9,7 +9,7 @@ import { server } from "./routing/router";
 import { scheduleReminders } from "./slack/shiftReminders";
 import { getSettings, writeSettings } from "./storage";
 import { Settings } from "./types";
-import { LogColors } from "./utils";
+import { LogColors, numberParser } from "./utils";
 import { parse } from "papaparse";
 import fs from "fs";
 import path from "path";
@@ -69,8 +69,13 @@ async function testCode() {
     FormModel.storeForm(form);
 
     form.updateResponseData(await FormResponseByTeamModel.findAll({ where: { formId: form.id } }));
-    const responseData = form.getResponseData();
-    if (!responseData) return;
+    console.log(form.getResponseData()?.responses.length!);
+    // console.log(form.getResponseData(25)?.responses.length!);
+    console.log(form.getResponseData(50)?.responses.length!);
+    // console.log(form.getResponseData(75)?.responses.length!);
+    console.log(form.getResponseData(90)?.responses.length!);
+    // console.log(form.getResponseData(95)?.responses.length!);
+    // if (!responseData) return;
 
     // await scoreAllForms();
 
