@@ -16,7 +16,7 @@ const adminAPIRouter = express.Router();
  * Creates getter and setter routes for a value.
  * @param getter The function to get the value and send to client. GET route sends `{"value": string}`.
  * @param setter The function to set the value using posted data. POST route expects `{"value": string}`.
- * @param valueKey The key to be used in the route listener urls. Ex: `"Key"` -> `/api/admin/setKey` and `/api/admin/getKey`
+ * @param valueKey The key to be used in the route listener urls. Ex: `"Ex"` -> `/api/admin/setEx` and `/api/admin/getEx`
  */
 function createValueRoute(getter: () => Promise<string>, setter: (value: string) => Promise<void>, valueKey: string) {
     adminAPIRouter.post(`/set${valueKey}`, async (req: Request, res: Response) => {
@@ -76,22 +76,10 @@ createValueRoute(async () => {
     writeSettings(settings);
 }, "TbaToken");
 
-createValueRoute(async () => {
-    return (await getSettings()).dayNumber.toString();
-}, async (val) => {
-    const intVal = parseInt(val);
-    if (Number.isNaN(intVal)) return;
-    const settings = await getSettings();
-    settings.dayNumber = intVal;
-    writeSettings(settings);
-}, "DayNumber");
-
 adminAPIRouter.post("/addUser", async (req: Request, res: Response) => {
     const body = CreateUser.safeParse(req.body);
 
     if (body.success && body.data) {
-        const settings = await getSettings();
-
         if (await isValidUser(body.data)) {
             UserModel.addUser(body.data.username, body.data.password, body.data.permissionId, body.data.reliable);
             res.sendStatus(200);
@@ -202,19 +190,6 @@ adminAPIRouter.post("/deletePerm", async (req: Request, res: Response) => {
             return;
         }
         settings.permissionLevels.splice(i, 1);
-        writeSettings(settings);
-        res.sendStatus(200);
-        return;
-    }
-    res.sendStatus(400);
-});
-
-adminAPIRouter.post("/changeDay", async (req: Request, res: Response) => {
-    const body = z.number().safeParse(req.body);
-
-    if (body.success && body.data) {
-        let settings = await getSettings();
-        settings.dayNumber = body.data;
         writeSettings(settings);
         res.sendStatus(200);
         return;

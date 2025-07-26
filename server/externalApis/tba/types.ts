@@ -23,6 +23,6 @@ export const TbaMatchData = z.object({
         red: z.unknown(),
         blue: z.unknown()
     }),
-    winning_alliance: z.enum(["red", "blue"])
+    winning_alliance: z.enum(["red", "blue", ""])
 }).passthrough()
 export type TbaMatchData = z.infer<typeof TbaMatchData>;

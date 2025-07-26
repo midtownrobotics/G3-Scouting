@@ -43,17 +43,6 @@ function Admin() {
                     <tbody>
                         <tr>
                             <td>
-                                <SaveableTextInput get={"/admin/getTbaToken"} post={"/admin/setTbaToken"}>TBA Token</SaveableTextInput>
-                            </td>
-                            <td>
-                                <SaveableTextInput get={"/admin/getDayNumber"} post={"/admin/setDayNumber"}>Day Number</SaveableTextInput>
-                            </td>
-                            <td>
-                                <SaveableTextInput get={"/admin/getEventKey"} post={"/admin/setEventKey"}>Event Key</SaveableTextInput>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
                                 <SaveableTextInput get={"/admin/getSlackClientSecret"} post={"/admin/setSlackClientSecret"}>Slack Client Secret</SaveableTextInput>
                             </td>
                             <td>
@@ -61,6 +50,16 @@ function Admin() {
                             </td>
                             <td>
                                 <SaveableTextInput get={"/admin/getSlackOathToken"} post={"/admin/setSlackOathToken"}>Slack Oath Token</SaveableTextInput>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <SaveableTextInput get={"/admin/getTbaToken"} post={"/admin/setTbaToken"}>TBA Token</SaveableTextInput>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                                <SaveableTextInput get={"/admin/getEventKey"} post={"/admin/setEventKey"}>Event Key</SaveableTextInput>
                             </td>
                         </tr>
                     </tbody>

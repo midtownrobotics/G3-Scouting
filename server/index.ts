@@ -1,6 +1,10 @@
 import { PORT, PRODUCTION } from "@shared/config";
 import Form from "@shared/forms/Form";
 import formComponents from "@shared/forms/FormComponents";
+import fs from "fs";
+import { parse } from "papaparse";
+import path from "path";
+import { assignForNextMatch } from "./data/nextMatch";
 import FormModel from "./models/forms/FormModel";
 import FormResponseByTeamModel from "./models/forms/FormResponseModel";
 import syncDatabase from "./models/syncDatabase";
@@ -9,12 +13,7 @@ import { server } from "./routing/router";
 import { scheduleReminders } from "./slack/shiftReminders";
 import { getSettings, writeSettings } from "./storage";
 import { Settings } from "./types";
-import { LogColors, numberParser } from "./utils";
-import { parse } from "papaparse";
-import fs from "fs";
-import path from "path";
-import { getAllMatches } from "./externalApis/tba/tba";
-import { scoreAllForms } from "./data/reliability/scoreUnscoredMatches";
+import { LogColors } from "./utils";
 
 console.clear();
 console.log(``);
@@ -68,18 +67,8 @@ async function testCode() {
 
     FormModel.storeForm(form);
 
-    form.updateResponseData(await FormResponseByTeamModel.findAll({ where: { formId: form.id } }));
-    console.log(form.getResponseData()?.responses.length!);
-    // console.log(form.getResponseData(25)?.responses.length!);
-    console.log(form.getResponseData(50)?.responses.length!);
-    // console.log(form.getResponseData(75)?.responses.length!);
-    console.log(form.getResponseData(90)?.responses.length!);
-    // console.log(form.getResponseData(95)?.responses.length!);
-    // if (!responseData) return;
+    await assignForNextMatch()
 
-    // await scoreAllForms();
-
-    // console.log(await getAllMatches());
     // console.log(await sendSlackMessage("U096JVA9VEV", "Hello from your bot!"));
 
     const insertCsvDataIntoDb = () => {
