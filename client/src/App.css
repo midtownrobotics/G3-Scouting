@@ -16,3 +16,12 @@ html, body, #root {
 .cursor-pointer {
     cursor: pointer;
 }
+
+.card-hover {
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card-hover:hover {
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
+    transform: translateY(-3px);
+}

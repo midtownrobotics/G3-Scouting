@@ -12,15 +12,10 @@ export type Settings = {
         theBlueAlliance: string;
     }
     eventKey: string;
-    dayNumber: number;
     match: number;
-    permissionLevels: Array<Permission>;
+    permissionLevels: Permission[];
     earlyBlock: string | null;
     teamPriority: string[];
-}
-type NextMatch = {
-    number: number,
-    team: number
 }
 
 interface AuthReq extends Request {

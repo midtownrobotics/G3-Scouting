@@ -82,3 +82,17 @@ export const MultiTeamQuestionData = z.object({
     }))
 });
 export type MultiTeamQuestionData = z.infer<typeof MultiTeamQuestionData>;
+
+export const NextMatch = z.object({
+    number: z.number(),
+    team: z.number()
+});
+export type NextMatch = z.infer<typeof NextMatch>;
+
+/** Info about scout's current assignments. */
+export const CurrentAssignment = z.object({
+    username: z.string(),
+    userId: z.number(),
+    team: z.number()
+});
+export type CurrentAssignment = z.infer<typeof CurrentAssignment>;

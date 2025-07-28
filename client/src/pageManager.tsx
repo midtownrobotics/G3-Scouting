@@ -4,8 +4,9 @@ import Settings from "./pages/settings/Settings";
 import Admin from "./pages/admin/Admin";
 import Data from "./pages/data/Data";
 import Forms from "./pages/forms/Forms";
+import Lead from "./pages/lead/Lead";
 
-export type PageKey = "home" | "admin" | "data" | "forms" | "settings";
+export type PageKey = "home" | "admin" | "data" | "forms" | "settings" | "lead";
 
 /** Gets the JSX element for a page from its respective {@link PageKey}. */
 export const getPageFromKey = (pageKey: PageKey) => {
@@ -13,6 +14,7 @@ export const getPageFromKey = (pageKey: PageKey) => {
     if (pageKey == "settings") return <Settings />;
     if (pageKey == "data") return <Data />;
     if (pageKey == "forms") return <Forms />;
+    if (pageKey == "lead") return <Lead />;
     if (pageKey == "home") return <Home />;
 
     const { setPageKey } = usePage();

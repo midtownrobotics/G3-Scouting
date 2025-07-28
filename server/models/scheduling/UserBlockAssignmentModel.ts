@@ -13,7 +13,6 @@ import BlockModel from "./BlockModel";
         ] 
     } 
 })
-
 class UserBlockAssignmentModel extends Model<
     InferAttributes<UserBlockAssignmentModel>,
     UserBlockAssignmentModelCreationAttributes
@@ -36,10 +35,10 @@ class UserBlockAssignmentModel extends Model<
     @BelongsTo(() => UserModel)
     declare user: UserModel;
 
-    @BelongsTo(() => BlockModel)
+    @BelongsTo(() => BlockModel, { as: "block" })
     declare block: BlockModel;
 
-    @BelongsTo(() => AssignmentModel)
+    @BelongsTo(() => AssignmentModel, { as: "assignment" })
     declare assignment: AssignmentModel;
 }
 

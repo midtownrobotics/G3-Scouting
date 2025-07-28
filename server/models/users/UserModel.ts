@@ -1,12 +1,10 @@
 import { Assignment } from "@shared/schemas/schedule";
 import bcrypt from 'bcrypt';
-import { BelongsToMany, Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
+import { Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
 import { getCurrentBlockId } from "../../scheduling/timeUtils";
-import { NextMatch } from "../../types";
 import UserBlockAssignmentModel from "../scheduling/UserBlockAssignmentModel";
 import { User, UserCreationAttributes } from "../types";
-import AccuracyScoreModel from "../validation/AccuracyScoreModel";
-import ScoutAccuracyScoreModel from "../validation/ScoutAccuracyScoreModel";
+import { NextMatch } from "@shared/schemas/data";
 
 @Table({ tableName: "users", defaultScope: { include: [{ model: UserBlockAssignmentModel, as: "schedule" }] } })
 class UserModel extends Model<User, UserCreationAttributes> {
@@ -17,7 +15,7 @@ class UserModel extends Model<User, UserCreationAttributes> {
     public username!: string;
 
     @Column({ type: DataType.TEXT, allowNull: true })
-    public slackId?: string;
+    public slackId?: string | null;
 
     @Column({ type: DataType.TEXT, allowNull: false })
     public password!: string;
@@ -29,18 +27,15 @@ class UserModel extends Model<User, UserCreationAttributes> {
     public redAlliance!: boolean;
 
     @Column({ type: DataType.JSON, allowNull: true })
-    public nextMatch?: NextMatch;
+    public nextMatch?: NextMatch | null;
 
     @Column({ type: DataType.JSON, allowNull: false, defaultValue: [] })
     public assignedMatches!: number[];
 
-    @Column({ type: DataType.INTEGER, allowNull: true })
-    public lastMatchScouted?: number;
-
     @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: 0 })
     public reliable!: boolean;
 
-    @HasMany(() => UserBlockAssignmentModel)
+    @HasMany(() => UserBlockAssignmentModel, { as: "schedule" })
     public schedule!: UserBlockAssignmentModel[];
 
     /**
