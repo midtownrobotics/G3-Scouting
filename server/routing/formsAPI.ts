@@ -24,8 +24,6 @@ formAPIRouter.get("/getForm/:formId", async (req, res) => {
 formAPIRouter.post("/submitForm", async (req: AuthReq, res) => {
     const body = FormResponse.safeParse(req.body);
 
-    console.log(body.error?.errors[0])
-
     if (req.user && body.success && body.data) {
         const { responses, formId, team, match } = body.data;
         await FormResponseByTeamModel.submitResponse(responses, formId, req.user.id, team, match);

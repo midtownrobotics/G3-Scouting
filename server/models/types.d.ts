@@ -3,12 +3,12 @@ import { NextMatch } from "@shared/schemas/data";
 
 export interface User {
     id: number;
-    slackId?: string;
+    slackId?: string | null;
     username: string;
     password: string;
     permissionId: number;
     redAlliance: boolean;
-    nextMatch?: NextMatch;
+    nextMatch?: NextMatch | null;
     lastMatchScouted?: number;
     assignedMatches: number[];
     reliable: boolean;

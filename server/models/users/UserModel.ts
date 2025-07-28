@@ -15,7 +15,7 @@ class UserModel extends Model<User, UserCreationAttributes> {
     public username!: string;
 
     @Column({ type: DataType.TEXT, allowNull: true })
-    public slackId?: string;
+    public slackId?: string | null;
 
     @Column({ type: DataType.TEXT, allowNull: false })
     public password!: string;
@@ -27,7 +27,7 @@ class UserModel extends Model<User, UserCreationAttributes> {
     public redAlliance!: boolean;
 
     @Column({ type: DataType.JSON, allowNull: true })
-    public nextMatch?: NextMatch;
+    public nextMatch?: NextMatch | null;
 
     @Column({ type: DataType.JSON, allowNull: false, defaultValue: [] })
     public assignedMatches!: number[];
