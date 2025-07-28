@@ -26,6 +26,7 @@ function NavigationBar() {
                         <NavPageLink page="settings" onClick={() => setExpanded(false)}>Settings</NavPageLink>
                         <NavPageLink page="forms" onClick={() => setExpanded(false)}>Forms</NavPageLink>
                         <NavPageLink page="data" onClick={() => setExpanded(false)}>Data</NavPageLink>
+                        <NavPageLink page="lead" onClick={() => setExpanded(false)}>Lead</NavPageLink>
                         <NavPageLink page="admin" onClick={() => setExpanded(false)}>Admin</NavPageLink>
                     </Nav>
                 </Navbar.Collapse>

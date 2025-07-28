@@ -4,7 +4,6 @@ import formComponents from "@shared/forms/FormComponents";
 import fs from "fs";
 import { parse } from "papaparse";
 import path from "path";
-import { assignForNextMatch } from "./data/nextMatch";
 import FormModel from "./models/forms/FormModel";
 import FormResponseByTeamModel from "./models/forms/FormResponseModel";
 import syncDatabase from "./models/syncDatabase";
@@ -66,8 +65,6 @@ async function testCode() {
     form.addComponent(new formComponents.ShortResponse("Additional Notes", "Notes"));
 
     FormModel.storeForm(form);
-
-    await assignForNextMatch()
 
     // console.log(await sendSlackMessage("U096JVA9VEV", "Hello from your bot!"));
 

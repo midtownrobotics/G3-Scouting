@@ -1,6 +1,5 @@
 import { JSX, useEffect, useState } from "react";
 import { Card, Col, Row } from "react-bootstrap";
-import "./Data.css";
 import FormRows from "./viewers/FormRows";
 import AveragedRows from "./viewers/AveragedRows";
 import TeamRows from "./viewers/TeamRows";
@@ -48,7 +47,7 @@ export default function Data() {
     }, [viewer]);
 
     return (
-        <div className="container mt-4">
+        <div className="container mt-4" id="data-page">
             {viewer == undefined || viewer == null || viewer > VIEW_OPTIONS.length ? (<>
                 <h2 className="mb-4">Select a Data View</h2>
                 <Row xs={1} sm={2} md={2} className="g-4">

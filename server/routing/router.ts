@@ -10,6 +10,7 @@ import genericAPIRouter from './genericAPI';
 import slackAPIRouter from './slackAPI';
 import userSettingsAPIRouter from './userSettingsAPI';
 import dataApiRouter from './dataAPI';
+import leadAPIrouter from './leadAPI';
 
 const app = express();
 export const server = http.createServer(app);
@@ -28,4 +29,5 @@ app.use("/api/admin", adminAPIRouter);
 app.use("/api/forms", formAPIRouter);
 app.use("/api/data", dataApiRouter)
 app.use("/api/slack", slackAPIRouter);
+app.use("/api/lead", leadAPIrouter);
 app.use("/api/userSettings", userSettingsAPIRouter);
