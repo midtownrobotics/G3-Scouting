@@ -10,9 +10,9 @@ import syncDatabase from "./models/syncDatabase";
 import UserModel from "./models/users/UserModel";
 import { server } from "./routing/router";
 import { scheduleReminders } from "./slack/shiftReminders";
-import { getSettings, writeSettings } from "./storage";
 import { Settings } from "./types";
 import { LogColors } from "./utils";
+import { Permission } from "@shared/permissions";
 
 console.clear();
 console.log(``);
@@ -29,15 +29,15 @@ syncDatabase().then(() => {
         scheduleReminders();
 
         const allUsers = await UserModel.findAll();
-        if (allUsers.length == 0 || !allUsers.find((user) => user.permissionId === 0)) {
-            UserModel.addUser("admin", "password", 0, true);
+        if (allUsers.length == 0 || !allUsers.find((user) => user.permission === Permission.ADMIN)) {
+            UserModel.addUser("admin", "password", Permission.ADMIN, true);
         }
 
-        const settings: Settings = await getSettings();
-        if (!settings.permissionLevels.find(p => p.blacklist.length == 0)) {
-            settings.permissionLevels.push({ name: "admin", blacklist: [], id: 0 });
-            writeSettings(settings);
-        }
+        // const settings: Settings = await getSettings();
+        // if (!settings.permissionLevels.find(p => p.blacklist.length == 0)) {
+        //     settings.permissionLevels.push({ name: "admin", blacklist: [], id: 0 });
+        //     writeSettings(settings);
+        // }
 
         testCode();
     });

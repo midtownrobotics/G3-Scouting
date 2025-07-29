@@ -1,9 +1,9 @@
 import express from 'express';
-import { getSettings } from '../storage';
 import { z } from 'zod';
 import { AuthReq } from '../types';
 import { createLinkCode, linkWithCmd } from '../slack/slackLink';
 import { SITE_URL } from '@shared/config';
+import { getSettingsValue } from '../settings';
 
 const slackAPIRouter = express.Router();
 
@@ -11,7 +11,7 @@ slackAPIRouter.get("/getSlackInfo", async (req: AuthReq, res) => {
     const userId = req.user?.slackId;
     if (!userId) { res.sendStatus(400); return; }
 
-    const token = (await getSettings()).keys.slack.token;
+    const token = await getSettingsValue("slackToken");
 
     const slackRes = await fetch(`https://slack.com/api/users.info?user=${userId}`, {
         headers: {
@@ -20,11 +20,11 @@ slackAPIRouter.get("/getSlackInfo", async (req: AuthReq, res) => {
     });
 
     const data = await slackRes.json();
-    res.send(data.user)
+    res.send(data.user);
 });
 
 slackAPIRouter.get("/getClientId", async (req, res) => {
-    const id = (await getSettings()).keys.slack.clientId;
+    const id = await getSettingsValue("slackClientId");
     res.send({ id });
 });
 

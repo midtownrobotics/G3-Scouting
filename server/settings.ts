@@ -1,9 +1,8 @@
 import * as fs from 'fs';
-import { Settings } from './types';
 import path from 'path';
-import { resolveObjectURL } from 'buffer';
+import { Settings } from './types';
 
-async function getFile(relativePath: string): Promise<any> {
+function getFile(relativePath: string): Promise<any> {
     return new Promise<any>((resolve) => {
         fs.readFile(path.join(__dirname, relativePath), (err, data) => {
             let finalData: any;
@@ -17,22 +16,12 @@ async function getFile(relativePath: string): Promise<any> {
     });
 }
 
-export async function getSettings(): Promise<Settings> {
+async function getSettings(): Promise<Settings> {
     const settings = await getFile("/storage/settings.json") as Settings;
     return settings;
 }
 
-export function getSettingsSync(): Settings {
-    return JSON.parse(fs.readFileSync(path.join(__dirname, "/storage/settings.json")).toString()) as Settings;
-}
-
-export async function writeSettings(data: Settings) {
-    if (
-        data.permissionLevels[0].blacklist.length != 0 ||
-        data.permissionLevels[0].id != 0 ||
-        data.permissionLevels[0].name != "admin"
-    ) return;
-
+async function writeSettings(data: Settings) {
     return new Promise<true>((resolve, reject) => {
         fs.writeFile(
             path.join(__dirname, "storage/settings.json"),
@@ -43,4 +32,15 @@ export async function writeSettings(data: Settings) {
             }
         );
     });
+}
+
+export async function getSettingsValue<T extends keyof Settings>(key: T): Promise<Settings[T]> {
+    const settings = await getSettings();
+    return settings[key];
+}
+
+export async function setSettingsValue<T extends keyof Settings>(key: T, value: Settings[T]) {
+    const settings = await getSettings();
+    settings[key] = value;
+    await writeSettings(settings);
 }

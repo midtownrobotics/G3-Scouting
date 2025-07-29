@@ -1,7 +1,17 @@
 import { WebClient } from "@slack/web-api";
-import { getSettingsSync } from "../storage";
+import { getSettingsValue } from "../settings";
 
-const { token } = getSettingsSync().keys.slack;
-const slackClient = new WebClient(token);
+let client: WebClient | undefined;
+let lastToken: string | undefined;
 
-export default slackClient;
+export async function getSlackClient() {
+    const token = await getSettingsValue("slackToken");
+
+    if (client !== undefined && lastToken === token) return client;
+
+    client = new WebClient(token)
+
+    return client;
+}
+
+export default getSlackClient;

@@ -1,14 +1,13 @@
 import { DeployPayload } from '@shared/schemas/schedule';
+import bcrypt from 'bcrypt';
 import express, { Request, Response } from 'express';
 import { z } from 'zod';
-import { CreateUser, Permission, SaveableInputData, SimpleUser } from '../../shared/schemas/API';
-import UserModel from '../models/users/UserModel';
-import { isValidUser } from '../models/users/userModelUtils';
-import deploySchedules from '../scheduling/deploySchedules';
-import { getSettings, writeSettings } from '../storage';
-import SessionModel from '../models/users/SessionModel';
-import bcrypt from 'bcrypt';
+import { CreateUser, SaveableInputData, SimpleUser } from '../../shared/schemas/API';
 import UserBlockAssignmentModel from '../models/scheduling/UserBlockAssignmentModel';
+import SessionModel from '../models/users/SessionModel';
+import UserModel from '../models/users/UserModel';
+import deploySchedules from '../scheduling/deploySchedules';
+import { getSettingsValue, setSettingsValue } from '../settings';
 
 const adminAPIRouter = express.Router();
 
@@ -37,56 +36,42 @@ function createValueRoute(getter: () => Promise<string>, setter: (value: string)
 }
 
 createValueRoute(async () => {
-    return (await getSettings()).eventKey;
+    return await getSettingsValue("eventKey");
 }, async (val) => {
-    const settings = await getSettings();
-    settings.eventKey = val;
-    writeSettings(settings);
+    await setSettingsValue("eventKey", val);
 }, "EventKey");
 
 createValueRoute(async () => {
-    return (await getSettings()).keys.slack.clientId;
+    return await getSettingsValue("slackClientId");
 }, async (val) => {
-    const settings = await getSettings();
-    settings.keys.slack.clientId = val;
-    writeSettings(settings);
+    await setSettingsValue("slackClientId", val);
 }, "SlackClientId");
 
 createValueRoute(async () => {
-    return (await getSettings()).keys.slack.token;
+    return await getSettingsValue("slackToken");
 }, async (val) => {
-    const settings = await getSettings();
-    settings.keys.slack.token = val;
-    writeSettings(settings);
+    return await setSettingsValue("slackToken", val);
 }, "SlackOathToken");
 
 createValueRoute(async () => {
-    return (await getSettings()).keys.slack.clientSecret;
+    return await getSettingsValue("slackClientSecret");
 }, async (val) => {
-    const settings = await getSettings();
-    settings.keys.slack.clientSecret = val;
-    writeSettings(settings);
+    return await setSettingsValue("slackClientSecret", val);
 }, "SlackClientSecret");
 
 createValueRoute(async () => {
-    return (await getSettings()).keys.theBlueAlliance;
+    return await getSettingsValue("theBlueAlliance");
 }, async (val) => {
-    const settings = await getSettings();
-    settings.keys.theBlueAlliance = val;
-    writeSettings(settings);
+    return await setSettingsValue("theBlueAlliance", val);
 }, "TbaToken");
 
 adminAPIRouter.post("/addUser", async (req: Request, res: Response) => {
     const body = CreateUser.safeParse(req.body);
-
     if (body.success && body.data) {
-        if (await isValidUser(body.data)) {
-            UserModel.addUser(body.data.username, body.data.password, body.data.permissionId, body.data.reliable);
-            res.sendStatus(200);
-            return;
-        }
+        await UserModel.addUser(body.data.username, body.data.password, body.data.permission, body.data.reliable);
+        res.sendStatus(200);
+        return;
     }
-
     res.sendStatus(400);
 });
 
@@ -130,13 +115,9 @@ adminAPIRouter.post("/editUser", async (req: Request, res: Response) => {
     // Replaces all values in user with corresponding values of body.data
     user.set(body.data);
 
-    if (await isValidUser(user)) {
-        user.save();
-        res.sendStatus(200);
-        return;
-    }
-
-    res.sendStatus(400);
+    user.save();
+    res.sendStatus(200);
+    return;
 });
 
 adminAPIRouter.post("/setUserPassword", async (req: Request, res: Response) => {
@@ -155,46 +136,6 @@ adminAPIRouter.post("/setUserPassword", async (req: Request, res: Response) => {
     });
 
     res.sendStatus(200);
-});
-
-adminAPIRouter.post("/addPerm", async (req: Request, res: Response) => {
-    const body = Permission.safeParse(req.body);
-
-    if (body.success && body.data) {
-        const settings = await getSettings();
-        if (settings.permissionLevels.some(p => p.name == body.data.name)) {
-            res.sendStatus(400);
-            return;
-        }
-        settings.permissionLevels.push({ ...body.data, id: Math.max(...settings.permissionLevels.map(p => p.id)) + 1 });
-        writeSettings(settings);
-        res.sendStatus(200);
-        return;
-    }
-    res.sendStatus(400);
-});
-
-adminAPIRouter.get("/getPerms", async (req: Request, res: Response) => {
-    res.json((await getSettings()).permissionLevels);
-    return;
-});
-
-adminAPIRouter.post("/deletePerm", async (req: Request, res: Response) => {
-    const body = z.object({ id: z.number() }).safeParse(req.body);
-
-    if (body.success && body.data) {
-        const settings = await getSettings();
-        const i = settings.permissionLevels.findIndex((p) => p.id == body.data.id);
-        if (settings.permissionLevels[i].name == "admin") {
-            res.sendStatus(400);
-            return;
-        }
-        settings.permissionLevels.splice(i, 1);
-        writeSettings(settings);
-        res.sendStatus(200);
-        return;
-    }
-    res.sendStatus(400);
 });
 
 // Note: This will remove all AssignmentModel and BlockModel routes.

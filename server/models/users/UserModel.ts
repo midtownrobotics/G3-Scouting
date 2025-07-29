@@ -5,6 +5,7 @@ import { getCurrentBlockId } from "../../scheduling/timeUtils";
 import UserBlockAssignmentModel from "../scheduling/UserBlockAssignmentModel";
 import { User, UserCreationAttributes } from "../types";
 import { NextMatch } from "@shared/schemas/data";
+import { Permission } from "@shared/permissions";
 
 @Table({ tableName: "users", defaultScope: { include: [{ model: UserBlockAssignmentModel, as: "schedule" }] } })
 class UserModel extends Model<User, UserCreationAttributes> {
@@ -20,8 +21,8 @@ class UserModel extends Model<User, UserCreationAttributes> {
     @Column({ type: DataType.TEXT, allowNull: false })
     public password!: string;
 
-    @Column({ type: DataType.INTEGER, allowNull: false })
-    public permissionId!: number;
+    @Column({ type: DataType.TEXT, allowNull: false })
+    public permission!: Permission;
 
     @Column({ type: DataType.BOOLEAN, allowNull: false })
     public redAlliance!: boolean;
@@ -44,7 +45,7 @@ class UserModel extends Model<User, UserCreationAttributes> {
      * @param password The user's password.
      * @param permissionId The permission ID that the user will have.
      */
-    public static async addUser(username: string, password: string, permissionId: number, reliable: boolean) {
+    public static async addUser(username: string, password: string, permission: Permission, reliable: boolean) {
         const [redCount, blueCount] = await Promise.all([
             UserModel.count({ where: { redAlliance: true } }),
             UserModel.count({ where: { redAlliance: false } }),
@@ -54,7 +55,7 @@ class UserModel extends Model<User, UserCreationAttributes> {
             if (!err) {
                 await UserModel.create({
                     username,
-                    permissionId,
+                    permission,
                     reliable,
                     password: hash,
                     redAlliance: redCount < blueCount,

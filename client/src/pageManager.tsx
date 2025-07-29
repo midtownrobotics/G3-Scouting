@@ -5,8 +5,7 @@ import Admin from "./pages/admin/Admin";
 import Data from "./pages/data/Data";
 import Forms from "./pages/forms/Forms";
 import Lead from "./pages/lead/Lead";
-
-export type PageKey = "home" | "admin" | "data" | "forms" | "settings" | "lead";
+import { PageKey } from "@shared/types";
 
 /** Gets the JSX element for a page from its respective {@link PageKey}. */
 export const getPageFromKey = (pageKey: PageKey) => {

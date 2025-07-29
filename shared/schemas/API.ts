@@ -1,10 +1,11 @@
 import z from 'zod'
 import { Assignment, Block } from './schedule'
+import { Permission } from '@shared/permissions';
 
 export const SimpleUser = z.object({
     username: z.string(),
     id: z.coerce.number(),
-    permissionId: z.coerce.number(),
+    permission: z.nativeEnum(Permission),
     reliable: z.coerce.boolean(),
     redAlliance: z.boolean()
 })
@@ -14,13 +15,6 @@ export const CreateUser = SimpleUser.and(z.object({
     password: z.string()
 }))
 export type CreateUser = z.infer<typeof CreateUser>
-
-export const Permission = z.object({
-    id: z.number(),
-    name: z.string(),
-    blacklist: z.array(z.string())
-})
-export type Permission = z.infer<typeof Permission>
 
 export const SaveableInputData = z.object({
     value: z.string()

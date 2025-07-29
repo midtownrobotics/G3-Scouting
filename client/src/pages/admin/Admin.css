@@ -28,19 +28,19 @@
         }
     }
 
-    #perms-table,
-    #users-table {
+    #users {
         text-align: center;
+        width: 100%;
+        height: auto;
+        overflow: hidden;
+    }
+
+    #users-table {
+        width: 100%;
     }
 
     input {
         width: 100px;
-    }
-
-    #users-and-perms {
-        width: 100%;
-        height: auto;
-        overflow: hidden;
     }
 
     #settings {
