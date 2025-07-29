@@ -23,8 +23,16 @@ genericAPIRouter.get("/me", async (req: AuthReq, res) => {
         return;
     }
 
+
     const data: UserInformation = {
-        user: user.toJSON(),
+        user: {
+            id: user.id,
+            username: user.username,
+            permission: user.permission,
+            redAlliance: user.redAlliance,
+            reliable: user.reliable,
+            schedule: user.schedule
+        },
         currentAssignment: await user.getCurrentAssignment()
     };
 
