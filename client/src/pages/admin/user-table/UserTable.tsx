@@ -6,37 +6,39 @@ import { fetchAPIJSON } from "../../../API";
 import NewUser from "./NewUser";
 import UserRow from "./UserRow";
 
-function UserTable({ setUsers }: { setUsers: (u: SimpleUser[]) => void }) {
-    const [userRows, setUserRows] = useState<JSX.Element[]>([])
+function UserTable({ setUsers }: { setUsers: (u: SimpleUser[]) => void; }) {
+    const [userRows, setUserRows] = useState<JSX.Element[]>([]);
 
     const reloadData = () => {
-        fetchAPIJSON("/admin/getUsers").then((res) => {
-            const body = z.array(SimpleUser).safeParse(res)
+        setTimeout(() => {
+            fetchAPIJSON("/admin/getUsers").then((res) => {
+                const body = z.array(SimpleUser).safeParse(res);
 
-            if (body.success && body.data) {
-                setUsers(body.data)
+                if (body.success && body.data) {
+                    setUsers(body.data);
 
-                setUserRows([
-                    ...body.data.map((u, ui) => <UserRow key={ui} user={u} reload={reloadData} />),
-                    <NewUser key={-1} reload={reloadData} />
-                ])
-            }
-        })
-    }
+                    setUserRows([
+                        ...body.data.map((u, ui) => <UserRow key={ui} user={u} reload={reloadData} />),
+                        <NewUser key={-1} reload={reloadData} />
+                    ]);
+                }
+            });
+        }, 500);
+    };
 
-    useEffect(reloadData, [])
+    useEffect(reloadData, []);
 
     return userRows.length == 0 ? (
         <Spinner style={{ fontSize: "30px" }}></Spinner>
     ) : (
-        <div className="table-responsive">
+        <div id="users-table" className="table-responsive px-0 px-md-5 px-lg-5">
             <Table className="rounded-3 overflow-hidden" style={{ marginBottom: 0 }}>
                 <thead>
                     <tr>
                         <td>ID</td>
                         <td>Username</td>
                         <td>Password</td>
-                        <td>PID</td>
+                        <td>Permission</td>
                         <td>Reliable</td>
                         <td>Alliance</td>
                         <td colSpan={2} />
@@ -47,7 +49,7 @@ function UserTable({ setUsers }: { setUsers: (u: SimpleUser[]) => void }) {
                 </tbody>
             </Table>
         </div>
-    )
+    );
 }
 
 export default UserTable;

@@ -1,12 +1,13 @@
 import { Optional } from "sequelize";
 import { NextMatch } from "@shared/schemas/data";
+import { Permission } from "../settings";
 
 export interface User {
     id: number;
     slackId?: string | null;
     username: string;
     password: string;
-    permissionId: number;
+    permission: Permission;
     redAlliance: boolean;
     nextMatch?: NextMatch | null;
     lastMatchScouted?: number;

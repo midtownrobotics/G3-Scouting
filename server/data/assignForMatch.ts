@@ -1,10 +1,10 @@
 import { AssignmentType } from "@shared/schemas/schedule";
 import { getAllMatches } from "../externalApis/tba/tba";
 import UserModel from "../models/users/UserModel";
-import { getSettings, writeSettings } from "../storage";
 import { scoreAllForms } from "./reliability/scoreUnscoredMatches";
 import { z } from "zod";
 import { CurrentAssignment } from "@shared/schemas/data";
+import { setSettingsValue } from "../settings";
 
 export const currentAssignments: CurrentAssignment[] = [];
 
@@ -36,8 +36,7 @@ export default async function assignForMatch(nextMatch: number) {
         });
     }
 
-    const settings = await getSettings();
-    await writeSettings({ ...settings, match: nextMatch });
+    setSettingsValue("match", nextMatch)
 
     await scoreAllForms();
 }

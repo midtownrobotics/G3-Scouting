@@ -1,7 +1,8 @@
 import { Nav } from "react-bootstrap";
-import { PageKey, usePage } from "../../pageManager";
+import { usePage } from "../../pageManager";
+import { PageKey } from "@shared/types";
 
-function NavPageLink({ page, children, onClick }: { page: PageKey, children: string, onClick: () => void }) {
+function NavPageLink({ page, blacklist, onClick }: { page: PageKey, blacklist: PageKey[], onClick: () => void }) {
     const { setPageKey, pageKey } = usePage();
 
     const linkOnClick = () => {
@@ -10,8 +11,8 @@ function NavPageLink({ page, children, onClick }: { page: PageKey, children: str
     }
     
     return (
-        <Nav.Item>
-            <Nav.Link style={{ color: pageKey == page ? "black" : "gray" }} onClick={linkOnClick}>{children}</Nav.Link>
+        <Nav.Item style={{ display: blacklist.includes(page) ? "none" : "block" }}>
+            <Nav.Link style={{ color: pageKey == page ? "black" : "gray" }} onClick={linkOnClick}>{page[0].toUpperCase() + page.slice(1)}</Nav.Link>
         </Nav.Item>
     )
 }

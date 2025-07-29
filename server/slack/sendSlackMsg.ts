@@ -1,9 +1,8 @@
-import UserModel from "../models/users/UserModel";
-import slackClient from "./slackClient";
+import getSlackClient from "./slackClient";
 
 export default async function sendSlackMessage(channel: string, text: string) {
     try {
-        const res = await slackClient.chat.postMessage({
+        const res = await (await getSlackClient()).chat.postMessage({
             channel,
             text
         });

@@ -1,7 +1,7 @@
 import express from 'express';
 import { z } from 'zod';
 import assignForMatch, { currentAssignments } from '../data/assignForMatch';
-import { getSettings } from '../storage';
+import { getSettingsValue } from '../settings';
 
 const leadAPIrouter = express.Router();
 
@@ -16,7 +16,7 @@ leadAPIrouter.post("/assignForMatch", async (req, res) => {
 });
 
 leadAPIrouter.get("/getCurrentMatch", async (req, res) => {
-    const match = (await getSettings()).match;
+    const match = await getSettingsValue("match");
     res.send({ match });
 });
 
