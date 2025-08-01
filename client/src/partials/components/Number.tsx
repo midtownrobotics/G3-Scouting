@@ -13,7 +13,7 @@ export default function Number({
 }) {
 
     useEffect(() => {
-        if (value === undefined || value === null) onChange(component.id, "0");
+        if (value === undefined || value === null) onChange(component.getId(), "0");
     }, [value]);
 
     return (
@@ -23,19 +23,19 @@ export default function Number({
                 <Button
                     variant="light"
                     style={{width: "50px"}}
-                    onClick={() => onChange(component.id, (parseInt(value)-1).toString())}
+                    onClick={() => onChange(component.getId(), (parseInt(value)-1).toString())}
                 >-</Button>
                 <Form.Control
                     className="text-center"
                     style={{ maxWidth: "180px" }}
-                    type="number"
+                    type="text"
                     value={value ?? 0}
-                    onChange={(e) => onChange(component.id, e.target.value)}
+                    onChange={(e) => onChange(component.getId(), (parseInt(e.target.value) || 0).toString())}
                 />
                 <Button
                     variant="light"
                     style={{width: "50px"}}
-                    onClick={() => onChange(component.id, (parseInt(value)+1).toString())}
+                    onClick={() => onChange(component.getId(), (parseInt(value)+1).toString())}
                 >+</Button>
             </div>
         </Form.Group>

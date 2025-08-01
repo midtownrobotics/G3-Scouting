@@ -11,11 +11,11 @@ export enum Permission {
 export function getDisallowedPages(permission: Permission): PageKey[] {
     switch (permission) {
         case Permission.SCOUT:
-            return ["data", "lead", "admin"];
+            return ["data", "lead", "admin", "form-maker"];
         case Permission.DATA:
-            return ["lead", "admin"];
+            return ["lead", "admin", "form-maker"];
         case Permission.LEAD:
-            return ["admin"];
+            return ["admin", "form-maker"];
         case Permission.ADMIN:
             return [];
     }

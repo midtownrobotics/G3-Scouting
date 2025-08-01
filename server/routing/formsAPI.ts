@@ -26,6 +26,10 @@ formAPIRouter.post("/submitForm", async (req: AuthReq, res) => {
 
     if (req.user && body.success && body.data) {
         const { responses, formId, team, match } = body.data;
+        const form = await FormModel.getForm(formId);
+
+        if (form === undefined || !form.deployed) { res.sendStatus(400); return; }
+
         await FormResponseByTeamModel.submitResponse(responses, formId, req.user.id, team, match);
 
         res.sendStatus(200);

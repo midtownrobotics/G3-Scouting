@@ -13,7 +13,7 @@ export default function MultipleChoice({
 }) {
 
     useEffect(() => {
-        if (value === undefined || value === null) onChange(component.id, component.choices[0]);
+        if (value === undefined || value === null) onChange(component.getId(), component.choices[0]);
     }, [value]);
 
     return (
@@ -23,7 +23,7 @@ export default function MultipleChoice({
                 className="w-100 mx-auto text-center" 
                 style={{ maxWidth: "300px" }}
                 value={value ?? ""}
-                onChange={(e) => onChange(component.id, e.target.value)}
+                onChange={(e) => onChange(component.getId(), e.target.value)}
             >
                 {component.choices.map((c, ci) => (
                     <option key={ci} value={c}>{c}</option>

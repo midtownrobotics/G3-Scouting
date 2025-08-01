@@ -13,7 +13,7 @@ export default function ShortResponse({
 }) {
 
     useEffect(() => {
-        if (value === undefined || value === null) onChange(component.id, "");
+        if (value === undefined || value === null) onChange(component.getId(), "");
     }, [value]);
 
     return (
@@ -24,7 +24,7 @@ export default function ShortResponse({
                 style={{ maxWidth: "300px" }}
                 type="text"
                 value={value ?? ""}
-                onChange={(e) => onChange(component.id, e.target.value)}
+                onChange={(e) => onChange(component.getId(), e.target.value)}
             />
         </Form.Group>
     );
