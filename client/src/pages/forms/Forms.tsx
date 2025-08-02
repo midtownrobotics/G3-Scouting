@@ -15,7 +15,7 @@ function Forms() {
     useEffect(() => {
         const formIdParam = new URLSearchParams(window.location.search).get("form");
         if (formIdParam) setFormId(formIdParam);
-    }, [])
+    }, []);
 
     useEffect(() => {
         if (!formId) return;
@@ -27,26 +27,24 @@ function Forms() {
         setLoadingForm(true);
 
         fetchAPIJSON(`/forms/getForm/${formId}`).then(f => {
-            const parsed = SerializedForm.safeParse(f)
-            if (parsed.success && parsed.data) {
+            const parsed = SerializedForm.safeParse(f);
+            if (parsed.success && parsed.data && parsed.data.deployed) {
                 form.current = Form.fromJSON(parsed.data);
                 setMainPage(false);
             }
             setLoadingForm(false);
-        })
+        });
 
         setTimeout(() => {
             if (mainPage) {
                 setLoadingForm(false);
             }
-        }, 5000);
-    }, [formId])
+        }, 3000);
+    }, [formId]);
 
-    return mainPage && !loadingForm
-        ? <MainPage setFormId={setFormId} />
-        : form.current
-            ? <FormPage form={form} />
-            : <h1 style={{ textAlign: "center" }}>Loading Form <Spinner></Spinner></h1>
+    if (mainPage && !loadingForm) return <MainPage setFormId={setFormId} />;
+    if (form.current) return <FormPage form={form} />;
+    return <h1 style={{ textAlign: "center" }}>Loading Form <Spinner></Spinner></h1>;
 }
 
 export default Forms;

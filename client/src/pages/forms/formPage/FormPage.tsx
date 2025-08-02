@@ -4,9 +4,9 @@ import React, { useState } from "react";
 import { Form as BSForm, Button, Spinner } from "react-bootstrap";
 import { postAPI } from "../../../API";
 import './FormPage.css';
-import DisabledInput from "./components/DisabledInput";
-import FormComponent from "./components/FormComponent";
-import SectionBreak from "./components/SectionBreak";
+import DisabledInput from "../../../partials/components/DisabledInput";
+import SectionBreak from "../../../partials/components/SectionBreak";
+import FormComponent from "../../../partials/components/FormComponent";
 
 function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
     const [answers, setAnswers] = useState(new Map<string, string>());

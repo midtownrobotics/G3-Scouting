@@ -12,7 +12,7 @@ function MainPage({ setFormId }: { setFormId: (id: string) => void; }) {
         fetchAPIJSON("/forms/getForms").then(u => {
             const parsed = z.array(SerializedForm).safeParse(u);
             if (parsed.success && parsed.data) {
-                setForms(parsed.data);
+                setForms(parsed.data.filter(f => f.deployed));
             }
         });
     }, []);

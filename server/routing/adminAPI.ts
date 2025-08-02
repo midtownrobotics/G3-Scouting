@@ -8,6 +8,9 @@ import SessionModel from '../models/users/SessionModel';
 import UserModel from '../models/users/UserModel';
 import deploySchedules from '../scheduling/deploySchedules';
 import { getSettingsValue, setSettingsValue } from '../settings';
+import { SerializedForm } from '@shared/schemas/forms';
+import Form from '@shared/forms/Form';
+import FormModel from '../models/forms/FormModel';
 
 const adminAPIRouter = express.Router();
 
@@ -138,7 +141,6 @@ adminAPIRouter.post("/setUserPassword", async (req: Request, res: Response) => {
     res.sendStatus(200);
 });
 
-// Note: This will remove all AssignmentModel and BlockModel routes.
 adminAPIRouter.post("/deploySchedule", async (req: Request, res: Response) => {
     const body = DeployPayload.safeParse(req.body);
 
@@ -147,6 +149,48 @@ adminAPIRouter.post("/deploySchedule", async (req: Request, res: Response) => {
         return;
     }
     res.sendStatus(400);
+});
+
+adminAPIRouter.post("/saveForm", async (req: Request, res: Response) => {
+    const body = z.object({
+        form: SerializedForm,
+        newForm: z.boolean()
+    }).safeParse(req.body);
+    if (!body.success || !body.data) { res.sendStatus(400); return; }
+
+    if (body.data.newForm) {
+        const current = await FormModel.getSerializedForm(body.data.form.id);
+        if (current !== undefined) {
+            res.status(200).send({ err: "already exists" });
+            return;
+        };
+    }
+
+    await FormModel.storeForm(body.data.form);
+    res.sendStatus(200);
+});
+
+adminAPIRouter.post("/setDeployed", async (req: Request, res: Response) => {
+    const body = z.object({
+        form: z.string(),
+        deployed: z.boolean()
+    }).safeParse(req.body);
+    if (!body.success || !body.data) { res.sendStatus(400); return; }
+
+    const form = await FormModel.getSerializedForm(body.data.form);
+    if (!form) { res.sendStatus(400); return; }
+
+    form.deployed = body.data.deployed;
+    await FormModel.storeForm(form);
+    res.sendStatus(200);
+});
+
+adminAPIRouter.post("/deleteForm", async (req: Request, res: Response) => {
+    const body = z.object({ form: z.string() }).safeParse(req.body);
+    if (!body.success || !body.data) { res.sendStatus(400); return; }
+
+    await FormModel.destroy({ where: { id: body.data.form } });
+    res.sendStatus(200);
 });
 
 export default adminAPIRouter;

@@ -6,6 +6,7 @@ import Data from "./pages/data/Data";
 import Forms from "./pages/forms/Forms";
 import Lead from "./pages/lead/Lead";
 import { PageKey } from "@shared/types";
+import FormMaker from "./pages/form-maker/FormMaker";
 
 /** Gets the JSX element for a page from its respective {@link PageKey}. */
 export const getPageFromKey = (pageKey: PageKey) => {
@@ -14,6 +15,7 @@ export const getPageFromKey = (pageKey: PageKey) => {
     if (pageKey == "data") return <Data />;
     if (pageKey == "forms") return <Forms />;
     if (pageKey == "lead") return <Lead />;
+    if (pageKey == "form-maker") return <FormMaker />;
     if (pageKey == "home") return <Home />;
 
     const { setPageKey } = usePage();

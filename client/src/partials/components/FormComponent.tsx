@@ -8,11 +8,11 @@ import ShortResponse from "./ShortResponse";
 function FormComponent({
     component,
     onAnswerChange,
-    answer,
+    answer
 }: {
-    component: FormComponentClass;
-    onAnswerChange: (id: string, value: string) => void;
-    answer: any;
+    component: FormComponentClass,
+    onAnswerChange: (id: string, value: string) => void,
+    answer: any,
 }) {
     if (component instanceof formComponents.SectionBreak) {
         return <SectionBreak component={component} />;

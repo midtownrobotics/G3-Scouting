@@ -2,7 +2,7 @@ import FormResponseByTeamModel from "../../server/models/forms/FormResponseModel
 import { FormResponse, FormResponseData } from "../schemas/data";
 import { SerializedForm } from "../schemas/forms";
 import { FormComponent } from "./FormComponents";
-import { generateRandomString, toSqlAcceptableString } from "./FormUtils";
+import { generateRandomString, toAlphanumeric } from "./FormUtils";
 
 export default class Form {
     public readonly name: string;
@@ -20,7 +20,7 @@ export default class Form {
     constructor(name: string, description: string, components: FormComponent[], maxComponentId: number, responses?: FormResponse[]);
     constructor(name: string, public description: string, components?: FormComponent[], maxComponentId?: number, private responses?: FormResponse[]) {
         this.name = name;
-        this.id = toSqlAcceptableString(name);
+        this.id = toAlphanumeric(name);
         this.maxComponentId = maxComponentId ?? 0;
 
         const uniqueMap = new Map<string, FormComponent>();
@@ -52,11 +52,12 @@ export default class Form {
         this.components = this.components.filter(c => c.getId() !== id);
     }
 
-    public moveComponent(id: string, toIndex: number): void {
+    public moveComponent(id: string, toIndex: number) {
         const fromIndex = this.components.findIndex(c => c.getId() == id);
-        if (fromIndex === -1 || toIndex < 0 || toIndex >= this.components.length) return;
+        if (fromIndex === -1 || toIndex < 0 || toIndex >= this.components.length) return this.components;
         const [item] = this.components.splice(fromIndex, 1);
         this.components.splice(toIndex, 0, item);
+        return this.components;
     }
 
     public updateResponseData(models: FormResponseByTeamModel[]) {

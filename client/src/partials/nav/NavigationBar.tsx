@@ -9,6 +9,9 @@ import NavPageLink from "./NavPageLink";
 function NavigationBar({ blacklist }: { blacklist: PageKey[]; }) {
     const { setPageKey } = usePage();
     const [expanded, setExpanded] = useState(false);
+
+    const onclick = () => setExpanded(false);
+
     return (
         <Navbar expanded={expanded} expand="lg" id="navbar">
             <Container>
@@ -22,12 +25,13 @@ function NavigationBar({ blacklist }: { blacklist: PageKey[]; }) {
                 />
                 <Navbar.Collapse id="main-navbar">
                     <Nav className="ms-auto">
-                        <NavPageLink page="home" onClick={() => setExpanded(false)} blacklist={blacklist} />
-                        <NavPageLink page="settings" onClick={() => setExpanded(false)} blacklist={blacklist} />
-                        <NavPageLink page="forms" onClick={() => setExpanded(false)} blacklist={blacklist} />
-                        <NavPageLink page="data" onClick={() => setExpanded(false)} blacklist={blacklist} />
-                        <NavPageLink page="lead" onClick={() => setExpanded(false)} blacklist={blacklist} />
-                        <NavPageLink page="admin" onClick={() => setExpanded(false)} blacklist={blacklist} />
+                        <NavPageLink page="home" onClick={onclick} blacklist={blacklist} />
+                        <NavPageLink page="settings" onClick={onclick} blacklist={blacklist} />
+                        <NavPageLink page="forms" onClick={onclick} blacklist={blacklist} />
+                        <NavPageLink page="data" onClick={onclick} blacklist={blacklist} />
+                        <NavPageLink page="lead" onClick={onclick} blacklist={blacklist} />
+                        <NavPageLink page="form-maker" onClick={onclick} blacklist={blacklist} />
+                        <NavPageLink page="admin" onClick={onclick} blacklist={blacklist} />
                     </Nav>
                 </Navbar.Collapse>
             </Container>

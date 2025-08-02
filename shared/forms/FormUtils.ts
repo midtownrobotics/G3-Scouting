@@ -1,9 +1,9 @@
 /**
- * Turns a string into a string that can be used for SQL column and table names.
+ * Turns a string into a string that is alphanumeric.
  * @param str The string to convert.
  * @returns The converted string.
  */
-export function toSqlAcceptableString(str: string) {
+export function toAlphanumeric(str: string) {
     return str
         .trim()
         .replace(/\s+/g, '_')

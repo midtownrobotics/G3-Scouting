@@ -32,15 +32,15 @@ export default class FormModel extends Model<SerializedForm> {
     @UpdatedAt
     updatedAt!: Date;
 
-    public static async storeForm(form: Form) {
-        await FormModel.upsert({
-            id: form.id,
-            name: form.name,
-            components: form.getComponents().map(c => c.toJSON()),
-            maxComponentId: form.maxComponentId,
-            deployed: form.deployed,
-            description: form.description
-        });
+    public static async storeForm(form: Form | SerializedForm) {
+        if (form instanceof Form) {
+            await FormModel.upsert({
+                ...form,
+                components: form.getComponents().map(c => c.toJSON())
+            });
+        } else {
+            await FormModel.upsert(form);
+        }
     }
 
     public static async getForms(includeResponses?: boolean) {
