@@ -1,4 +1,4 @@
-import { SimpleUser } from "@shared/schemas/API";
+import { SimpleUser } from "@shared/schemas/user";
 import React, { useEffect } from "react";
 import { Assignment, Block } from "@shared/schemas/schedule";
 

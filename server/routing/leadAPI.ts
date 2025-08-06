@@ -15,11 +15,6 @@ leadAPIrouter.post("/assignForMatch", async (req, res) => {
     res.send(400);
 });
 
-leadAPIrouter.get("/getCurrentMatch", async (req, res) => {
-    const match = await getSettingsValue("match");
-    res.send({ match });
-});
-
 leadAPIrouter.get("/getCurrentAssignment", async (req, res) => {
     res.send({ assignments: currentAssignments });
 });

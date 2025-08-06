@@ -1,3 +1,4 @@
+import { FormType } from "@shared/forms/Form";
 import { z } from "zod";
 
 /** A question: response pair. Contains the **NON-NAMESPACED** questionId and a response. */
@@ -9,16 +10,32 @@ export type QuestionResponse = z.infer<typeof QuestionResponse>;
 
 /** A response to a form, including a team, match, and the question: response pairs. If sent from the server, will contain `userId`, `submittedAt`, `id`, and `accuracyScore`. */
 export const FormResponse = z.object({
-    responses: z.array(QuestionResponse),
-    formId: z.string(),
     team: z.number(),
+    responses: z.array(QuestionResponse),
     match: z.number(),
+    formId: z.string(),
     userId: z.number().optional(),
     submittedAt: z.string().optional(),
     id: z.number().optional(),
     accuracyScore: z.number().nullable().optional()
 });
 export type FormResponse = z.infer<typeof FormResponse>;
+
+/** A response that is sent from the client to the server. */
+export const SubmittedResponse = z.union([
+    z.object({
+        type: z.literal(FormType.TEAM),
+        response: FormResponse
+    }),
+    z.object({
+        type: z.literal(FormType.ALLIANCE),
+        teams: z.array(z.number()),
+        responses: z.array(FormResponse)
+    }),
+]).and(z.object({
+    formId: z.string()
+}));
+export type SubmittedResponse = z.infer<typeof SubmittedResponse>;
 
 /** Data about how to validate question data. */
 export const QuestionValidationData = z.object({
@@ -85,7 +102,8 @@ export type MultiTeamQuestionData = z.infer<typeof MultiTeamQuestionData>;
 
 export const NextMatch = z.object({
     number: z.number(),
-    team: z.number()
+    team: z.number(),
+    teams: z.array(z.number())
 });
 export type NextMatch = z.infer<typeof NextMatch>;
 
@@ -93,6 +111,15 @@ export type NextMatch = z.infer<typeof NextMatch>;
 export const CurrentAssignment = z.object({
     username: z.string(),
     userId: z.number(),
-    team: z.number()
+    team: z.number(),
+    teams: z.array(z.number())
 });
 export type CurrentAssignment = z.infer<typeof CurrentAssignment>;
+
+export const MatchData = z.object({
+    number: z.number(),
+    teams: z.array(z.number()),
+    blue: z.array(z.number()),
+    red: z.array(z.number()),
+})
+export type MatchData = z.infer<typeof MatchData>;

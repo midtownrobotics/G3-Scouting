@@ -1,4 +1,4 @@
-import { CreateUser, SimpleUser } from "@shared/schemas/API"
+import { CreateUser, SimpleUser } from "@shared/schemas/user"
 import { useState } from "react"
 import { Floppy, Pencil, Trash } from "react-bootstrap-icons"
 import EditableCell from "../EditableCell"

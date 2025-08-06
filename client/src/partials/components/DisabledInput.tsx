@@ -4,7 +4,7 @@ export default function DisabledInput({
     val,
     children
 }: {
-    val: string | number,
+    val?: string | number,
     children: string;
 }) {
     return (

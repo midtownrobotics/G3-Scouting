@@ -1,10 +1,14 @@
-import Form from "@shared/forms/Form";
+import Form, { FormType } from "@shared/forms/Form";
 import { SerializedForm } from "@shared/schemas/forms";
 import { useEffect, useState } from "react";
 import { Alert, Form as BSForm, Button, Col, FormControl, Row, Table } from "react-bootstrap";
 import { CloudSlash, CloudUpload, Pencil, Trash } from "react-bootstrap-icons";
 import { z } from "zod";
 import { fetchAPIJSON, postAPI } from "../../API";
+
+function isFormTypeKey(val: string): val is keyof typeof FormType {
+    return val in FormType;
+}
 
 export default function SelectForm({
     form,
@@ -18,6 +22,11 @@ export default function SelectForm({
     const [forms, setForms] = useState<SerializedForm[]>();
     const [newFormName, setNewFormName] = useState("");
     const [newFormDesc, setNewFormDesc] = useState("");
+    const [newFormType, _setNewFormType] = useState<FormType>(FormType.TEAM);
+
+    const setNewFormType = (val: string) => {
+        if (isFormTypeKey(val)) _setNewFormType(FormType[val]);
+    };
 
     const [working, setWorking] = useState(false);
 
@@ -36,7 +45,9 @@ export default function SelectForm({
 
     const createNewForm = () => {
         setErr(undefined);
-        const newForm = new Form(newFormName.trim(), newFormDesc.trim());
+
+        const newForm = new Form(newFormType, newFormName, newFormDesc);
+
         if (forms?.some(f => f.id === newForm.id)) return setErr("ERROR: Form already exists.");
         form.current = newForm;
         form.current.deployed = false;
@@ -154,6 +165,10 @@ export default function SelectForm({
                             value={newFormDesc}
                             placeholder="Form description..."
                         />
+                        <BSForm.Select onChange={(e) => setNewFormType(e.target.value)}>
+                            <option value="TEAM">Team Based</option>
+                            <option value="ALLIANCE">Alliance Based</option>
+                        </BSForm.Select>
                         <Button
                             className="w-100"
                             variant="primary"

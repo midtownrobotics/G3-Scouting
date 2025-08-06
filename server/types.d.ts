@@ -1,6 +1,7 @@
-import { Permission } from "@shared/schemas/API";
+import { Permission } from "@shared/schemas/user";
 import { Request } from "express";
 import UserModel from "./models/users/UserModel";
+import { MatchData } from "@shared/schemas/data";
 
 export type Settings = {
     slackClientId: string;
@@ -8,7 +9,7 @@ export type Settings = {
     slackToken: string;
     theBlueAlliance: string;
     eventKey: string;
-    match: number;
+    match: MatchData;
 }
 
 interface AuthReq extends Request {

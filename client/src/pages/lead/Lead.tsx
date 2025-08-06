@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Card, Container, Form, Row, Col, Spinner, Table } from "react-bootstrap";
 import { fetchAPIJSON, postAPI } from "../../API";
 import { z } from "zod";
-import { CurrentAssignment } from "@shared/schemas/data";
+import { CurrentAssignment, MatchData } from "@shared/schemas/data";
 
 export default function Lead() {
     const [currentMatch, setCurrentMatch] = useState(-1);
@@ -10,11 +10,11 @@ export default function Lead() {
     const [assignments, setAssignments] = useState<CurrentAssignment[]>();
 
     const getMatchData = () => {
-        fetchAPIJSON("/lead/getCurrentMatch").then(body => {
-            const data = z.object({ match: z.number() }).safeParse(body);
+        fetchAPIJSON("/getCurrentMatch").then(body => {
+            const data = MatchData.safeParse(body);
             if (data.success) {
-                setCurrentMatch(data.data.match);
-                setMatchInput(data.data.match + 1);
+                setCurrentMatch(data.data.number);
+                setMatchInput(data.data.number + 1);
                 return;
             }
             setTimeout(getMatchData, 500);

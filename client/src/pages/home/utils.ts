@@ -1,4 +1,4 @@
-import { UserInformation } from "@shared/schemas/API";
+import { UserInformation } from "@shared/schemas/user";
 import { Block } from "@shared/schemas/schedule";
 import { DateString } from "@shared/types";
 

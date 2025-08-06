@@ -1,4 +1,4 @@
-import { UserInformation } from "@shared/schemas/API";
+import { UserInformation } from "@shared/schemas/user";
 import React, { useEffect, useState } from "react";
 import { Card, Container, Spinner, Table } from "react-bootstrap";
 import { fetchAPIJSON } from "../../API";

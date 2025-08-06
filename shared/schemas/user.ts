@@ -1,6 +1,7 @@
 import z from 'zod'
 import { Assignment, Block } from './schedule'
 import { Permission } from '@shared/permissions';
+import { NextMatch } from './data';
 
 export const SimpleUser = z.object({
     username: z.string(),
@@ -26,7 +27,8 @@ export const UserInformation = z.object({
         schedule: z.array(z.object({
             block: Block,
             assignment: Assignment
-        }))
+        })),
+        nextMatch: NextMatch.nullish()
     })),
     currentAssignment: Assignment.optional()
 });

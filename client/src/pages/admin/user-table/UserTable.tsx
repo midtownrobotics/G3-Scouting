@@ -1,4 +1,4 @@
-import { SimpleUser } from "@shared/schemas/API";
+import { SimpleUser } from "@shared/schemas/user";
 import { JSX, useEffect, useState } from "react";
 import { Spinner, Table } from "react-bootstrap";
 import z from 'zod';
