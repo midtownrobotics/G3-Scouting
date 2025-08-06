@@ -4,7 +4,7 @@ import AssignmentModel from './scheduling/AssignmentModel';
 import BlockModel from './scheduling/BlockModel';
 import UserBlockAssignmentModel from './scheduling/UserBlockAssignmentModel';
 import FormModel from './forms/FormModel';
-import FormResponseByTeamModel from './forms/FormResponseModel';
+import FormResponseByTeamModel from './forms/FormResponseModels';
 import SessionModel from './users/SessionModel';
 import AccuracyScoreModel from './validation/AccuracyScoreModel';
 import ScoutAccuracyScoreModel from './validation/ScoutAccuracyScoreModel';

@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Alert, Button, Card, Container, Form, Spinner } from "react-bootstrap";
 import { postAPI } from "../API";
+import { useUserData } from "../userData";
 
-function Login({ setLoggedIn }: { setLoggedIn: (val: boolean) => void }) {
+function Login() {
+    const { setLoggedIn } = useUserData();
+
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -17,10 +20,10 @@ function Login({ setLoggedIn }: { setLoggedIn: (val: boolean) => void }) {
             const res = await postAPI("/login", {
                 username,
                 password
-            })
+            });
 
             if (res?.status === 200) {
-                setLoggedIn(true)
+                setLoggedIn(true);
             } else {
                 setError("Invalid credentials.");
             }
@@ -29,7 +32,7 @@ function Login({ setLoggedIn }: { setLoggedIn: (val: boolean) => void }) {
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     return (
         <div id="login-page">

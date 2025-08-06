@@ -20,3 +20,8 @@ export function generateRandomString(length: number) {
     }
     return result;
 }
+
+export enum Alliance {
+    RED = "RED",
+    BLUE = "BLUE"
+}

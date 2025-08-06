@@ -1,9 +1,9 @@
 import { FormResponseData } from "@shared/schemas/data";
 import { getValueByPath } from "../../externalApis/tba/getValueByPath";
 import { getMatchData } from "../../externalApis/tba/tba";
+import FormResponseByTeamModel from "../../models/forms/FormResponseModels";
 import { keepTryingQuery } from "../../models/modelUtils";
 import AccuracyScoreModel from "../../models/validation/AccuracyScoreModel";
-import FormResponseByTeamModel from "../../models/forms/FormResponseModel";
 import ScoutAccuracyScoreModel from "../../models/validation/ScoutAccuracyScoreModel";
 
 export default async function scoreAllianceData(
@@ -79,7 +79,7 @@ export default async function scoreAllianceData(
     };
 
     for (const response of matchData) {
-        const responseModel = await FormResponseByTeamModel.findByPk(response.id)
+        const responseModel = await FormResponseByTeamModel.findByPk(response.id);
         responseModel?.update({ accuracyScore: score });
     };
 

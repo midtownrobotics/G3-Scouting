@@ -2,7 +2,7 @@ import { DeployPayload } from '@shared/schemas/schedule';
 import bcrypt from 'bcrypt';
 import express, { Request, Response } from 'express';
 import { z } from 'zod';
-import { CreateUser, SaveableInputData, SimpleUser } from '../../shared/schemas/API';
+import { CreateUser, SaveableInputData, SimpleUser } from '../../shared/schemas/user';
 import UserBlockAssignmentModel from '../models/scheduling/UserBlockAssignmentModel';
 import SessionModel from '../models/users/SessionModel';
 import UserModel from '../models/users/UserModel';

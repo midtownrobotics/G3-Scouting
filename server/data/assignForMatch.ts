@@ -1,42 +1,62 @@
+import { CurrentAssignment } from "@shared/schemas/data";
 import { AssignmentType } from "@shared/schemas/schedule";
 import { getAllMatches } from "../externalApis/tba/tba";
 import UserModel from "../models/users/UserModel";
-import { scoreAllForms } from "./reliability/scoreUnscoredMatches";
-import { z } from "zod";
-import { CurrentAssignment } from "@shared/schemas/data";
 import { setSettingsValue } from "../settings";
+import { scoreAllForms } from "./reliability/scoreUnscoredMatches";
+import { Alliance } from "@shared/forms/FormUtils";
 
 export const currentAssignments: CurrentAssignment[] = [];
 
 export default async function assignForMatch(nextMatch: number) {
     const match = (await getAllMatches())?.find(m => m.match_number === nextMatch);
     if (!match) return;
-    const teams = [...match.alliances.red.team_keys, ...match.alliances.blue.team_keys].map(t => parseInt(t.slice(3)));
-    if (teams.length !== 6) return;
+    const redTeams = match.alliances.red.team_keys.map(t => parseInt(t.slice(3)));
+    const blueTeams = match.alliances.blue.team_keys.map(t => parseInt(t.slice(3)));
+    const allTeams = redTeams.concat(blueTeams);
+    if (allTeams.length !== 6) return;
 
     currentAssignments.length = 0;
 
     const users = await UserModel.findAll();
-    for (const user of users) {
-        if ((await user.getCurrentAssignment())?.type !== AssignmentType.SCOUTING) continue;
+    for (const alliance of [Alliance.RED, Alliance.BLUE]) {
+        const assigned: CurrentAssignment[] = [];
+        const allianceTeams = alliance === Alliance.RED ? redTeams : blueTeams;
 
-        const team = teams[currentAssignments.length % 6];
-        currentAssignments.push({
-            username: user.username,
-            userId: user.id,
-            team
-        });
+        for (const user of users) {
+            if ((await user.getCurrentAssignment())?.type !== AssignmentType.SCOUTING) continue;
+            const i = assigned.length;
+            const userAlliance = user.redAlliance ? Alliance.RED : Alliance.BLUE;
+            if (userAlliance !== alliance) continue;    
+            const team = allianceTeams[i % 3];
+            
+            currentAssignments.push({
+                username: user.username,
+                userId: user.id,
+                team,
+                teams: allianceTeams
+            });
+    
+            await user.update({
+                assignedMatches: [...user.assignedMatches, nextMatch],
+                nextMatch: {
+                    number: nextMatch,
+                    team,
+                    teams: allianceTeams
+                }
+            });
+        }
 
-        await user.update({
-            assignedMatches: [...user.assignedMatches, nextMatch],
-            nextMatch: {
-                number: nextMatch,
-                team
-            }
-        });
+        currentAssignments.push(...assigned)
     }
 
-    setSettingsValue("match", nextMatch)
+    setSettingsValue("match", {
+        number: nextMatch,
+        teams: allTeams,
+        red: redTeams,
+        blue: blueTeams
+    });
 
-    await scoreAllForms();
+    // Runs in background
+    scoreAllForms();
 }

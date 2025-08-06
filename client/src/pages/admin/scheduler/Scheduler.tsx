@@ -1,4 +1,4 @@
-import { SimpleUser } from "@shared/schemas/API";
+import { SimpleUser } from "@shared/schemas/user";
 import { Assignment, Block, SendableSchedule } from "@shared/schemas/schedule";
 import { Day } from "@shared/types";
 import { useEffect, useRef, useState } from "react";

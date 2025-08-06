@@ -1,11 +1,11 @@
 import { PORT, PRODUCTION } from "@shared/config";
-import Form from "@shared/forms/Form";
+import Form, { FormType } from "@shared/forms/Form";
 import formComponents from "@shared/forms/FormComponents";
 import fs from "fs";
 import { parse } from "papaparse";
 import path from "path";
 import FormModel from "./models/forms/FormModel";
-import FormResponseByTeamModel from "./models/forms/FormResponseModel";
+import FormResponseByTeamModel from "./models/forms/FormResponseModels";
 import syncDatabase from "./models/syncDatabase";
 import UserModel from "./models/users/UserModel";
 import { server } from "./routing/router";
@@ -29,7 +29,7 @@ syncDatabase().then(() => {
         scheduleReminders();
 
         const allUsers = await UserModel.findAll();
-        if (allUsers.length == 0 || !allUsers.find((user) => user.permission === Permission.ADMIN)) {
+        if (allUsers.length === 0 || !allUsers.some((user) => user.permission === Permission.ADMIN)) {
             UserModel.addUser("admin", "password", Permission.ADMIN, true);
         }
 
@@ -44,7 +44,7 @@ syncDatabase().then(() => {
 });
 
 async function testCode() {
-    // const form = new Form("Quantitative", "A quantitative scouting form.");
+    // const form = new Form(FormType.TEAM, "Quantitative", "A quantitative scouting form.");
 
     // form.addComponent(new formComponents.SectionBreak("Autonomous"));
     // form.addComponent(new formComponents.Number("L1", "AutoL1", { type: "tba", path: "score_breakdown.{$A}.autoReef.trough" }));
@@ -73,7 +73,7 @@ async function testCode() {
             header: true
         });
 
-        ppData.data.forEach((row: any) => {
+        ppData.data.forEach((row: any, i) => {
             const team = parseInt(row.TeamNumber);
             const match = parseInt(row.MatchNumber);
             const userId = parseInt(row.UserId);

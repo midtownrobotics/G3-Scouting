@@ -1,7 +1,7 @@
-import Form from "@shared/forms/Form";
+import Form, { FormType } from "@shared/forms/Form";
 import { SerializedComponent, SerializedForm } from "@shared/schemas/forms";
 import { Column, CreatedAt, DataType, HasMany, Model, Table, UpdatedAt } from "sequelize-typescript";
-import FormResponseByTeamModel from "./FormResponseModel";
+import FormResponseByTeamModel from "./FormResponseModels";
 
 @Table({ tableName: "forms" })
 export default class FormModel extends Model<SerializedForm> {
@@ -19,6 +19,9 @@ export default class FormModel extends Model<SerializedForm> {
 
     @Column(DataType.INTEGER)
     maxComponentId!: number;
+
+    @Column(DataType.TEXT)
+    type!: FormType;
 
     @Column(DataType.JSON)
     components!: SerializedComponent[];
@@ -64,6 +67,6 @@ export default class FormModel extends Model<SerializedForm> {
     }
 
     public toForm(): Form {
-        return Form.fromJSON(this);
+        return Form.fromJSON(this.toJSON());
     }
 }

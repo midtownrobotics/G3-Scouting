@@ -1,9 +1,11 @@
 import { Nav } from "react-bootstrap";
 import { usePage } from "../../pageManager";
 import { PageKey } from "@shared/types";
+import { useUserData } from "../../userData";
 
-function NavPageLink({ page, blacklist, onClick }: { page: PageKey, blacklist: PageKey[], onClick: () => void; }) {
+function NavPageLink({ page, onClick }: { page: PageKey, onClick: () => void; }) {
     const { setPageKey, pageKey } = usePage();
+    const { blacklist } = useUserData();
 
     const linkOnClick = () => {
         onClick();

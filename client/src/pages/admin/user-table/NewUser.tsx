@@ -1,4 +1,4 @@
-import { CreateUser } from "@shared/schemas/API";
+import { CreateUser } from "@shared/schemas/user";
 import { useState } from "react";
 import { PlusCircle } from "react-bootstrap-icons";
 import { postAPI } from "../../../API";

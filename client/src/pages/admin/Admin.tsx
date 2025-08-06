@@ -1,4 +1,4 @@
-import { SimpleUser } from "@shared/schemas/API";
+import { SimpleUser } from "@shared/schemas/user";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { fetchAPIJSON } from "../../API";

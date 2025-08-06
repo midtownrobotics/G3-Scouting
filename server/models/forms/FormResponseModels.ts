@@ -1,7 +1,8 @@
-import { QuestionResponse } from "@shared/schemas/data";
+import { FormResponse, QuestionResponse, SubmittedResponse } from "@shared/schemas/data";
 import { CreationOptional, InferAttributes, InferCreationAttributes } from "sequelize";
 import { Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
 import FormModel from "./FormModel";
+import { FormType } from "@shared/forms/Form";
 
 @Table({ tableName: "form_responses_by_team" })
 export default class FormResponseByTeamModel extends Model<InferAttributes<FormResponseByTeamModel>, InferCreationAttributes<FormResponseByTeamModel>> {
@@ -27,19 +28,24 @@ export default class FormResponseByTeamModel extends Model<InferAttributes<FormR
     @Column({ type: DataType.STRING })
     submittedAt!: string;
 
-    @Column({type: DataType.FLOAT, defaultValue: null})
+    @Column({ type: DataType.FLOAT, defaultValue: null })
     accuracyScore!: number | null;
 
-    public static async submitResponse(responses: QuestionResponse[], formId: string, userId: number, team: number, match: number) {
+    public static async submitResponse(r: SubmittedResponse, userId: number) {
+        if (r.type === FormType.ALLIANCE) {
+            for (const response of r.responses) {
+                FormResponseByTeamModel.createResponse(response, userId);
+            }
+        } else {
+            FormResponseByTeamModel.createResponse(r.response, userId);
+        }
+    }
+
+    private static async createResponse(r: FormResponse, userId: number) {
+        const submittedAt = new Date().toLocaleString();
+
         try {
-            await FormResponseByTeamModel.create({
-                submittedAt: new Date().toString(),
-                match,
-                userId,
-                formId,
-                team,
-                responses
-            });
+            await FormResponseByTeamModel.create({ ...r, userId, submittedAt });
         } catch (err: any) { }
     }
 }

@@ -1,4 +1,3 @@
-import { PageKey } from "@shared/types";
 import { useState } from "react";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { usePage } from "../../pageManager";
@@ -6,7 +5,7 @@ import "./NavigationBar.css";
 import NavPageLink from "./NavPageLink";
 
 /** The site navigation bar. */
-function NavigationBar({ blacklist }: { blacklist: PageKey[]; }) {
+function NavigationBar() {
     const { setPageKey } = usePage();
     const [expanded, setExpanded] = useState(false);
 
@@ -25,13 +24,13 @@ function NavigationBar({ blacklist }: { blacklist: PageKey[]; }) {
                 />
                 <Navbar.Collapse id="main-navbar">
                     <Nav className="ms-auto">
-                        <NavPageLink page="home" onClick={onclick} blacklist={blacklist} />
-                        <NavPageLink page="settings" onClick={onclick} blacklist={blacklist} />
-                        <NavPageLink page="forms" onClick={onclick} blacklist={blacklist} />
-                        <NavPageLink page="data" onClick={onclick} blacklist={blacklist} />
-                        <NavPageLink page="lead" onClick={onclick} blacklist={blacklist} />
-                        <NavPageLink page="form-maker" onClick={onclick} blacklist={blacklist} />
-                        <NavPageLink page="admin" onClick={onclick} blacklist={blacklist} />
+                        <NavPageLink page="home" onClick={onclick} />
+                        <NavPageLink page="settings" onClick={onclick} />
+                        <NavPageLink page="forms" onClick={onclick} />
+                        <NavPageLink page="data" onClick={onclick} />
+                        <NavPageLink page="lead" onClick={onclick} />
+                        <NavPageLink page="form-maker" onClick={onclick} />
+                        <NavPageLink page="admin" onClick={onclick} />
                     </Nav>
                 </Navbar.Collapse>
             </Container>

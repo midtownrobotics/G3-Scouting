@@ -3,7 +3,7 @@ import { Alert, Button, Card, Container, Form, Spinner } from "react-bootstrap";
 import { BoxArrowRight, Key, Slack, Trash } from "react-bootstrap-icons";
 import { fetchAPIJSON, postAPI } from "../../API";
 import SlackLink from "./SlackLink";
-import { SlackData } from "@shared/schemas/API";
+import { SlackData } from "@shared/schemas/user";
 
 export default function Settings() {
     const [newPassword, setNewPassword] = useState("");

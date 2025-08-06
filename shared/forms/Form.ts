@@ -1,24 +1,28 @@
-import FormResponseByTeamModel from "../../server/models/forms/FormResponseModel";
 import { FormResponse, FormResponseData } from "../schemas/data";
 import { SerializedForm } from "../schemas/forms";
 import { FormComponent } from "./FormComponents";
 import { generateRandomString, toAlphanumeric } from "./FormUtils";
+import FormResponseByTeamModel from "../../server/models/forms/FormResponseModels";
+
+export enum FormType {
+    TEAM = "TEAM",
+    ALLIANCE = "ALLIANCE"
+}
 
 export default class Form {
     public readonly name: string;
     public readonly id: string;
-    public deployed: boolean = true;
     public maxComponentId: number;
 
-    private components: FormComponent[] = [];
+    protected components: FormComponent[] = [];
+    protected responses?: FormResponse[];
 
     public get needsValidation(): boolean {
         return this.components.some(c => c.needsValidation);
     }
 
-    constructor(name: string, description: string);
-    constructor(name: string, description: string, components: FormComponent[], maxComponentId: number, responses?: FormResponse[]);
-    constructor(name: string, public description: string, components?: FormComponent[], maxComponentId?: number, private responses?: FormResponse[]) {
+    constructor(public deployed: boolean, public type: FormType, name: string, public description: string, components?: FormComponent[], maxComponentId?: number, responses?: FormResponse[]) {
+        this.responses = responses;
         this.name = name;
         this.id = toAlphanumeric(name);
         this.maxComponentId = maxComponentId ?? 0;
@@ -60,14 +64,26 @@ export default class Form {
         return this.components;
     }
 
-    public updateResponseData(models: FormResponseByTeamModel[]) {
-        this.responses = models.map(m => m.toJSON());
+    public static fromJSON(json: SerializedForm): Form {
+        return new Form(
+            json.deployed, 
+            json.type, 
+            json.name, 
+            json.description, 
+            json.components.map(c => FormComponent.fromJSON(c, json.id)), 
+            json.maxComponentId, 
+            json.responses
+        );
     }
 
     /** Gets response data for this form, if form has associated data. 
      * @param minAccuracy The minimum accuracy for responses to be included in the data result.
      * @returns `null` if there are no reponses. Be sure to pass `true` into FormModel.getForm(s).
      */
+    public updateResponseData(models: FormResponseByTeamModel[]): void {
+        this.responses = models.map(m => m.toJSON());
+    }
+
     public getResponseData(minAccuracy?: number): FormResponseData | null {
         if (!this.responses) return null;
         const questions = this.components.filter(c => c.metadata !== null).map(q => q.metadata!);
@@ -83,12 +99,9 @@ export default class Form {
         };
     }
 
-    public static fromJSON(json: SerializedForm): Form {
-        return new Form(json.name, json.description, json.components.map(c => FormComponent.fromJSON(c, json.id)), json.maxComponentId, json.responses);
-    }
-
     public toJSON(): SerializedForm {
         return {
+            type: FormType.ALLIANCE,
             name: this.name,
             components: this.getComponents().map(c => c.toJSON()),
             id: this.id,
