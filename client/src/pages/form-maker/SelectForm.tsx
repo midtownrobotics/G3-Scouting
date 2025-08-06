@@ -46,7 +46,7 @@ export default function SelectForm({
     const createNewForm = () => {
         setErr(undefined);
 
-        const newForm = new Form(newFormType, newFormName, newFormDesc);
+        const newForm = new Form(false, newFormType, newFormName, newFormDesc);
 
         if (forms?.some(f => f.id === newForm.id)) return setErr("ERROR: Form already exists.");
         form.current = newForm;
