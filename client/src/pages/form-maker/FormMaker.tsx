@@ -1,14 +1,12 @@
 import { closestCenter, DndContext, DragMoveEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import Form, { FormType } from "@shared/forms/Form";
-import formComponents, { FormComponent as FormComponentClass } from "@shared/forms/FormComponents";
+import Form from "@shared/forms/Form";
+import { FormComponent as FormComponentClass } from "@shared/forms/FormComponents";
 import { useReducer, useRef, useState } from "react";
-import { Alert, Button, Card, Col, FormControl, InputGroup, Row, Form as BSForm } from "react-bootstrap";
+import { Alert, Button, Card, Col, FormControl, InputGroup, Row } from "react-bootstrap";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { postAPI } from "../../API";
-import DisabledInput from "../../partials/components/DisabledInput";
-import FormComponent from "../../partials/components/FormComponent";
-import SectionBreak from "../../partials/components/SectionBreak";
+import FormComp from "../../partials/FormComp";
 import NewComponent from "./components/NewComponent";
 import SelectForm from "./SelectForm";
 import SortableItem from "./SortableItem";
@@ -229,44 +227,17 @@ export default function FormMaker() {
 
                 <Col className="text-center">
                     <h1>Preview: {form.current.name}</h1>
-                    {form.current?.type === FormType.TEAM ? (
-                        <BSForm>
-                            <SectionBreak component={new formComponents.SectionBreak("Pre-game")} />
-                            <DisabledInput val={99}>Match Number</DisabledInput>
-                            <DisabledInput val={9999}>Team Number</DisabledInput>
-                            {form.current?.getComponents().map(c => (
-                                <div key={c.getId()} style={dragging === c.getId() ? { padding: "5px 0px", backgroundColor: "lightblue" } : {}}>
-                                    <FormComponent
-                                        key={c.getId()}
-                                        component={c}
-                                        onAnswerChange={() => undefined}
-                                        answer={undefined}
-                                    />
-                                </div>
-                            ))}
-                        </BSForm>
-                    ) : (
-                        <BSForm>
-                            <hr />
-                            <DisabledInput val={"99"}>Match Number</DisabledInput>
-                            {["123", "1648", "999"].map(t => (
-                                <div>
-                                    <hr />
-                                    <h2>Team #{t}</h2>
-                                    {form.current?.getComponents().map(c => (
-                                        <div key={c.getId()} style={dragging === c.getId() ? { padding: "5px 0px", backgroundColor: "lightblue" } : {}}>
-                                            <FormComponent
-                                                key={c.getId()}
-                                                component={c}
-                                                onAnswerChange={() => undefined}
-                                                answer={undefined}
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-                            ))}
-                        </BSForm>
-                    )}
+
+                    <FormComp
+                        answers={new Map()}
+                        handleAnswerChange={() => undefined}
+                        form={form.current}
+                        match={67}
+                        team={1648}
+                        teams={[999, 1648, 123]}
+                        dragging={dragging}
+                    />
+
                 </Col>
             </Row>
         </div>

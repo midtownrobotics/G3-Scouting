@@ -14,7 +14,7 @@ function FormComponent({
     component: FormComponentClass,
     onAnswerChange: (id: string, value: string) => void,
     answer: any,
-    team?: number;
+    team?: number,
 }) {
     const _onAnswerChange = (id: string, val: string) => {
         onAnswerChange(team ? team + "##" + id : id, val);
