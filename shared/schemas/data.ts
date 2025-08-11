@@ -12,7 +12,7 @@ export type QuestionResponse = z.infer<typeof QuestionResponse>;
 export const FormResponse = z.object({
     team: z.number(),
     responses: z.array(QuestionResponse),
-    match: z.number(),
+    match: z.number().optional(),
     formId: z.string(),
     userId: z.number().optional(),
     submittedAt: z.string().optional(),
@@ -80,7 +80,7 @@ export const QuestionData = z.object({
     average: z.string().or(z.number()).optional(),
     responses: z.array(z.object({
         response: z.string(),
-        match: z.number()
+        match: z.number().optional()
     })),
 });
 export type QuestionData = z.infer<typeof QuestionData>;

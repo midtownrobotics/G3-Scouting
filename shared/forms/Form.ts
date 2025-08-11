@@ -6,13 +6,16 @@ import FormResponseByTeamModel from "../../server/models/forms/FormResponseModel
 
 export enum FormType {
     TEAM = "TEAM",
-    ALLIANCE = "ALLIANCE"
+    ALLIANCE = "ALLIANCE",
+    NO_MATCH = "NO_MATCH"
 }
 
 export default class Form {
     public readonly name: string;
     public readonly id: string;
-    public maxComponentId: number;
+    public maxComponentId: number = 0;
+    public deployed = false;
+    public openSubmission = false;
 
     protected components: FormComponent[] = [];
     protected responses?: FormResponse[];
@@ -21,20 +24,9 @@ export default class Form {
         return this.components.some(c => c.needsValidation);
     }
 
-    constructor(public deployed: boolean, public type: FormType, name: string, public description: string, components?: FormComponent[], maxComponentId?: number, responses?: FormResponse[]) {
-        this.responses = responses;
+    constructor(public type: FormType, name: string, public description: string) {
         this.name = name;
         this.id = toAlphanumeric(name);
-        this.maxComponentId = maxComponentId ?? 0;
-
-        const uniqueMap = new Map<string, FormComponent>();
-        for (const component of components ?? []) {
-            const id = component.getId();
-            if (!uniqueMap.has(id)) {
-                uniqueMap.set(id, component);
-            }
-        }
-        this.components = Array.from(uniqueMap.values());
     }
 
     getComponents = (): FormComponent[] => [...this.components];
@@ -65,15 +57,19 @@ export default class Form {
     }
 
     public static fromJSON(json: SerializedForm): Form {
-        return new Form(
-            json.deployed, 
-            json.type, 
-            json.name, 
-            json.description, 
-            json.components.map(c => FormComponent.fromJSON(c, json.id)), 
-            json.maxComponentId, 
-            json.responses
+        const form = new Form(
+            json.type,
+            json.name,
+            json.description
         );
+
+        form.responses = json.responses;
+        form.deployed = json.deployed;
+        form.openSubmission = json.openSubmission;
+        form.maxComponentId = json.maxComponentId ?? 0;
+        form.setComponents(json.components.map(c => FormComponent.fromJSON(c, json.id)));
+
+        return form;
     }
 
     /** Gets response data for this form, if form has associated data. 
@@ -82,6 +78,21 @@ export default class Form {
      */
     public updateResponseData(models: FormResponseByTeamModel[]): void {
         this.responses = models.map(m => m.toJSON());
+    }
+
+    /**
+     * **Removes all currently added components** and new ones.
+     * @param components The array of components to add.
+     */
+    public setComponents(components: FormComponent[]) {
+        const uniqueMap = new Map<string, FormComponent>();
+        for (const component of components ?? []) {
+            const id = component.getId();
+            if (!uniqueMap.has(id)) {
+                uniqueMap.set(id, component);
+            }
+        }
+        this.components = Array.from(uniqueMap.values());
     }
 
     public getResponseData(minAccuracy?: number): FormResponseData | null {
@@ -101,10 +112,11 @@ export default class Form {
 
     public toJSON(): SerializedForm {
         return {
-            type: FormType.ALLIANCE,
+            type: this.type,
             name: this.name,
             components: this.getComponents().map(c => c.toJSON()),
             id: this.id,
+            openSubmission: this.openSubmission,
             maxComponentId: this.maxComponentId,
             deployed: this.deployed,
             description: this.description,

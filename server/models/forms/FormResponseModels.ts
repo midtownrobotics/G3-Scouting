@@ -19,8 +19,8 @@ export default class FormResponseByTeamModel extends Model<InferAttributes<FormR
     @Column({ type: DataType.INTEGER })
     team!: number;
 
-    @Column({ type: DataType.INTEGER })
-    match!: number;
+    @Column({ type: DataType.INTEGER, allowNull: true })
+    match?: number;
 
     @Column({ type: DataType.JSON })
     responses!: QuestionResponse[];

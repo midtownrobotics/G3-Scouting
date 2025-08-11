@@ -2,7 +2,7 @@ import Form, { FormType } from "@shared/forms/Form";
 import { SerializedForm } from "@shared/schemas/forms";
 import { useEffect, useState } from "react";
 import { Alert, Form as BSForm, Button, Col, FormControl, Row, Table } from "react-bootstrap";
-import { CloudSlash, CloudUpload, Pencil, Trash } from "react-bootstrap-icons";
+import { CloudSlash, CloudUpload, Lock, Pencil, Trash, Unlock } from "react-bootstrap-icons";
 import { z } from "zod";
 import { fetchAPIJSON, postAPI } from "../../API";
 
@@ -32,25 +32,25 @@ export default function SelectForm({
 
     const [err, setErr] = useState<string>();
 
-    const getForms = () => {
+    const getForms = (next?: () => void) => {
         fetchAPIJSON("/forms/getForms").then(u => {
             const parsed = z.array(SerializedForm).safeParse(u);
             if (parsed.success && parsed.data) {
                 setForms(parsed.data);
+                if (next) next();
             }
         });
     };
 
-    useEffect(() => getForms, []);
+    useEffect(() => getForms(), []);
 
     const createNewForm = () => {
         setErr(undefined);
 
-        const newForm = new Form(false, newFormType, newFormName, newFormDesc);
+        const newForm = new Form(newFormType, newFormName, newFormDesc);
 
         if (forms?.some(f => f.id === newForm.id)) return setErr("ERROR: Form already exists.");
         form.current = newForm;
-        form.current.deployed = false;
         forceUpdate();
     };
 
@@ -66,8 +66,14 @@ export default function SelectForm({
         setWorking(true);
         await postAPI("/admin/setDeployed", { form: id, deployed });
         await new Promise((r) => setTimeout(r, 200));
-        getForms();
-        setWorking(false);
+        getForms(() => setWorking(false));
+    };
+
+    const setOpenSubmission = async (id: string, openSubmission: boolean) => {
+        setWorking(true);
+        await postAPI("/admin/setOpenSubmission", { form: id, openSubmission });
+        await new Promise((r) => setTimeout(r, 200));
+        getForms(() => setWorking(false));
     };
 
     const deleteForm = async (id: string, name: string) => {
@@ -75,8 +81,7 @@ export default function SelectForm({
         if (prompt(`Please type "I am about to delete ${name}" in the box.`) !== `I am about to delete ${name}`) return;
         await postAPI("/admin/deleteForm", { form: id });
         await new Promise((r) => setTimeout(r, 200));
-        getForms();
-        setWorking(false);
+        getForms(() => setWorking(false));
     };
 
     return (
@@ -97,6 +102,7 @@ export default function SelectForm({
                         <thead>
                             <tr>
                                 <th>Name</th>
+                                <th />
                                 <th />
                                 <th />
                                 <th />
@@ -129,6 +135,16 @@ export default function SelectForm({
                                         </Button>
                                     </td>
                                     <td>
+                                        <Button
+                                            variant="link"
+                                            title={f.openSubmission ? "Lock Submissions" : "Unlock Submissions"}
+                                            onClick={() => setOpenSubmission(f.id, !f.openSubmission)}
+                                            disabled={working}
+                                        >
+                                            {f.openSubmission ? <Lock /> : <Unlock />}
+                                        </Button>
+                                    </td>
+                                    <td>
                                         {!f.deployed &&
                                             <Button
                                                 variant="link"
@@ -149,7 +165,7 @@ export default function SelectForm({
                 <Col className="m-2">
                     <h3>Create new form:</h3>
                     <BSForm
-                        className="d-flex flex-column align-items-center gap-2"
+                        className="d-flex flex-column align-items-center gap-2 m-auto"
                         style={{
                             minWidth: "300px",
                             maxWidth: "600px",
@@ -168,6 +184,7 @@ export default function SelectForm({
                         <BSForm.Select onChange={(e) => setNewFormType(e.target.value)}>
                             <option value="TEAM">Team Based</option>
                             <option value="ALLIANCE">Alliance Based</option>
+                            <option value="NO_MATCH">Team Data (no match)</option>
                         </BSForm.Select>
                         <Button
                             className="w-100"

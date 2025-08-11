@@ -1,7 +1,7 @@
 import { QuestionMetadata } from "@shared/schemas/data";
 
-type StringAggregation = { values: Map<string, number>, responses: { response: string, match: number; }[]; };
-type NumberAggregation = { sum: number, count: number, responses: { response: string, match: number; }[]; };
+type StringAggregation = { values: Map<string, number>, responses: { response: string, match?: number; }[]; };
+type NumberAggregation = { sum: number, count: number, responses: { response: string, match?: number; }[]; };
 export type AggregationEntry = StringAggregation | NumberAggregation;
 
 /** Compute averages */
@@ -18,13 +18,13 @@ export function computeAverage(metadata: QuestionMetadata, data: AggregationEntr
     return "";
 }
 
-/** Aggregate a single response */
+/** Get response data and add it to question aggregations. */
 export function aggregateResponse(
     aggregation: Map<string, AggregationEntry>,
     metadataMap: Map<string, QuestionMetadata>,
     namespacedId: string,
     response: string,
-    match: number
+    match?: number
 ) {
     const key = namespacedId;
     const metadata = metadataMap.get(key);

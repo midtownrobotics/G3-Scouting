@@ -125,26 +125,6 @@ export default function FormMaker() {
                     <h1>Form Maker</h1>
                     <hr className="my-4" />
 
-                    <Card className="bg-light-subtle mx-3">
-                        <Card.Body>
-                            <span>
-                                <span>New components will be added to the </span>
-                                <select
-                                    value={newComponentsTop ? "top" : "bottom"}
-                                    onChange={(e) => setNewComponentsTop(e.target.value === "top")}
-                                >
-                                    <option value="top">Top</option>
-                                    <option value="bottom">Bottom</option>
-                                </select>
-                                <span> of the form.</span>
-                            </span>
-                            <br />
-                            <span>Right click to delete components.</span>
-                        </Card.Body>
-                    </Card>
-
-                    <NewComponent addComponent={handleAddComponent} />
-
                     <Card className="bg-light-subtle m-3">
                         <Card.Body>
                             <div className="d-flex align-items-center">
@@ -189,6 +169,26 @@ export default function FormMaker() {
                                     onChange={(e) => setFormDescription(e.target.value)}
                                 />
                             </InputGroup>
+                        </Card.Body>
+                    </Card>
+
+                    <NewComponent addComponent={handleAddComponent} />
+
+                    <Card className="bg-light-subtle mx-3">
+                        <Card.Body>
+                            <span>
+                                <span>New components will be added to the </span>
+                                <select
+                                    value={newComponentsTop ? "top" : "bottom"}
+                                    onChange={(e) => setNewComponentsTop(e.target.value === "top")}
+                                >
+                                    <option value="top">Top</option>
+                                    <option value="bottom">Bottom</option>
+                                </select>
+                                <span> of the form.</span>
+                            </span>
+                            <br />
+                            <span>Right click to delete components.</span>
                         </Card.Body>
                     </Card>
 

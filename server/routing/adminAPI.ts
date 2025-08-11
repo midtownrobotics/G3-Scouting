@@ -185,6 +185,21 @@ adminAPIRouter.post("/setDeployed", async (req: Request, res: Response) => {
     res.sendStatus(200);
 });
 
+adminAPIRouter.post("/setOpenSubmission", async (req: Request, res: Response) => {
+    const body = z.object({
+        form: z.string(),
+        openSubmission: z.boolean()
+    }).safeParse(req.body);
+    if (!body.success || !body.data) { res.sendStatus(400); return; }
+
+    const form = await FormModel.getSerializedForm(body.data.form);
+    if (!form) { res.sendStatus(400); return; }
+
+    form.openSubmission = body.data.openSubmission;
+    await FormModel.storeForm(form);
+    res.sendStatus(200);
+});
+
 adminAPIRouter.post("/deleteForm", async (req: Request, res: Response) => {
     const body = z.object({ form: z.string() }).safeParse(req.body);
     if (!body.success || !body.data) { res.sendStatus(400); return; }
