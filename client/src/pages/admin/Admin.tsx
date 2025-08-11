@@ -63,8 +63,6 @@ function Admin() {
             <hr />
 
             <Scheduler users={users} />
-
-            <hr />
         </div>
     );
 }

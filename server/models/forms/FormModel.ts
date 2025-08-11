@@ -17,6 +17,9 @@ export default class FormModel extends Model<SerializedForm> {
     @Column(DataType.BOOLEAN)
     deployed!: boolean;
 
+    @Column(DataType.BOOLEAN)
+    openSubmission!: boolean;
+
     @Column(DataType.INTEGER)
     maxComponentId!: number;
 

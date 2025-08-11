@@ -34,7 +34,7 @@ export async function postAPI(url: string, data: any): Promise<Response | null> 
  * @param url The API url. Not including `/api`.
  * @returns Parsed JSON data.
  */
-export async function fetchAPIJSON(url: string): Promise<unknown> {
+export async function fetchAPIJSON(url: string) {
     return fetchAPI(url).then(async (r) => r?.json())
 }
 

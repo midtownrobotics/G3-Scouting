@@ -17,6 +17,7 @@ export const SerializedForm = z.object({
     id: z.string(),
     description: z.string(),
     deployed: z.boolean(),
+    openSubmission: z.boolean(),
     maxComponentId: z.number(),
     components: z.array(SerializedComponent),
 });
