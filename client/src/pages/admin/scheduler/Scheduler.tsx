@@ -3,7 +3,7 @@ import { Assignment, Block, SendableSchedule } from "@shared/schemas/schedule";
 import { Day } from "@shared/types";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "react-bootstrap";
-import { postAPI } from "../../../API";
+import { fetchAPIJSON, postAPI } from "../../../API";
 import Assignments from "./Assignments";
 import DaySelector from "./DaySelector";
 import "./Scheduler.css";
@@ -23,21 +23,12 @@ function Scheduler({ users }: { users: SimpleUser[] }) {
     }, [users])
 
     const [selectedAssignment, setSelectedAssignment] = useState<number>()
-    const [assignments, setAssignmentsState] = useState<Assignment[]>(JSON.parse(localStorage.getItem("assignments") || "[]"))
-    const setAssignments = (a: Assignment[]) => {
-        localStorage.setItem("assignments", JSON.stringify(a))
-        setAssignmentsState(a);
-    }
+    const [assignments, setAssignments] = useState<Assignment[]>([])
 
-    const [blocks, setBlocksState] = useState<Block[]>(JSON.parse(localStorage.getItem("blocks") || "[]"));
-    const setBlocks = (blocks: Block[]) => {
-        localStorage.setItem("blocks", JSON.stringify(blocks))
-        setBlocksState(blocks)
-    }
+    const [blocks, setBlocks] = useState<Block[]>([]);
 
-    const [days, setDaysState] = useState<Day[]>(JSON.parse(localStorage.getItem("days") || "[]"));
+    const [days, setDaysState] = useState<Day[]>([]);
     const setDays = (days: Day[]) => {
-        localStorage.setItem("days", JSON.stringify(days))
         setDaysState(days);
         const newBlocks: Block[] = [];
         days.forEach(d => {
@@ -65,6 +56,10 @@ function Scheduler({ users }: { users: SimpleUser[] }) {
 
         setBlocks(newBlocks)
     }
+
+    useEffect(() => {
+        // fetchAPIJSON("/blocks")
+    }, [])
 
     const deploySchedules = () => {
         if (!confirm("Are you sure you want to deploy this schedule. This will RESET the current schedule.") || prompt(`Please type "DEPLOY" in the box below to confirm.`) !== "DEPLOY") return alert("Schedule NOT deployed.");
@@ -108,7 +103,7 @@ function Scheduler({ users }: { users: SimpleUser[] }) {
             <Assignments assignments={{ setAssignments, assignments, setSelectedAssignment, selectedAssignment }} />
             <br />
             <ScheduleTable userBlockMapRef={userBlockMapRef} users={users} assignmentIndex={selectedAssignment} blocks={blocks} assignments={assignments} />
-            <Button id="deployButton" className="w-100 w-sm-auto px-4 py-2" variant="danger" onClick={deploySchedules}>Deploy Schedule</Button>
+            <Button id="deployButton" className="w-50 w-sm-auto px-4 py-2" variant="primary" onClick={deploySchedules}>Deploy Schedule</Button>
         </div>
     )
 }

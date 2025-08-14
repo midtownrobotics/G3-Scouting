@@ -5,6 +5,7 @@ import { AuthReq } from "../types";
 import { getSettingsValue } from "../settings";
 import AssignmentModel from "../models/scheduling/AssignmentModel";
 import UserBlockAssignmentModel from "../models/scheduling/UserBlockAssignmentModel";
+import BlockModel from "../models/scheduling/BlockModel";
 
 const genericAPIRouter = express.Router();
 
@@ -63,6 +64,10 @@ genericAPIRouter.get("/schedules", async (req, res) => {
 
 genericAPIRouter.get("/assignments", async (req, res) => {
     res.send(await AssignmentModel.findAll())
+})
+
+genericAPIRouter.get("/blocks", async (req, res) => {
+    res.send(await BlockModel.findAll())
 })
 
 export default genericAPIRouter;
