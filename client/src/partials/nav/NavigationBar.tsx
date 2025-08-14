@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { Container, Nav, Navbar } from "react-bootstrap";
+import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { usePage } from "../../pageManager";
 import "./NavigationBar.css";
 import NavPageLink from "./NavPageLink";
+import { morePages } from "@shared/types";
 
 /** The site navigation bar. */
 function NavigationBar() {
-    const { setPageKey } = usePage();
+    const { setPageKey, pageKey } = usePage();
     const [expanded, setExpanded] = useState(false);
+    const [showDropdown, setShowDropdown] = useState(false);
 
     const onclick = () => setExpanded(false);
 
@@ -29,8 +31,20 @@ function NavigationBar() {
                         <NavPageLink page="forms" onClick={onclick} />
                         <NavPageLink page="data" onClick={onclick} />
                         <NavPageLink page="lead" onClick={onclick} />
-                        <NavPageLink page="form-maker" onClick={onclick} />
                         <NavPageLink page="admin" onClick={onclick} />
+
+                        <NavDropdown
+                            title={<span style={{ color: morePages.includes(pageKey) || showDropdown ? "black" : "gray" }}>More</span>}
+                            id="slide-dropdown"
+                            show={showDropdown}
+                            onMouseEnter={() => setShowDropdown(true)}
+                            onMouseLeave={() => setShowDropdown(false)}
+                            className="slide-dropdown"
+                            style={{ color: morePages.includes(pageKey) ? "black" : "gray" }}
+                        >
+                            <NavPageLink page="form-maker" onClick={onclick} dropdown hide={() => setShowDropdown(false)} />
+                            <NavPageLink page="shift-tracker" onClick={onclick} dropdown hide={() => setShowDropdown(false)} />
+                        </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>
             </Container>

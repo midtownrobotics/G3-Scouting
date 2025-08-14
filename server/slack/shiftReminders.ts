@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import UserModel from '../models/users/UserModel';
-import { getCurrentBlockId } from '../scheduling/timeUtils';
+import { getCurrentBlockId } from '@shared/utils';
 import sendSlackMessage from './sendSlackMsg';
 
 export function scheduleReminders() {

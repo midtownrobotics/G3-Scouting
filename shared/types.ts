@@ -20,4 +20,6 @@ export const DateString = z
 /** Time stored in the form `MM:SS` */
 export type TimeString = Brand<string, "TimeString">;
 
-export type PageKey = "home" | "admin" | "data" | "forms" | "settings" | "lead" | "form-maker";
+export type PageKey = "home" | "admin" | "data" | "forms" | "settings" | "lead" | "form-maker" | "shift-tracker";
+
+export const morePages: PageKey[] = ["form-maker", "shift-tracker"];

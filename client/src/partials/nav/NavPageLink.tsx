@@ -1,9 +1,9 @@
-import { Nav } from "react-bootstrap";
+import { Nav, NavDropdown } from "react-bootstrap";
 import { usePage } from "../../pageManager";
 import { PageKey } from "@shared/types";
 import { useUserData } from "../../userData";
 
-function NavPageLink({ page, onClick }: { page: PageKey, onClick: () => void; }) {
+function NavPageLink({ page, onClick, dropdown, hide }: { page: PageKey, onClick: () => void, dropdown?: boolean, hide?: () => void; }) {
     const { setPageKey, pageKey } = usePage();
     const { blacklist } = useUserData();
 
@@ -13,8 +13,22 @@ function NavPageLink({ page, onClick }: { page: PageKey, onClick: () => void; })
     };
 
     const formatPageKey = (key: PageKey) => {
-        return key.split("-").map(s => s[0].toUpperCase() + s.slice(1)).join("");
+        return key.split("-").map(s => s[0].toUpperCase() + s.slice(1)).join(" ");
     };
+
+    if (dropdown) {
+        return (
+            <NavDropdown.Item style={{ display: blacklist.includes(page) ? "none" : "block" }}>
+                <Nav.Link
+                    style={{ color: pageKey == page ? "black" : "rgb(80, 80, 80)" }}
+                    onClick={() => {
+                        linkOnClick();
+                        if (hide) hide();
+                    }}
+                >{formatPageKey(page)}</Nav.Link>
+            </NavDropdown.Item>
+        );
+    }
 
     return (
         <Nav.Item style={{ display: blacklist.includes(page) ? "none" : "block" }}>

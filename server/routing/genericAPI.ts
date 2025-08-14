@@ -3,6 +3,8 @@ import express from 'express';
 import UserModel from "../models/users/UserModel";
 import { AuthReq } from "../types";
 import { getSettingsValue } from "../settings";
+import AssignmentModel from "../models/scheduling/AssignmentModel";
+import UserBlockAssignmentModel from "../models/scheduling/UserBlockAssignmentModel";
 
 const genericAPIRouter = express.Router();
 
@@ -45,5 +47,22 @@ genericAPIRouter.get("/me", async (req: AuthReq, res) => {
 
     res.send(data);
 });
+
+genericAPIRouter.get("/schedules", async (req, res) => {
+    const schedules = [];
+    for (const user of (await UserModel.findAll())) {
+        schedules.push({
+            schedule: user.schedule,
+            id: user.id,
+            name: user.username,
+            current: await user.getCurrentAssignment()
+        })
+    }
+    res.send(schedules);
+})
+
+genericAPIRouter.get("/assignments", async (req, res) => {
+    res.send(await AssignmentModel.findAll())
+})
 
 export default genericAPIRouter;

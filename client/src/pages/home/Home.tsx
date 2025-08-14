@@ -3,64 +3,10 @@ import React, { useEffect, useState } from "react";
 import { Card, Container, Spinner, Table } from "react-bootstrap";
 import { fetchAPIJSON } from "../../API";
 import { toFormattedTime } from "../admin/scheduler/utils";
-import { compareBlocksByDate, condenseSchedule, getCurrentBlockMins, getCurrentDate, makeDateFromDateString, softenColor } from "./utils";
+import { compareBlocksByDate, condenseSchedule, getCurrentBlockMins, getCurrentDate, getFormattedAssignmentDuration, makeDateFromDateString, softenColor } from "./utils";
 
 function Home() {
     const [userData, setUserData] = useState<UserInformation>()
-
-    function getCurrentAssignmentDuration(): string | null {
-        if (!userData || !userData.currentAssignment) return null;
-
-        const { schedule } = userData.user;
-        const currentTime = getCurrentBlockMins();
-        const now = new Date();
-        const currentDate = getCurrentDate();
-        const currentAssignmentId = userData.currentAssignment.id;
-
-        const currentIndex = schedule.findIndex(
-            (a) =>
-                a.block.time === currentTime &&
-                a.block.date === currentDate
-        );
-
-        if (currentIndex === -1) return null;
-
-        let endTime = schedule[currentIndex].block.time;
-
-        // Walk forward to find the last matching block time
-        for (let i = currentIndex + 1; i < schedule.length; i++) {
-            const prev = schedule[i - 1];
-            const curr = schedule[i];
-
-            if (
-                curr.assignment.id === currentAssignmentId &&
-                curr.block.date === prev.block.date &&
-                curr.block.time === prev.block.time + 30
-            ) {
-                endTime = curr.block.time;
-            } else {
-                break;
-            }
-        }
-
-        // Convert current real time to minutes since midnight
-        const realNowMinutes = now.getHours() * 60 + now.getMinutes();
-
-        const remainingMinutes = Math.max(0, endTime + 30 - realNowMinutes);
-
-        const hours = Math.floor(remainingMinutes / 60);
-        const minutes = remainingMinutes % 60;
-
-        if (minutes == 0) {
-            return `${hours} more hours`
-        }
-
-        if (hours > 0) {
-            return `${hours}hour${hours !== 1 ? "s" : ""}${minutes ? ` ${minutes} more minute${minutes !== 1 ? "s" : ""}` : ""}`;
-        }
-
-        return `${minutes} more minute${minutes !== 1 ? "s" : ""}`
-    }
 
     useEffect(() => {
         fetchAPIJSON("/me").then(res => {
@@ -82,7 +28,7 @@ function Home() {
             <Card className="mb-4 shadow-sm">
                 <Card.Body>
                     <Card.Title>Welcome back, {userData?.user.username}!</Card.Title>
-                    {userData?.currentAssignment && <Card.Text>You're current assignment is: {userData?.currentAssignment?.name}. You will be on this assignment for {getCurrentAssignmentDuration()}.</Card.Text>}
+                    {userData?.currentAssignment && <Card.Text>You're current assignment is: {userData?.currentAssignment?.name}. You will be on this assignment for {getFormattedAssignmentDuration(userData.currentAssignment, userData.user.schedule)}.</Card.Text>}
                 </Card.Body>
             </Card>
 

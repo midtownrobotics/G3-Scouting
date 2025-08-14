@@ -1,7 +1,7 @@
 import { Assignment } from "@shared/schemas/schedule";
 import bcrypt from 'bcrypt';
 import { Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
-import { getCurrentBlockId } from "../../scheduling/timeUtils";
+import { getCurrentBlockId } from "@shared/utils";
 import UserBlockAssignmentModel from "../scheduling/UserBlockAssignmentModel";
 import { User, UserCreationAttributes } from "../types";
 import { NextMatch } from "@shared/schemas/data";
