@@ -1,8 +1,10 @@
-import { UserInformation } from "@shared/schemas/user";
-import { Block } from "@shared/schemas/schedule";
+import { UserBlockAssignment, UserInformation } from "@shared/schemas/user";
+import { Assignment, Block } from "@shared/schemas/schedule";
 import { DateString } from "@shared/types";
 
-export function softenColor(hex: string): string {
+export function softenColor(hex?: string): string {
+    if (hex === undefined) return("hsl(0, 0.00%, 100.00%)")
+
     // Convert hex to RGB
     const bigint = parseInt(hex.slice(1), 16);
     const r = (bigint >> 16) & 255;
@@ -108,4 +110,64 @@ export function condenseSchedule(userData: UserInformation): CondensedRow[] {
 
     result.push(group);
     return result;
+}
+
+export function getAssignmentDuration(assignment?: Assignment, schedule?: UserBlockAssignment[]): number | null {
+    if (assignment === undefined || schedule === undefined) return null;
+
+    const currentTime = getCurrentBlockMins();
+    const now = new Date();
+    const currentDate = getCurrentDate();
+    const currentAssignmentId = assignment.id;
+
+    const currentIndex = schedule.findIndex(
+        (a) =>
+            a.block.time === currentTime &&
+            a.block.date === currentDate
+    );
+
+    if (currentIndex === -1) return null;
+
+    let endTime = schedule[currentIndex].block.time;
+
+    // Walk forward to find the last matching block time
+    for (let i = currentIndex + 1; i < schedule.length; i++) {
+        const prev = schedule[i - 1];
+        const curr = schedule[i];
+
+        if (
+            curr.assignment.id === currentAssignmentId &&
+            curr.block.date === prev.block.date &&
+            curr.block.time === prev.block.time + 30
+        ) {
+            endTime = curr.block.time;
+        } else {
+            break;
+        }
+    }
+
+    // Convert current real time to minutes since midnight
+    const realNowMinutes = now.getHours() * 60 + now.getMinutes();
+
+    const remainingMinutes = Math.max(0, endTime + 30 - realNowMinutes);
+
+    return remainingMinutes;
+}
+
+export function getFormattedAssignmentDuration(assignment?: Assignment, schedule?: UserBlockAssignment[]) {
+    const remainingMinutes = getAssignmentDuration(assignment, schedule);
+    if (remainingMinutes === null) return null;
+
+    const hours = Math.floor(remainingMinutes / 60);
+    const minutes = remainingMinutes % 60;
+
+    if (minutes == 0) {
+        return `${hours} more hours`
+    }
+
+    if (hours > 0) {
+        return `${hours}hour${hours !== 1 ? "s" : ""}${minutes ? ` ${minutes} more minute${minutes !== 1 ? "s" : ""}` : ""}`;
+    }
+
+    return `${minutes} more minute${minutes !== 1 ? "s" : ""}`
 }
