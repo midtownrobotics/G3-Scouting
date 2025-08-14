@@ -11,9 +11,10 @@ export default function TeamRows({ hideSelector }: { hideSelector?: boolean; }) 
 
     useEffect(() => {
         if (team === undefined) return;
-        fetchAPIJSON(`/data/getTeamRows/${team}`).then(data => {
-            const parsed = z.object({ data: z.array(FormResponseData) }).safeParse(data);
-            if (parsed.success) setFormsResponseData(parsed.data.data);
+        fetchAPIJSON(`/data/getTeamRows/${team}`, z.object({ 
+            data: z.array(FormResponseData) 
+        })).then(res => {
+            if (res) setFormsResponseData(res.data);
         });
     }, [team]);
 

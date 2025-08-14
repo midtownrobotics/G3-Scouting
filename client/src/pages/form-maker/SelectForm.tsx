@@ -3,7 +3,6 @@ import { SerializedForm } from "@shared/schemas/forms";
 import { useEffect, useState } from "react";
 import { Alert, Form as BSForm, Button, Col, FormControl, Row, Table } from "react-bootstrap";
 import { CloudSlash, CloudUpload, Lock, Pencil, Trash, Unlock } from "react-bootstrap-icons";
-import { z } from "zod";
 import { fetchAPIJSON, postAPI } from "../../API";
 
 function isFormTypeKey(val: string): val is keyof typeof FormType {
@@ -33,10 +32,9 @@ export default function SelectForm({
     const [err, setErr] = useState<string>();
 
     const getForms = (next?: () => void) => {
-        fetchAPIJSON("/forms/getForms").then(u => {
-            const parsed = z.array(SerializedForm).safeParse(u);
-            if (parsed.success && parsed.data) {
-                setForms(parsed.data);
+        fetchAPIJSON("/forms/getForms", SerializedForm.array()).then(res => {
+            if (res) {
+                setForms(res);
                 if (next) next();
             }
         });

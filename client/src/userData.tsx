@@ -19,12 +19,10 @@ export function UserDataProvider({ children }: { children: React.ReactNode; }) {
     const [userData, setUserData] = useState<UserInformation>();
 
     const reloadUserData = () => {
-        fetchAPIJSON("/me").then(res => {
-            const body = UserInformation.safeParse(res);
-            if (!body.data && !body.success) return;
-
-            setBlacklist(getDisallowedPages(body.data.user.permission));
-            setUserData(body.data);
+        fetchAPIJSON("/me", UserInformation).then(res => {
+            if (!res) return;
+            setBlacklist(getDisallowedPages(res.user.permission));
+            setUserData(res);
         });
     };
     useEffect(reloadUserData, []);

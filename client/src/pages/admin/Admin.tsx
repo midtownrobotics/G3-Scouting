@@ -1,6 +1,5 @@
 import { SimpleUser } from "@shared/schemas/user";
 import { useEffect, useState } from "react";
-import { z } from "zod";
 import { fetchAPIJSON } from "../../API";
 import "./Admin.css";
 import SaveableTextInput from "./SaveableTextInput";
@@ -11,10 +10,9 @@ function Admin() {
     const [users, setUsers] = useState<SimpleUser[]>([]);
 
     useEffect(() => {
-        fetchAPIJSON("/admin/getUsers").then(u => {
-            const parsed = z.array(SimpleUser).safeParse(u);
-            if (parsed.success && parsed.data) {
-                setUsers(parsed.data);
+        fetchAPIJSON("/admin/getUsers", SimpleUser.array()).then(res => {
+            if (res) {
+                setUsers(res);
             }
         });
     }, []);

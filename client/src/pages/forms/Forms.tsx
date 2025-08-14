@@ -26,10 +26,9 @@ function Forms() {
 
         setLoadingForm(true);
 
-        fetchAPIJSON(`/forms/getForm/${formId}`).then(f => {
-            const parsed = SerializedForm.safeParse(f);
-            if (parsed.success && parsed.data && parsed.data.deployed) {
-                form.current = Form.fromJSON(parsed.data);
+        fetchAPIJSON(`/forms/getForm/${formId}`, SerializedForm).then(res => {
+            if (res && res.deployed) {
+                form.current = Form.fromJSON(res);
                 setMainPage(false);
             }
             setLoadingForm(false);

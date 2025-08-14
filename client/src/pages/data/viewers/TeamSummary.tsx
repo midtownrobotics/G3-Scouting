@@ -17,9 +17,10 @@ export default function TeamSummary() {
 
     useEffect(() => {
         if (team1 === undefined) return;
-        fetchAPIJSON(`/data/getTeamData/${team1}`).then((data) => {
-            const parsed = z.object({ data: z.array(QuestionData) }).safeParse(data);
-            if (parsed.success) setQuestionData(parsed.data.data);
+        fetchAPIJSON(`/data/getTeamData/${team1}`, z.object({ 
+            data: z.array(QuestionData) 
+        })).then(res => {
+            if (res) setQuestionData(res.data);
         });
     }, [team1]);
 

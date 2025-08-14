@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 /** Fetch API data.
  * @param url The API url. Not including `/api`.
  * @returns `null` if fetch error and {@link Response} otherwise.
@@ -30,12 +32,16 @@ export async function postAPI(url: string, data: any): Promise<Response | null> 
 }
 
 /**
- * Fetches API data and parses it to JSON.
+ * Fetches API data and parses it.
  * @param url The API url. Not including `/api`.
- * @returns Parsed JSON data.
+ * @param type The Zod type to use for JSON parsing.
+ * @returns Parsed data or `undefinied` if parsing failed.
  */
-export async function fetchAPIJSON(url: string) {
-    return fetchAPI(url).then(async (r) => r?.json())
+export async function fetchAPIJSON<T extends z.ZodType>(url: string, type: T): Promise<z.infer<T> | undefined> {
+    const data =  fetchAPI(url).then(async (r) => r?.json());
+    const parsed = type.safeParse(data);
+    if (parsed.success) return parsed.data;
+    return undefined;
 }
 
 export async function getApiStatus() {

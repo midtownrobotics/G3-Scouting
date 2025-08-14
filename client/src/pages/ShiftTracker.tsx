@@ -39,24 +39,21 @@ export default function ShiftTracker() {
     ).filter(n => n !== undefined);
 
     useEffect(() => {
-        fetchAPIJSON("/assignments").then(res => {
-            const body = z.array(Assignment).safeParse(res);
-            if (body.data && body.success) {
-                setAssignments(body.data);
-                setSelectedAssignment(body.data[0]);
+        fetchAPIJSON("/assignments", Assignment.array()).then(res => {
+            if (res) {
+                setAssignments(res);
+                setSelectedAssignment(res[0]);
             }
         });
 
-        fetchAPIJSON("/schedules").then(res => {
-            const body = z.array(z.object({
-                id: z.number(),
-                name: z.string(),
-                schedule: z.array(UserBlockAssignment),
-                current: Assignment.optional()
-            })).safeParse(res);
-
-            if (body.data && body.success) {
-                setSchedules(body.data);
+        fetchAPIJSON("/schedules", z.array(z.object({
+            id: z.number(),
+            name: z.string(),
+            schedule: z.array(UserBlockAssignment),
+            current: Assignment.optional()
+        }))).then(res => {
+            if (res) {
+                setSchedules(res);
             }
         });
     }, []);
