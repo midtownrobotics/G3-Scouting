@@ -22,8 +22,8 @@ export default function SlackLink() {
     }, []);
 
     const openSlack = () => {
-        const slackUrl = "slack://open";
-        window.location.href = slackUrl;
+        window.location.href = "slack://open";
+        window.open("https://slack.com/workspace-signin")
     };
 
     const copyCommand = () => {

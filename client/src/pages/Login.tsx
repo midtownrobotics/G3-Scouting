@@ -4,7 +4,7 @@ import { postAPI } from "../API";
 import { useUserData } from "../userData";
 
 function Login() {
-    const { setLoggedIn } = useUserData();
+    const { apiStatusRefresh } = useUserData();
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -23,7 +23,7 @@ function Login() {
             });
 
             if (res?.status === 200) {
-                setLoggedIn(true);
+                await apiStatusRefresh();
             } else {
                 setError("Invalid credentials.");
             }
