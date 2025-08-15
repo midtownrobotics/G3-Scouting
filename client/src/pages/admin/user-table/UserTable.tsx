@@ -5,15 +5,13 @@ import { fetchAPIJSON } from "../../../API";
 import NewUser from "./NewUser";
 import UserRow from "./UserRow";
 
-function UserTable({ setUsers }: { setUsers: (u: SimpleUser[]) => void; }) {
+function UserTable() {
     const [userRows, setUserRows] = useState<JSX.Element[]>([]);
 
     const reloadData = () => {
         setTimeout(() => {
             fetchAPIJSON("/admin/getUsers", SimpleUser.array()).then((res) => {
                 if (res) {
-                    setUsers(res);
-
                     setUserRows([
                         ...res.map((u, ui) => <UserRow key={ui} user={u} reload={reloadData} />),
                         <NewUser key={-1} reload={reloadData} />

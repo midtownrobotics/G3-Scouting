@@ -6,6 +6,7 @@ import { getSettingsValue } from "../settings";
 import AssignmentModel from "../models/scheduling/AssignmentModel";
 import UserBlockAssignmentModel from "../models/scheduling/UserBlockAssignmentModel";
 import BlockModel from "../models/scheduling/BlockModel";
+import { SendableSchedule, UserScheduleData } from "@shared/schemas/schedule";
 
 const genericAPIRouter = express.Router();
 
@@ -50,7 +51,7 @@ genericAPIRouter.get("/me", async (req: AuthReq, res) => {
 });
 
 genericAPIRouter.get("/schedules", async (req, res) => {
-    const schedules = [];
+    const schedules: UserScheduleData[] = [];
     for (const user of (await UserModel.findAll())) {
         schedules.push({
             schedule: user.schedule,

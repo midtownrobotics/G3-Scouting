@@ -38,7 +38,7 @@ export async function postAPI(url: string, data: any): Promise<Response | null> 
  * @returns Parsed data or `undefinied` if parsing failed.
  */
 export async function fetchAPIJSON<T extends z.ZodType>(url: string, type: T): Promise<z.infer<T> | undefined> {
-    const data =  fetchAPI(url).then(async (r) => r?.json());
+    const data = await fetchAPI(url).then(async (r) => r?.json());
     const parsed = type.safeParse(data);
     if (parsed.success) return parsed.data;
     return undefined;

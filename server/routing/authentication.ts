@@ -1,13 +1,13 @@
+import { PRODUCTION } from "@shared/config";
+import { getDisallowedApis } from "@shared/permissions";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import { NextFunction, Request, Response } from "express";
+import { Op } from "sequelize";
 import { z } from "zod";
+import SessionModel from "../models/users/SessionModel";
 import UserModel from "../models/users/UserModel";
 import { AuthReq } from "../types";
-import { PRODUCTION } from "@shared/config";
-import crypto from "crypto";
-import SessionModel from "../models/users/SessionModel";
-import { Op } from "sequelize";
-import { getDisallowedPages } from "@shared/permissions";
 
 const destroyOldSessions = async () => await SessionModel.destroy({ where: { expiresAt: { [Op.lt]: Date.now() } } });
 setInterval(destroyOldSessions, 60 * 60 * 1000);
@@ -27,7 +27,6 @@ export async function authHandler(req: AuthReq, res: Response, next: NextFunctio
     const user = await UserModel.findByPk(userId);
     if (!user) { res.sendStatus(401); return; }
 
-
     const url: string = req.url.replace(/\/$/, '');
 
     if (url == "api/status") {
@@ -35,7 +34,7 @@ export async function authHandler(req: AuthReq, res: Response, next: NextFunctio
         return next();
     }
 
-    const blacklist = getDisallowedPages(user.permission);
+    const blacklist = getDisallowedApis(user.permission);
     if (blacklist.some(path => url.includes(path))) {
         res.sendStatus(403);
         return;

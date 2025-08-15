@@ -1,5 +1,5 @@
 import z from 'zod'
-import { Assignment, Block } from './schedule'
+import { Assignment, UserBlockAssignment } from './schedule'
 import { Permission } from '../permissions';
 import { NextMatch } from './data';
 
@@ -21,12 +21,6 @@ export const SaveableInputData = z.object({
     value: z.string()
 })
 export type SaveableInputData = z.infer<typeof SaveableInputData>
-
-export const UserBlockAssignment = z.object({
-    block: Block,
-    assignment: Assignment
-});
-export type UserBlockAssignment = z.infer<typeof UserBlockAssignment>
 
 export const UserInformation = z.object({
     user: SimpleUser.and(z.object({
