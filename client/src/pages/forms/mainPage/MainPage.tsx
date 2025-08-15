@@ -1,7 +1,6 @@
 import { SerializedForm } from "@shared/schemas/forms";
 import { useEffect, useState } from "react";
 import { Card, Col, Container, Row, Spinner } from "react-bootstrap";
-import z from 'zod';
 import { fetchAPIJSON } from "../../../API";
 import "./MainPage.css";
 
@@ -9,10 +8,9 @@ function MainPage({ setFormId }: { setFormId: (id: string) => void; }) {
     const [forms, setForms] = useState<SerializedForm[]>();
 
     useEffect(() => {
-        fetchAPIJSON("/forms/getForms").then(u => {
-            const parsed = z.array(SerializedForm).safeParse(u);
-            if (parsed.success && parsed.data) {
-                setForms(parsed.data.filter(f => f.deployed));
+        fetchAPIJSON("/forms/getForms", SerializedForm.array()).then(res => {
+            if (res) {
+                setForms(res.filter(f => f.deployed));
             }
         });
     }, []);

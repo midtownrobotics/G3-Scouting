@@ -10,9 +10,8 @@ export default function FormRows() {
 
     useEffect(() => {
         if (formId === undefined) return;
-        fetchAPIJSON(`/data/getFormData/${formId}`).then(data => {
-            const parsed = FormResponseData.safeParse(data);
-            if (parsed.success) setFormResponseData(parsed.data);
+        fetchAPIJSON(`/data/getFormData/${formId}`, FormResponseData).then(res => {
+            if (res) setFormResponseData(res);
         });
     }, [formId]);
 

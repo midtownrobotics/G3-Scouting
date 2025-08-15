@@ -7,15 +7,27 @@ export enum Permission {
     ADMIN = "ADMIN"
 }
 
-
 export function getDisallowedPages(permission: Permission): PageKey[] {
     switch (permission) {
         case Permission.SCOUT:
-            return ["data", "lead", "admin", "form-maker"];
+            return ["data", "lead", "admin", "form-maker", "scheduler"];
         case Permission.DATA:
-            return ["lead", "admin", "form-maker"];
+            return ["lead", "admin", "form-maker", "scheduler"];
         case Permission.LEAD:
-            return ["admin", "form-maker"];
+            return ["admin", "form-maker", "scheduler"];
+        case Permission.ADMIN:
+            return [];
+    }
+}
+
+export function getDisallowedApis(permission: Permission): string[] {
+    switch (permission) {
+        case Permission.SCOUT:
+            return ["data", "lead", "admin"];
+        case Permission.DATA:
+            return ["lead", "admin"];
+        case Permission.LEAD:
+            return ["admin"];
         case Permission.ADMIN:
             return [];
     }

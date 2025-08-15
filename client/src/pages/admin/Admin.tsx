@@ -1,24 +1,8 @@
-import { SimpleUser } from "@shared/schemas/user";
-import { useEffect, useState } from "react";
-import { z } from "zod";
-import { fetchAPIJSON } from "../../API";
 import "./Admin.css";
 import SaveableTextInput from "./SaveableTextInput";
-import Scheduler from "./scheduler/Scheduler";
 import UserTable from "./user-table/UserTable";
 
 function Admin() {
-    const [users, setUsers] = useState<SimpleUser[]>([]);
-
-    useEffect(() => {
-        fetchAPIJSON("/admin/getUsers").then(u => {
-            const parsed = z.array(SimpleUser).safeParse(u);
-            if (parsed.success && parsed.data) {
-                setUsers(parsed.data);
-            }
-        });
-    }, []);
-
     return (
         <div id="admin-page">
             <h1 id="head">Admin</h1>
@@ -26,7 +10,7 @@ function Admin() {
 
             <div id="users">
                 <h2>Users</h2>
-                <UserTable setUsers={setUsers} />
+                <UserTable />
             </div>
 
             <hr />
@@ -61,8 +45,6 @@ function Admin() {
             </div>
 
             <hr />
-
-            <Scheduler users={users} />
         </div>
     );
 }

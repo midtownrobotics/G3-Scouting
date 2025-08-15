@@ -58,12 +58,4 @@
             padding: 5px;
         }
     }
-
-    #scheduler {
-        text-align: center;
-
-        #deployButton {
-            margin-top: 20px;
-        }
-    }
 }

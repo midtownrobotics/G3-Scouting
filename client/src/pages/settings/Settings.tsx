@@ -12,11 +12,9 @@ export default function Settings() {
     const [slackData, setSlackData] = useState<SlackData>();
 
     useEffect(() => {
-        fetchAPIJSON("/slack/getSlackInfo").then((res) => {
-            const body = SlackData.safeParse(res);
-
-            if (body.success && body.data) {
-                setSlackData(body.data);
+        fetchAPIJSON("/slack/getSlackInfo", SlackData).then(res => {
+            if (res) {
+                setSlackData(res);
             }
         });
     }, []);

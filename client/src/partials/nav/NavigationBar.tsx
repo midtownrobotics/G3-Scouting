@@ -44,6 +44,7 @@ function NavigationBar() {
                         >
                             <NavPageLink page="form-maker" onClick={onclick} dropdown hide={() => setShowDropdown(false)} />
                             <NavPageLink page="shift-tracker" onClick={onclick} dropdown hide={() => setShowDropdown(false)} />
+                            <NavPageLink page="scheduler" onClick={onclick} dropdown hide={() => setShowDropdown(false)} />
                         </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>

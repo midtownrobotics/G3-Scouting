@@ -14,9 +14,8 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
     const [matchData, setMatchData] = useState<MatchData>()
 
     useEffect(() => {
-        fetchAPIJSON("/getCurrentMatch").then(res => {
-            const body = MatchData.safeParse(res)
-            if (body.data && body.success) setMatchData(body.data);
+        fetchAPIJSON("/getCurrentMatch", MatchData).then(res => {
+            if (res) setMatchData(res);
         })
     }, [])
 

@@ -12,9 +12,10 @@ export default function AveragedRows() {
 
     useEffect(() => {
         if (formId === undefined) return;
-        fetchAPIJSON(`/data/getQuestionData/${formId}`).then(data => {
-            const parsed = z.object({ data: z.array(MultiTeamQuestionData) }).safeParse(data);
-            if (parsed.success) setTeamQuestionData(parsed.data.data);
+        fetchAPIJSON(`/data/getQuestionData/${formId}`, z.object({ 
+            data: z.array(MultiTeamQuestionData) 
+        })).then(res => {
+            if (res) setTeamQuestionData(res.data);
         });
     }, [formId]);
 

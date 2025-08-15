@@ -36,3 +36,17 @@ export const DeployPayload = z.object({
     blocks: z.array(Block)
 })
 export type DeployPayload = z.infer<typeof DeployPayload>
+
+export const UserBlockAssignment = z.object({
+    block: Block,
+    assignment: Assignment
+});
+export type UserBlockAssignment = z.infer<typeof UserBlockAssignment>
+
+export const UserScheduleData = z.object({
+    id: z.number(),
+    name: z.string(),
+    schedule: z.array(UserBlockAssignment),
+    current: Assignment.optional()
+})
+export type UserScheduleData = z.infer<typeof UserScheduleData>;

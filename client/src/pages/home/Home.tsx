@@ -2,19 +2,18 @@ import { UserInformation } from "@shared/schemas/user";
 import React, { useEffect, useState } from "react";
 import { Card, Container, Spinner, Table } from "react-bootstrap";
 import { fetchAPIJSON } from "../../API";
-import { toFormattedTime } from "../admin/scheduler/utils";
+import { toFormattedTime } from "../scheduler/utils";
 import { compareBlocksByDate, condenseSchedule, getCurrentBlockMins, getCurrentDate, getFormattedAssignmentDuration, makeDateFromDateString, softenColor } from "./utils";
 
 function Home() {
     const [userData, setUserData] = useState<UserInformation>()
 
     useEffect(() => {
-        fetchAPIJSON("/me").then(res => {
-            const body = UserInformation.safeParse(res)
-            if (body.data && body.success) {
-                body.data.user.schedule = body.data.user.schedule.sort((a, b) => a.block.time - b.block.time)
-                body.data.user.schedule = body.data.user.schedule.sort((a, b) => compareBlocksByDate(a.block, b.block))
-                setUserData(body.data);
+        fetchAPIJSON("/me", UserInformation).then(res => {
+            if (res) {
+                res.user.schedule = res.user.schedule.sort((a, b) => a.block.time - b.block.time)
+                res.user.schedule = res.user.schedule.sort((a, b) => compareBlocksByDate(a.block, b.block))
+                setUserData(res);
             }
         })
     }, [])

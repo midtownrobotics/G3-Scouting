@@ -10,20 +10,20 @@ export default function Lead() {
     const [assignments, setAssignments] = useState<CurrentAssignment[]>();
 
     const getMatchData = () => {
-        fetchAPIJSON("/getCurrentMatch").then(body => {
-            const data = MatchData.safeParse(body);
-            if (data.success) {
-                setCurrentMatch(data.data.number);
-                setMatchInput(data.data.number + 1);
+        fetchAPIJSON("/getCurrentMatch", MatchData).then(res => {
+            if (res) {
+                setCurrentMatch(res.number);
+                setMatchInput(res.number + 1);
                 return;
             }
             setTimeout(getMatchData, 500);
         });
 
-        fetchAPIJSON("/lead/getCurrentAssignment").then(body => {
-            const data = z.object({ assignments: z.array(CurrentAssignment) }).safeParse(body);
-            if (data.success) {
-                setAssignments(data.data?.assignments);
+        fetchAPIJSON("/lead/getCurrentAssignment", z.object({ 
+            assignments: z.array(CurrentAssignment) 
+        })).then(res => {
+            if (res) {
+                setAssignments(res.assignments);
                 return;
             }
             setTimeout(getMatchData, 500);

@@ -10,11 +10,11 @@ export default function SlackLink() {
     const [btnDisabled, setBtnDisabled] = useState(true)
 
     useEffect(() => {
-        fetchAPIJSON("/slack/getLinkCode").then((res) => {
-            const body = z.object({ code: z.string() }).safeParse(res);
-
-            if (body.success && body.data) {
-                setCommand("/link " + body.data.code);
+        fetchAPIJSON("/slack/getLinkCode", z.object({ 
+            code: z.string() 
+        })).then((res) => {
+            if (res) {
+                setCommand("/link " + res.code);
             }
         });
 

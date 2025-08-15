@@ -16,10 +16,9 @@ function SaveableTextInput({ get, post, children }: { get: string, post: string,
     const [editing, setEditing] = useState(false)
     const [value, setValue] = useState("")
 
-    const reloadValue = () => fetchAPIJSON(get).then(data => {
-        const val = SaveableInputData.safeParse(data)
-        if (val.success) {
-            setValue(val.data.value)
+    const reloadValue = () => fetchAPIJSON(get, SaveableInputData).then(res => {
+        if (res) {
+            setValue(res.value)
         }
     })
 

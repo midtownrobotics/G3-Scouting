@@ -1,12 +1,10 @@
-import { Assignment } from "@shared/schemas/schedule";
+import { Assignment, UserScheduleData } from "@shared/schemas/schedule";
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Form, Card, Badge } from "react-bootstrap";
 import { Clock } from "react-bootstrap-icons";
 import { fetchAPIJSON } from "../API";
-import { z } from "zod";
 import { getAssignmentDuration, getCurrentBlockMins, softenColor } from "./home/utils";
-import { UserBlockAssignment } from "@shared/schemas/user";
-import { toFormattedTime } from "./admin/scheduler/utils";
+import { toFormattedTime } from "./scheduler/utils";
 import { getCurrentBlockId } from "@shared/utils";
 
 function getMinutesSinceMidnight() {
@@ -20,12 +18,7 @@ function getMinutesSinceMidnight() {
 
 export default function ShiftTracker() {
     const [assignments, setAssignments] = useState<Assignment[]>();
-    const [schedules, setSchedules] = useState<{
-        id: number,
-        name: string,
-        schedule: UserBlockAssignment[],
-        current?: Assignment;
-    }[]>();
+    const [schedules, setSchedules] = useState<UserScheduleData[]>();
     const [selectedAssignment, setSelectedAssignment] = useState<Assignment>();
 
     const currentSchedules = schedules?.filter(s => s.current !== undefined && s.current.id === selectedAssignment?.id);
@@ -39,24 +32,16 @@ export default function ShiftTracker() {
     ).filter(n => n !== undefined);
 
     useEffect(() => {
-        fetchAPIJSON("/assignments").then(res => {
-            const body = z.array(Assignment).safeParse(res);
-            if (body.data && body.success) {
-                setAssignments(body.data);
-                setSelectedAssignment(body.data[0]);
+        fetchAPIJSON("/assignments", Assignment.array()).then(res => {
+            if (res) {
+                setAssignments(res);
+                setSelectedAssignment(res[0]);
             }
         });
 
-        fetchAPIJSON("/schedules").then(res => {
-            const body = z.array(z.object({
-                id: z.number(),
-                name: z.string(),
-                schedule: z.array(UserBlockAssignment),
-                current: Assignment.optional()
-            })).safeParse(res);
-
-            if (body.data && body.success) {
-                setSchedules(body.data);
+        fetchAPIJSON("/schedules", UserScheduleData.array()).then(res => {
+            if (res) {
+                setSchedules(res);
             }
         });
     }, []);
