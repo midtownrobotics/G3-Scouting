@@ -11,3 +11,15 @@ export function alertState(val?: unknown) {
         alert(val)
     }, [val])
 }
+
+export function makeUrlParam(
+    name: string, 
+    val: string | number | undefined, 
+){
+    useEffect(() => {
+        if (val === undefined) return;
+        const url = new URL(window.location.href);
+        url.searchParams.set(name, val?.toString() ?? "");
+        window.history.pushState({}, "", url.toString());
+    }, [val]);
+}

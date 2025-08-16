@@ -4,12 +4,15 @@ import { BoxArrowRight, Key, Slack, Trash } from "react-bootstrap-icons";
 import { fetchAPIJSON, postAPI } from "../../API";
 import SlackLink from "./SlackLink";
 import { SlackData } from "@shared/schemas/user";
+import { useUserData } from "../../userData";
 
 export default function Settings() {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const linkSuccess = new URL(window.location.href).searchParams.has("linkSuccess");
     const [slackData, setSlackData] = useState<SlackData>();
+
+    const { apiStatusRefresh } = useUserData();
 
     useEffect(() => {
         fetchAPIJSON("/slack/getSlackInfo", SlackData).then(res => {
@@ -28,7 +31,7 @@ export default function Settings() {
     const [logoutLoading, setLogoutLoading] = useState(false);
     const logout = () => {
         setLogoutLoading(true);
-        postAPI("/userSettings/logout", {});
+        postAPI("/userSettings/logout", {}).then(() => apiStatusRefresh());
     };
 
     const [sessionClearLoading, setSessionClearLoading] = useState(false);

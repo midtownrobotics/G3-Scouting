@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Spinner } from "react-bootstrap";
+import { Button, Card, OverlayTrigger, Spinner, Tooltip } from "react-bootstrap";
 import { Clipboard, ClipboardCheck } from "react-bootstrap-icons";
 import { z } from "zod";
 import { fetchAPIJSON } from "../../API";
@@ -7,23 +7,21 @@ import { fetchAPIJSON } from "../../API";
 export default function SlackLink() {
     const [command, setCommand] = useState<string>();
     const [commandCopied, setCommandCopied] = useState(false);
-    const [btnDisabled, setBtnDisabled] = useState(true)
+    const [btnDisabled, setBtnDisabled] = useState(true);
 
     useEffect(() => {
-        fetchAPIJSON("/slack/getLinkCode", z.object({ 
-            code: z.string() 
+        fetchAPIJSON("/slack/getLinkCode", z.object({
+            code: z.string()
         })).then((res) => {
             if (res) {
                 setCommand("/link " + res.code);
             }
         });
-
-        setTimeout(() => setBtnDisabled(false), 5000);
     }, []);
 
     const openSlack = () => {
-        const slackUrl = "slack://open";
-        window.location.href = slackUrl;
+        window.location.href = "slack://open";
+        window.open("https://slack.com/workspace-signin");
     };
 
     const copyCommand = () => {
@@ -44,12 +42,21 @@ export default function SlackLink() {
                     }
                 </div>
                 <p>
-                    Paste this command into any slack channel and send it.
+                    Click to copy then paste this command into any slack channel and send it to link your account.
                 </p>
-                <Button variant="primary" onClick={openSlack} disabled={btnDisabled}>
-                    Open Slack
-                </Button>
+                <OverlayTrigger
+                    placement="top"
+                    overlay={<Tooltip id="tooltip-top">Hello, I'm a tooltip!</Tooltip>}
+                >
+                    <Button
+                        variant="primary"
+                        onClick={openSlack}
+                        disabled={btnDisabled}
+                    >
+                        Open Slack
+                    </Button>
+                </OverlayTrigger>
             </Card.Body>
         </Card>
     );
-}
+};

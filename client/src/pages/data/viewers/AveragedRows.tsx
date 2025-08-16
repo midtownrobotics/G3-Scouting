@@ -6,18 +6,18 @@ import { z } from "zod";
 import { fetchAPIJSON } from "../../../API";
 import FormIdInput from "../helpers/FormIdInput";
 
-export default function AveragedRows() {
+export default function AveragedRows({ accuracy }: {accuracy: number}) {
     const [teamQuestionData, setTeamQuestionData] = useState<MultiTeamQuestionData[]>();
     const [formId, setFormId] = useState<string>();
 
     useEffect(() => {
         if (formId === undefined) return;
-        fetchAPIJSON(`/data/getQuestionData/${formId}`, z.object({ 
+        fetchAPIJSON(`/data/getQuestionData/${formId}/${accuracy}`, z.object({ 
             data: z.array(MultiTeamQuestionData) 
         })).then(res => {
             if (res) setTeamQuestionData(res.data);
         });
-    }, [formId]);
+    }, [formId, accuracy]);
 
     const { rows, columns } = useMemo(() => {
         const table = new Map<number, { [key: string]: number | string | undefined; }>();

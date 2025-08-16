@@ -5,18 +5,18 @@ import { fetchAPIJSON } from "../../../API";
 import { FormResponseData } from "@shared/schemas/data";
 import FormResponseTable from "../helpers/FormResponseTable";
 
-export default function TeamRows({ hideSelector }: { hideSelector?: boolean; }) {
+export default function TeamRows({ hideSelector, accuracy }: { hideSelector?: boolean, accuracy: number; }) {
     const [formsResponseData, setFormsResponseData] = useState<FormResponseData[]>();
     const [team, setTeam] = useState<number>(parseInt(new URLSearchParams(window.location.search).get("team") ?? "0"));
 
     useEffect(() => {
         if (team === undefined) return;
-        fetchAPIJSON(`/data/getTeamRows/${team}`, z.object({ 
-            data: z.array(FormResponseData) 
+        fetchAPIJSON(`/data/getTeamRows/${team}/${accuracy}`, z.object({
+            data: z.array(FormResponseData)
         })).then(res => {
             if (res) setFormsResponseData(res.data);
         });
-    }, [team]);
+    }, [team, accuracy]);
 
     if (!formsResponseData || !team) return (
         <div className="p-3">

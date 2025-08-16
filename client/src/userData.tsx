@@ -10,6 +10,7 @@ const UserContext = createContext<{
     setLoggedIn: (v: boolean) => void;
     blacklist: PageKey[];
     userData: UserInformation | undefined;
+    apiStatusRefresh: () => Promise<void>;
 }>({} as any);
 
 export function UserDataProvider({ children }: { children: React.ReactNode; }) {
@@ -46,7 +47,7 @@ export function UserDataProvider({ children }: { children: React.ReactNode; }) {
     }, []);
 
     return (
-        <UserContext.Provider value={{ apiConnection, loggedIn, blacklist, userData, setLoggedIn }}>
+        <UserContext.Provider value={{ apiStatusRefresh, apiConnection, loggedIn, blacklist, userData, setLoggedIn }}>
             {children}
         </UserContext.Provider>
     );
