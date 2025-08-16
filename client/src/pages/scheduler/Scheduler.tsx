@@ -107,7 +107,7 @@ function Scheduler() {
 
                 for (const { block, assignment } of userData.schedule) {
                     blockMap.set(block.id, assignment.id);
-                } 
+                }
 
                 userBlockMap.set(userData.id, blockMap);
             }
@@ -119,25 +119,26 @@ function Scheduler() {
     const deploySchedules = () => {
         setSaving(true);
 
-        const stop = () => { return setSaving(false); };
-
         // Converts map into an array. Maps cannot be JSON.stringify()ed.
-        const schedules: SendableSchedule[] = Array.from(userBlockMapRef.current.entries()).map(([userId, blockMap]) => {
+        const schedules: SendableSchedule[] = [];
+        for (const [userId, blockMap] of userBlockMapRef.current) {
             const assignments = Array.from(blockMap.entries()).map(([blockId, assignmentId]) => ({
                 blockId,
                 assignmentId
             }));
 
             if (assignments.length !== blocks.length) {
-                alert("Every user must have an assignment for every block!");
-                stop();
+                setStatus("Every user must have an assignment for every block!");
+                setError(true);
+                setTimeout(() => setStatus(undefined), 4000);
+                return setSaving(false);
             }
 
-            return ({
+            schedules.push({
                 userId,
                 assignments
             });
-        });
+        }
 
         postAPI("/admin/deploySchedule", {
             assignments,
@@ -151,14 +152,14 @@ function Scheduler() {
                 setStatus("Error saving schedule...");
                 setError(true);
             }
+            setSaving(false);
             setTimeout(() => setStatus(undefined), 4000);
-            stop();
         });
     };
 
     return (
         <div id="scheduler" className="text-center mt-3">
-            <h1 className="ms-1" style={{textAlign: "left"}}>Scheduler</h1>
+            <h1 className="ms-1" style={{ textAlign: "left" }}>Scheduler</h1>
             <DaySelector setDays={setDays} days={days} />
             <br />
             <Assignments assignments={{ setAssignments, assignments, setSelectedAssignment, selectedAssignment }} />
@@ -166,7 +167,7 @@ function Scheduler() {
             <ScheduleTable userBlockMapRef={userBlockMapRef} users={users} assignmentIndex={selectedAssignment} blocks={blocks} assignments={assignments} />
             <Button
                 id="deployButton"
-                className="w-50 mt-3 w-sm-auto px-4 py-2"
+                className={`w-50 mt-3 w-sm-auto px-4 py-2 ${status === undefined ? "mb-5" : ""}`}
                 variant="primary"
                 onClick={deploySchedules}
                 disabled={saving}
@@ -174,7 +175,7 @@ function Scheduler() {
             {status !== undefined &&
                 <Alert
                     variant={error ? "danger" : "success"}
-                    className="w-50 mx-auto my-2 p-2"
+                    className="w-50 mx-auto my-2 p-2 mb-0 mt-1"
                 >{status}</Alert>
             }
         </div>

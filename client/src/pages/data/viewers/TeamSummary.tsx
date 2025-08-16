@@ -7,7 +7,7 @@ import { fetchAPIJSON } from "../../../API";
 import TeamNumberInput from "../helpers/TeamNumberInput";
 import TeamDataPage from "./TeamRows";
 
-export default function TeamSummary() {
+export default function TeamSummary({ accuracy }: {accuracy: number}) {
     const [_, forceUpdate] = useState(0);
     const [questionData, setQuestionData] = useState<QuestionData[]>();
     const questionsLineGraphSelected = useRef(new Map<string, boolean>());
@@ -17,12 +17,12 @@ export default function TeamSummary() {
 
     useEffect(() => {
         if (team1 === undefined) return;
-        fetchAPIJSON(`/data/getTeamData/${team1}`, z.object({ 
+        fetchAPIJSON(`/data/getTeamData/${team1}/${accuracy}`, z.object({ 
             data: z.array(QuestionData) 
         })).then(res => {
             if (res) setQuestionData(res.data);
         });
-    }, [team1]);
+    }, [team1, accuracy]);
 
     if (!questionData) return (
         <div className="p-3">
