@@ -4,6 +4,7 @@ import { usePage } from "../../pageManager";
 import "./NavigationBar.css";
 import NavPageLink from "./NavPageLink";
 import { morePages } from "@shared/types";
+import { useFullscreenStatus } from "../../utils";
 
 /** The site navigation bar. */
 function NavigationBar() {
@@ -14,7 +15,7 @@ function NavigationBar() {
     const onclick = () => setExpanded(false);
 
     return (
-        <Navbar expanded={expanded} expand="lg" id="navbar">
+        <Navbar hidden={useFullscreenStatus()} expanded={expanded} expand="lg" id="navbar">
             <Container>
                 <Navbar.Brand onClick={() => setPageKey("home")}>
                     <img style={{ height: "30px", transform: "translateY(-7px)" }} src="https://images.squarespace-cdn.com/content/v1/56a5169805caa73d80ad787a/079ee4f1-7efb-45c3-bfb1-cd280cea67b9/Midtown+G3+Team+1648+-+Full+Color+%28Dark+ver.%29.png?format=1500w" />
@@ -45,6 +46,7 @@ function NavigationBar() {
                             <NavPageLink page="form-maker" onClick={onclick} dropdown hide={() => setShowDropdown(false)} />
                             <NavPageLink page="shift-tracker" onClick={onclick} dropdown hide={() => setShowDropdown(false)} />
                             <NavPageLink page="scheduler" onClick={onclick} dropdown hide={() => setShowDropdown(false)} />
+                            <NavPageLink page="pit-monitor" onClick={onclick} dropdown hide={() => setShowDropdown(false)} />
                         </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>

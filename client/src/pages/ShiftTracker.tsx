@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import { Container, Row, Col, Form, Card, Badge } from "react-bootstrap";
 import { Clock } from "react-bootstrap-icons";
 import { fetchAPIJSON } from "../API";
-import { getAssignmentDuration, getCurrentBlockMins, softenColor } from "./home/utils";
 import { toFormattedTime } from "./scheduler/utils";
 import { getCurrentBlockId } from "@shared/utils";
+import { softenColor } from "./home/utils";
+import { getAssignmentDuration, getCurrentBlockMins } from "../utils";
 
 function getMinutesSinceMidnight() {
     const now = new Date();

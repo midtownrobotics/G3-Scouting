@@ -1,6 +1,7 @@
-import { UserBlockAssignment, UserInformation } from "@shared/schemas/user";
-import { Assignment, Block } from "@shared/schemas/schedule";
+import { UserInformation } from "@shared/schemas/user";
+import { Assignment, Block, UserBlockAssignment } from "@shared/schemas/schedule";
 import { DateString } from "@shared/types";
+import { getAssignmentDuration } from "../../utils";
 
 export function softenColor(hex?: string): string {
     if (hex === undefined) return("hsl(0, 0.00%, 100.00%)")
@@ -36,17 +37,6 @@ export function softenColor(hex?: string): string {
     l = Math.min(0.95, l + 0.35);
 
     return `hsl(${Math.round(h)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`;
-}
-
-export function getCurrentBlockMins(): number {
-    const now = new Date();
-    const totalMinutes = now.getHours() * 60 + now.getMinutes();
-    return Math.floor(totalMinutes / 30) * 30;
-}
-
-export function getCurrentDate(): DateString {
-    const now = new Date();
-    return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now.getDate().toString().padStart(2, "0")}` as DateString;
 }
 
 export function makeDateFromDateString(date: DateString): Date {
@@ -110,48 +100,6 @@ export function condenseSchedule(userData: UserInformation): CondensedRow[] {
 
     result.push(group);
     return result;
-}
-
-export function getAssignmentDuration(assignment?: Assignment, schedule?: UserBlockAssignment[]): number | null {
-    if (assignment === undefined || schedule === undefined) return null;
-
-    const currentTime = getCurrentBlockMins();
-    const now = new Date();
-    const currentDate = getCurrentDate();
-    const currentAssignmentId = assignment.id;
-
-    const currentIndex = schedule.findIndex(
-        (a) =>
-            a.block.time === currentTime &&
-            a.block.date === currentDate
-    );
-
-    if (currentIndex === -1) return null;
-
-    let endTime = schedule[currentIndex].block.time;
-
-    // Walk forward to find the last matching block time
-    for (let i = currentIndex + 1; i < schedule.length; i++) {
-        const prev = schedule[i - 1];
-        const curr = schedule[i];
-
-        if (
-            curr.assignment.id === currentAssignmentId &&
-            curr.block.date === prev.block.date &&
-            curr.block.time === prev.block.time + 30
-        ) {
-            endTime = curr.block.time;
-        } else {
-            break;
-        }
-    }
-
-    // Convert current real time to minutes since midnight
-    const realNowMinutes = now.getHours() * 60 + now.getMinutes();
-
-    const remainingMinutes = Math.max(0, endTime + 30 - realNowMinutes);
-
-    return remainingMinutes;
 }
 
 export function getFormattedAssignmentDuration(assignment?: Assignment, schedule?: UserBlockAssignment[]) {

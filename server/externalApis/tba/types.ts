@@ -8,6 +8,7 @@ const Alliance = z.object({
 })
 
 export const TbaMatchData = z.object({
+    comp_level: z.enum(["qm", "qf", "sf", "f"]),
     time: z.number(),
     actual_time: z.number(),
     post_result_time: z.number(),
@@ -26,3 +27,26 @@ export const TbaMatchData = z.object({
     winning_alliance: z.enum(["red", "blue", ""])
 }).passthrough()
 export type TbaMatchData = z.infer<typeof TbaMatchData>;
+
+export const TbaTeamEventData = z.object({
+    qual: z.object({
+        ranking: z.object({
+            matches_played: z.number(),
+            rank: z.number(),
+            record: z.object({
+                losses: z.number(),
+                wins: z.number(),
+                ties: z.number()
+            })
+        })
+    })
+}).passthrough()
+export type TbaTeamEventData = z.infer<typeof TbaTeamEventData>;
+
+export const TbaRankingData = z.object({
+    rankings: z.array(z.object({
+        team_key: z.string(),
+        extra_stats: z.tuple([z.number()])
+    }))
+}).passthrough()
+export type TbaRankingData = z.infer<typeof TbaRankingData>;

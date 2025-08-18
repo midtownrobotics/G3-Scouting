@@ -1,7 +1,7 @@
 import path from 'path';
-import { TbaMatchData } from './types';
 import { z } from 'zod';
 import { getSettingsValue } from '../../settings';
+import { TbaMatchData, TbaRankingData, TbaTeamEventData } from './types';
 
 export async function fetchTba(url: string) {
     const key = await getSettingsValue("theBlueAlliance");
@@ -38,6 +38,28 @@ export async function getMatchData(match: number): Promise<TbaMatchData | undefi
 export async function getAllMatches(): Promise<TbaMatchData[] | undefined> {
     const event = await getSettingsValue("eventKey");
     const fetched = await fetchTba("/event/" + event + "/matches");
+    if (!fetched) return undefined;
+    const data = z.array(TbaMatchData).safeParse(await fetched.json());
+    if (data.success) return data.data;
+    return undefined;
+}
+
+/** 
+ * Gets team data for a team at an event.
+ * @returns Team data in the form of {@link TbaTeamEventData}.
+ */
+export async function getTeamEventData(team: number): Promise<TbaTeamEventData | undefined> {
+    const event = await getSettingsValue("eventKey");
+    const fetched = await fetchTba(`/team/frc${team}/event/${event}/status`);
+    if (!fetched) return undefined;
+    const data = TbaTeamEventData.safeParse(await fetched.json());
+    if (data.success) return data.data;
+    return undefined;
+}
+
+export async function getTeamMatchData(team: number): Promise<TbaMatchData[] | undefined> {
+    const event = await getSettingsValue("eventKey");
+    const fetched = await fetchTba(`/team/frc${team}/event/${event}/matches`);
     if (!fetched) return undefined;
     const data = z.array(TbaMatchData).safeParse(await fetched.json());
     if (data.success) return data.data;

@@ -42,8 +42,10 @@ function Assignments({ assignments: { assignments, setAssignments, selectedAssig
                         <Form.Control type="color" value={newColor} onChange={e => setNewColor(e.target.value)} />
                         <Form.Control type="text" value={newName} placeholder="Name" onChange={e => setNewName(e.target.value)} onKeyUp={e => { if (e.key == "Enter") addAssignment() }} />
                         <Form.Select style={{marginLeft: "2px"}} value={newType} onChange={e => setNewType(e.target.value as AssignmentType)}>
-                            <option value={AssignmentType.BREAK}>{AssignmentType.BREAK}</option>
-                            <option value={AssignmentType.SCOUTING}>{AssignmentType.SCOUTING}</option>
+                            <option value={AssignmentType.BREAK}>Break</option>
+                            <option value={AssignmentType.ASSIGNED}>Assigned</option>
+                            <option value={AssignmentType.PIT}>Pit</option>
+                            <option value={AssignmentType.OTHER}>Other</option>
                         </Form.Select>
                         <Button variant="light" onClick={addAssignment}><Plus /></Button>
                     </td>

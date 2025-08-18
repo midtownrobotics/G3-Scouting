@@ -3,7 +3,9 @@ import { z } from "zod";
 
 export enum AssignmentType {
     BREAK = "Break",
-    SCOUTING = "Scouting"
+    ASSIGNED = "Assigned",
+    PIT = "Pit",
+    OTHER = "Other"
 }
 
 export const Assignment = z.object({
