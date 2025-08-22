@@ -13,6 +13,7 @@ import { scheduleReminders } from "./slack/shiftReminders";
 import { Settings } from "./types";
 import { LogColors } from "./utils";
 import { Permission } from "@shared/permissions";
+import { getEventStatus } from "./externalApis/nexus/nexus";
 
 console.clear();
 console.log(``);
@@ -93,4 +94,6 @@ async function testCode() {
         });
     };
     // insertCsvDataIntoDb();
+
+    console.log((await getEventStatus())?.matches)
 }

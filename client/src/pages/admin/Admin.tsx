@@ -35,6 +35,7 @@ function Admin() {
                                 <SaveableTextInput get={"/admin/getTbaToken"} post={"/admin/setTbaToken"}>TBA Token</SaveableTextInput>
                             </td>
                             <td>
+                                <SaveableTextInput get={"/admin/getNexusToken"} post={"/admin/setNexusToken"}>Nexus Token</SaveableTextInput>
                             </td>
                             <td>
                                 <SaveableTextInput get={"/admin/getEventKey"} post={"/admin/setEventKey"}>Event Key</SaveableTextInput>

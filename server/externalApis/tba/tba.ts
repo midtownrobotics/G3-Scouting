@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { getSettingsValue } from '../../settings';
 import { TbaMatchData, TbaRankingData, TbaTeamEventData } from './types';
 
-export async function fetchTba(url: string) {
+async function fetchTba(url: string) {
     const key = await getSettingsValue("theBlueAlliance");
 
     return (await fetch(

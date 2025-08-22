@@ -8,6 +8,7 @@ export type Settings = {
     slackClientSecret: string;
     slackToken: string;
     theBlueAlliance: string;
+    nexus: string;
     eventKey: string;
     match: MatchData;
 }

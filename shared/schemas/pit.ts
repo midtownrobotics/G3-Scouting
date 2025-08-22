@@ -1,5 +1,43 @@
 import { z } from "zod";
 
+export const NexusMatch = z.object({
+    label: z.string(),
+    status: z.enum(["Queuing soon", "Now queuing", "On deck", "On field"]),
+    redTeams: z.array(z.string().nullish()).nullish(),
+    blueTeams: z.array(z.string().nullish()).nullish(),
+    times: z.object({
+        estimatedQueueTime: z.number().nullish(),
+        estimatedOnDeckTime: z.number().nullish(),
+        estimatedOnFieldTime: z.number().nullish(),
+        estimatedStartTime: z.number().nullish(),
+        actualQueueTime: z.number().nullish(),
+        actualOnDeckTime: z.number().nullish(),
+        actualOnFieldTime: z.number().nullish(),
+    }),
+    breakAfter: z.string().nullish(),
+    replayOf: z.string().nullish()
+});
+export type NexusMatch = z.infer<typeof NexusMatch>;
+
+export const NexusEventStatus = z.object({
+    eventKey: z.string(),
+    dataAsOfTime: z.number(),
+    nowQueuing: z.string().nullish(),
+    matches: z.array(NexusMatch),
+    announcements: z.array(z.object({
+        id: z.string(),
+        announcement: z.string(),
+        postedTime: z.number()
+    })),
+    partsRequests: z.array(z.object({
+        id: z.string(),
+        parts: z.string(),
+        requestedByTeam: z.string(),
+        postedTime: z.number()
+    })),
+}).passthrough();
+export type NexusEventStatus = z.infer<typeof NexusEventStatus>;
+
 export const RankingRow = z.object({
     rank: z.number(),
     wins: z.number(),
@@ -10,18 +48,10 @@ export const RankingRow = z.object({
 });
 export type RankingRow = z.infer<typeof RankingRow>;
 
-export const ScheduledMatch = z.object({
-    key: z.string(),
-    number: z.number(),
-    red: z.array(z.number()),
-    blue: z.array(z.number()),
-});
-export type ScheduledMatch = z.infer<typeof ScheduledMatch>;
-
 export const PitMonitorData = z.object({
     team: z.number(),
     pitNow: z.array(z.string()),
     ranking: RankingRow,
-    upcoming: z.array(ScheduledMatch),
+    nexusData: NexusEventStatus
 });
 export type PitMonitorData = z.infer<typeof PitMonitorData>;

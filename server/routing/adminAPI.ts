@@ -68,6 +68,12 @@ createValueRoute(async () => {
     return await setSettingsValue("theBlueAlliance", val);
 }, "TbaToken");
 
+createValueRoute(async () => {
+    return await getSettingsValue("nexus");
+}, async (val) => {
+    return await setSettingsValue("nexus", val);
+}, "NexusToken");
+
 adminAPIRouter.post("/addUser", async (req: Request, res: Response) => {
     const body = CreateUser.safeParse(req.body);
     if (body.success && body.data) {

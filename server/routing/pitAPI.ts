@@ -1,7 +1,8 @@
 import { PitMonitorData } from '@shared/schemas/pit';
 import express from 'express';
-import { getMatchData, getTeamEventData, getTeamMatchData } from '../externalApis/tba/tba';
+import { getTeamEventData, getTeamMatchData } from '../externalApis/tba/tba';
 import { getTeamData } from '../externalApis/statbotics/statbotics';
+import { getEventStatus } from '../externalApis/nexus/nexus';
 
 const pitAPIRouter = express.Router();
 
@@ -11,12 +12,14 @@ pitAPIRouter.get("/data", async (req, res) => {
     const tbaEventData = await getTeamEventData(team);
     const tbaMatches = await getTeamMatchData(team);
     const sbData = await getTeamData(team);
+    const nexusData = await getEventStatus();
 
-    if (!tbaEventData || !sbData || !tbaMatches) { res.send(400); return; };
+    if (!tbaEventData || !sbData || !tbaMatches || !nexusData) { res.send(400); return; };
 
     const data: PitMonitorData = {
-        team: team,
+        team,
         pitNow: [],
+        nexusData,
         ranking: {
             wins: tbaEventData.qual.ranking.record.wins,
             losses: tbaEventData.qual.ranking.record.losses,
@@ -24,18 +27,7 @@ pitAPIRouter.get("/data", async (req, res) => {
             rank: sbData.district_rank,
             rp: sbData.district_points,
             epa: sbData.epa.breakdown.total_points
-        },
-        upcoming: (
-            tbaMatches
-                .filter(m => m.comp_level === "qm")
-                .map(m => ({
-                    blue: m.alliances.blue.team_keys.map(t => parseInt(t.slice(3))),
-                    red: m.alliances.red.team_keys.map(t => parseInt(t.slice(3))),
-                    number: m.match_number,
-                    key: m.key
-                }))
-                .sort((a, b) => a.number - b.number)
-        )
+        }
     };
 
     res.send(data);

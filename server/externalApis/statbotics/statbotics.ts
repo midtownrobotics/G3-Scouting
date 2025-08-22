@@ -1,7 +1,7 @@
 import path from 'path';
 import { SbTeamData } from './types';
 
-export async function fetchSb(url: string) {
+async function fetchSb(url: string) {
     return (await fetch(
         ("https://" + path.join("api.statbotics.io/v3/", url)),
         {
