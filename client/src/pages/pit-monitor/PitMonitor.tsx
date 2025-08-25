@@ -1,6 +1,6 @@
 import { NexusEventStatus, NexusMatch, PitMonitorData, RankingRow } from "@shared/schemas/pit";
 import { AssignmentType, UserScheduleData } from "@shared/schemas/schedule";
-import { Clock, Maximize2, Minimize2, RefreshCw, Users, Wrench } from "lucide-react";
+import { Clock, Maximize2, Minimize2, Users, Wrench } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Row, Table } from "react-bootstrap";
 import { fetchAPIJSON } from "../../API";

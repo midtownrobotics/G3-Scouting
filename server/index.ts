@@ -95,5 +95,5 @@ async function testCode() {
     };
     // insertCsvDataIntoDb();
 
-    console.log((await getEventStatus())?.matches)
+    // console.log((await getEventStatus())?.matches)
 }

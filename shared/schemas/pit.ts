@@ -55,3 +55,17 @@ export const PitMonitorData = z.object({
     nexusData: NexusEventStatus
 });
 export type PitMonitorData = z.infer<typeof PitMonitorData>;
+
+export enum BatteryState {
+    CHARGING = "Charging",
+    IN_ROBOT = "In Robot",
+    IDLE = "Idle"
+}
+
+export const BatteryData = z.object({
+    id: z.number(),
+    name: z.string(),
+    state: z.nativeEnum(BatteryState),
+    stateSince: z.number()
+})
+export type BatteryData = z.infer<typeof BatteryData>;

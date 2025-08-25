@@ -8,6 +8,7 @@ import FormResponseByTeamModel from './forms/FormResponseModels';
 import SessionModel from './users/SessionModel';
 import AccuracyScoreModel from './validation/AccuracyScoreModel';
 import ScoutAccuracyScoreModel from './validation/ScoutAccuracyScoreModel';
+import BatteryModel from './battery/BatteryModel';
 
 export const managementDatabase = new Sequelize({
     dialect: 'sqlite',
@@ -22,6 +23,7 @@ export const managementDatabase = new Sequelize({
         FormModel,
         FormResponseByTeamModel,
         SessionModel,
+        BatteryModel,
     ],
     logging: false
 });
