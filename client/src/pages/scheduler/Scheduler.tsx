@@ -117,15 +117,15 @@ function Scheduler() {
     }, []);
 
     useEffect(() => {
-        function handleKeyUp(e: KeyboardEvent) {
+        function handleKey(e: KeyboardEvent) {
             if (/^[0-9]$/.test(e.key)) {
                 if (parseInt(e.key) >= assignments.length) return;
                 setSelectedAssignment(parseInt(e.key));
             }
         }
 
-        window.addEventListener("keyup", handleKeyUp);
-        return () => window.removeEventListener("keyup", handleKeyUp);
+        window.addEventListener("keydown", handleKey);
+        return () => window.removeEventListener("keydown", handleKey);
     }, [assignments]);
 
     const deploySchedules = () => {

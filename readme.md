@@ -1,22 +1,65 @@
 # G3 Scout-o-matic (v4.0)
 
-An online scouting system powered by Node.JS and React. Our platform enables features such as **schedule deployment**, **match assignment**, and real-time form handling.
+The G3 Scout-o-matic is a fully online scouting and event management system built with **Node.js** and **React**.
+
+It helps robotics teams handle data collection, match prep, scheduling, and team coordination with ease.
 
 ---
 
-## 🚧 Version 4.0 – Work In Progress
+## Features
 
-This version is a major overhaul introducing:
+- Schedule development
+- Match assignment
+- Custom form creation
+- Data analysis tools
+- Built-in pit monitor
+- Robot battery tracker
+- Slack reminders
+- and more!
 
-- ⚛️ A new **React**-based frontend
-- 🧩 A flexible **form management system** for easier administration
-- 📶 Improved administration and ***data analysis***
-- 🎨 A **cleaner, more user-friendly interface**
+## Setup
 
----
+1. Clone the repo
+```bash
+git clone https://github.com/midtownrobotics/G3-Scouting.git
+```
+2. Install node modules for all three node projects (shared, server, client)
+```bash
+cd ./shared
+npm install
+cd ../server
+npm install
+cd ../client
+npm install
+```
+3. Setup config in ./shared/config.ts
+```typescript
+/** Port to host backend server on. */
+export const PORT: number = 8080;
 
-## ✨ Key Features
+/** Whether to host the react site on the express server. Also turns off sequlize altering. */
+export const PRODUCTION: boolean = true;
 
-- 🔗 Remote access for clients and scouts
-- 📋 Dynamic form generation
-- 🗓 Match assignment & automated schedule deployment
+/** URL that the server is hosted on. Used for slack redirecting. Omit last `/` */
+export const SITE_URL: string = "https://example.grayjn.com";
+
+/** Port to host the vite server on. */
+export const DEV_VITE_PORT: number = 0; // Only needed for development
+
+/** The api url for development. Sets up vite proxy. */
+export const DEV_API_URL = "http://localhost:8080/api";
+
+/** The allowed hosts for vite. */
+export const DEV_VITE_HOSTS = ["example.grayjn.com"];
+```
+4. Compile the React Vite project
+```bash
+cd ./client
+npm run build
+```
+5. Compile the backend server
+```bash
+cd ./server
+npm run build
+```
+6. Your server should be up and running! The defualt username is `admin` and the password is `password`. Check out the docs for help with in-app settings.
