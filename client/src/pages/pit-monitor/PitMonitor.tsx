@@ -1,11 +1,11 @@
-import { NexusEventStatus, NexusMatch, PitMonitorData, RankingRow } from "@shared/schemas/pit";
+import { BatteryData, BatteryState, NexusEventStatus, NexusMatch, PitMonitorData, RankingRow } from "@shared/schemas/pit";
 import { AssignmentType, UserScheduleData } from "@shared/schemas/schedule";
 import { Clock, Maximize2, Minimize2, Users, Wrench } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { Button, Card, Col, Container, Row, Table } from "react-bootstrap";
 import { fetchAPIJSON } from "../../API";
-import { getAssignmentDuration } from "../../utils";
-import { Asterisk } from "react-bootstrap-icons";
+import { formatDuration, getAssignmentDuration } from "../../utils";
+import { Asterisk, BatteryFull } from "react-bootstrap-icons";
 import Countdown from "./Countdown";
 
 function teamInMatch(m: NexusMatch, t: number) {
@@ -47,20 +47,20 @@ function usePitMonitor(refreshSec: number) {
 
 // ---------- Components ----------
 const PitNowCard: React.FC<{ currentSchedules: UserScheduleData[]; }> = ({ currentSchedules }) => (
-    <Card>
+    <Card hidden={currentSchedules.length === 0}>
         <Card.Header><Wrench size={18} className="me-2 mb-1" /> In the Pit Now</Card.Header>
         <Card.Body className="pb-0">
             <Row>
                 {
                     currentSchedules?.map(s => {
                         const minsLeft = getAssignmentDuration(s.current, s.schedule);
-                        if (minsLeft === null) return <></>;
+                        if (minsLeft === null) return "";
 
                         let timeColor = "success";
                         if (minsLeft <= 20) timeColor = "danger";
 
                         return (
-                            <Col key={s.id} lg={2} className="mx-auto">
+                            <Col key={s.id} lg={2}>
                                 <div className={`mb-3 border rounded p-2 text-center text-light bg-${timeColor}`}>
                                     <div className="fw-bold">{s.name}</div>
                                     <div>{minsLeft}mins</div>
@@ -148,7 +148,7 @@ const UpcomingMatchesCard: React.FC<{ matches: NexusMatch[]; teamNumber: number;
     <Card>
         <Card.Header><Clock size={18} className="me-2 mb-1" /> Upcoming Matches</Card.Header>
         <Card.Body className="pt-0">
-            {matches.length === 0 ? <div>No matches scheduled.</div> : (
+            {matches.length === 0 ? <div className="mt-3">No matches scheduled.</div> : (
                 <Table className="text-center">
                     <thead>
                         <tr>
@@ -182,7 +182,7 @@ const NexusCard: React.FC<{ data?: NexusEventStatus, team: number; }> = ({ data,
                 {onDeck !== undefined &&
                     <Card style={{ color: "#333" }} className={`bg-danger mb-3 bg-opacity-50 fw-bold ${teamInMatch(onDeck, team) ? "border border-5 border-dark" : ""}`}>
                         <Card.Body className={teamInMatch(onDeck, team) ? "fw-bold" : ""}>
-                        On Deck: {onDeck?.label}<Countdown prefix={" - On field in "} targetDate={new Date(onDeck?.times.estimatedOnFieldTime ?? 0)} backup=" - Delayed" />
+                            On Deck: {onDeck?.label}<Countdown prefix={" - On field in "} targetDate={new Date(onDeck?.times.estimatedOnFieldTime ?? 0)} backup=" - Delayed" />
                         </Card.Body>
                     </Card>
                 }
@@ -200,6 +200,41 @@ const NexusCard: React.FC<{ data?: NexusEventStatus, team: number; }> = ({ data,
                         </Card.Body>
                     </Card>
                 }
+            </Card.Body>
+        </Card>
+    );
+};
+
+const BatteryCard: React.FC<{ data?: BatteryData[]; }> = ({ data }) => {
+    data = data?.sort((a, b) => a.stateSince - b.stateSince);
+    const inRobot = data?.find(b => b.state === BatteryState.IN_ROBOT);
+    const charging = data?.find(b => b.state === BatteryState.CHARGING);
+
+    const reload = useReducer(x => x + 1, 0)[1];
+
+    useEffect(() => {
+        const int = setInterval(reload, 200);
+        return () => clearInterval(int);
+    }, []);
+
+    return (
+        <Card hidden={data === undefined}>
+            <Card.Header><BatteryFull size={18} className="me-2 mb-1" /> Battery Data</Card.Header>
+            <Card.Body className="pb-0">
+                <Row>
+                    <Col hidden={inRobot === undefined}>
+                        <div className={`mb-3 border rounded p-2 text-center bg-primary text-light`}>
+                            <div>In robot: <span className="fw-bold">{inRobot?.name}</span></div>
+                            <div className="text-nowrap">For: {formatDuration(inRobot?.stateSince)}</div>
+                        </div>
+                    </Col>
+                    <Col hidden={charging === undefined}>
+                        <div className={`mb-3 border rounded p-2 text-center bg-success text-light`}>
+                            <div>Longest charging: <span className="fw-bold">{charging?.name}</span></div>
+                            <div className="text-nowrap">For: {formatDuration(charging?.stateSince)}</div>
+                        </div>
+                    </Col>
+                </Row>
             </Card.Body>
         </Card>
     );
@@ -226,14 +261,15 @@ export default function PitMonitor() {
                 </div>
             </div>
 
-            <Row className="mt-3 g-3">
+            <Row className="mt-0 g-3">
                 <Col lg={7}>
-                    <div><PitNowCard currentSchedules={currentSchedules ?? []} /></div>
+                    <div className="mt-3"><PitNowCard currentSchedules={currentSchedules ?? []} /></div>
                     <div className="mt-3"><UpcomingMatchesCard matches={ourMatches ?? []} teamNumber={data?.team ?? 0} /></div>
                 </Col>
                 <Col lg={5}>
-                    <div><NexusCard data={data?.nexusData} team={data?.team ?? 0} /></div>
+                    <div className="mt-3"><NexusCard data={data?.nexusData} team={data?.team ?? 0} /></div>
                     <div className="mt-3"><RankingCard row={data?.ranking} /></div>
+                    <div className="mt-3"><BatteryCard data={data?.batteryData} /></div>
                 </Col>
             </Row>
         </Container>

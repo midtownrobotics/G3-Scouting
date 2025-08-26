@@ -48,14 +48,6 @@ export const RankingRow = z.object({
 });
 export type RankingRow = z.infer<typeof RankingRow>;
 
-export const PitMonitorData = z.object({
-    team: z.number(),
-    pitNow: z.array(z.string()),
-    ranking: RankingRow,
-    nexusData: NexusEventStatus
-});
-export type PitMonitorData = z.infer<typeof PitMonitorData>;
-
 export enum BatteryState {
     CHARGING = "Charging",
     IN_ROBOT = "In Robot",
@@ -63,9 +55,18 @@ export enum BatteryState {
 }
 
 export const BatteryData = z.object({
-    id: z.number(),
+    id: z.number().optional(),
     name: z.string(),
     state: z.nativeEnum(BatteryState),
     stateSince: z.number()
 })
 export type BatteryData = z.infer<typeof BatteryData>;
+
+export const PitMonitorData = z.object({
+    team: z.number(),
+    pitNow: z.array(z.string()),
+    ranking: RankingRow,
+    nexusData: NexusEventStatus,
+    batteryData: z.array(BatteryData),
+});
+export type PitMonitorData = z.infer<typeof PitMonitorData>;

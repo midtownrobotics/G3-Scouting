@@ -8,7 +8,8 @@ export const SimpleUser = z.object({
     id: z.coerce.number(),
     permission: z.nativeEnum(Permission),
     reliable: z.coerce.boolean(),
-    redAlliance: z.boolean()
+    redAlliance: z.boolean(),
+    slackLinked: z.boolean()
 })
 export type SimpleUser = z.infer<typeof SimpleUser>
 

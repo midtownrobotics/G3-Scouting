@@ -15,6 +15,7 @@ pitAPIRouter.get("/data", async (req, res) => {
     const tbaMatches = await getTeamMatchData(team);
     const sbData = await getTeamData(team);
     const nexusData = await getEventStatus();
+    const batteryData = await BatteryModel.findAll();
 
     if (!tbaEventData || !sbData || !tbaMatches || !nexusData) { res.send(400); return; };
 
@@ -29,7 +30,8 @@ pitAPIRouter.get("/data", async (req, res) => {
             rank: sbData.district_rank,
             rp: sbData.district_points,
             epa: sbData.epa.breakdown.total_points
-        }
+        },
+        batteryData
     };
 
     res.send(data);
@@ -45,7 +47,7 @@ pitAPIRouter.post("/setBatteryState", async (req, res) => {
     if (!body.success) { res.send(400); return; }
 
     const battery = await BatteryModel.findByPk(body.data.id);
-    battery?.update({ state: body.data.state });
+    battery?.update({ state: body.data.state, stateSince: Date.now() });
 
     res.send(200);
 });
@@ -59,6 +61,8 @@ pitAPIRouter.post("/newBattery", async (req, res) => {
         state: BatteryState.IDLE,
         stateSince: Date.now()
     });
+
+    res.send(200);
 });
 
 pitAPIRouter.post("/deleteBattery", async (req, res) => {

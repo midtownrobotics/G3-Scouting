@@ -91,3 +91,13 @@ export function getCurrentDate(): DateString {
     const now = new Date();
     return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now.getDate().toString().padStart(2, "0")}` as DateString;
 }
+
+export function formatDuration(since?: number) {
+    if (since === undefined) return "0s";
+    const secs = Math.floor((Date.now() - since) / 1000);
+    const mins = Math.floor(secs / 60);
+    const hrs = Math.floor(mins / 60);
+    if (hrs > 0) return `${hrs}h ${mins % 60}m`;
+    if (mins > 0) return `${mins}m ${secs % 60}s`;
+    return `${secs}s`;
+}

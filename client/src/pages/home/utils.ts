@@ -109,13 +109,13 @@ export function getFormattedAssignmentDuration(assignment?: Assignment, schedule
     const hours = Math.floor(remainingMinutes / 60);
     const minutes = remainingMinutes % 60;
 
-    if (minutes == 0) {
-        return `${hours} more hours`
+    if (minutes == 0 && hours !== 0) {
+        return `${hours} hours`
     }
 
     if (hours > 0) {
-        return `${hours}hour${hours !== 1 ? "s" : ""}${minutes ? ` ${minutes} more minute${minutes !== 1 ? "s" : ""}` : ""}`;
+        return `${hours} hour${hours !== 1 ? "s" : ""}${minutes ? ` ${minutes} minute${minutes !== 1 ? "s" : ""}` : ""}`;
     }
 
-    return `${minutes} more minute${minutes !== 1 ? "s" : ""}`
+    return `${minutes} minute${minutes !== 1 ? "s" : ""}`
 }

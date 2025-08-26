@@ -40,7 +40,7 @@ export default function Countdown({ targetDate, backup, prefix }: CountdownProps
 
         const timer = setInterval(() => {
             setTimeLeft(getTimeLeftString());
-        }, 1000);
+        }, 300);
 
         return () => clearInterval(timer);
     }, [targetDate]);

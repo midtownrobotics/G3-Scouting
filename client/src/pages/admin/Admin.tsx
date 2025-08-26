@@ -13,6 +13,7 @@ function Admin() {
                 <UserTable />
             </div>
 
+            <br />
             <hr />
 
             <div id="settings">
@@ -44,8 +45,6 @@ function Admin() {
                     </tbody>
                 </table>
             </div>
-
-            <hr />
         </div>
     );
 }

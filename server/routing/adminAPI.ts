@@ -11,6 +11,7 @@ import { getSettingsValue, setSettingsValue } from '../settings';
 import { SerializedForm } from '@shared/schemas/forms';
 import Form from '@shared/forms/Form';
 import FormModel from '../models/forms/FormModel';
+import { permission } from 'process';
 
 const adminAPIRouter = express.Router();
 
@@ -102,16 +103,16 @@ adminAPIRouter.post("/deleteUser", async (req: Request, res: Response) => {
 });
 
 adminAPIRouter.get("/getUsers", async (req: Request, res: Response) => {
+    const users: SimpleUser[] = (await UserModel.findAll()).map(u => ({
+        username: u.username,
+        id: u.id,
+        permission: u.permission,
+        redAlliance: u.redAlliance,
+        reliable: u.reliable,
+        slackLinked: u.slackLinked
+    }));
 
-    const users = await UserModel.findAll();
-    const body = z.array(SimpleUser).safeParse(users);
-
-    if (body.success && body.data) {
-        res.json(body.data);
-        return;
-    }
-
-    res.sendStatus(500);
+    res.json(users);
 });
 
 adminAPIRouter.post("/editUser", async (req: Request, res: Response) => {

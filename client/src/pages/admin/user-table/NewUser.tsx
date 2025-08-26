@@ -46,6 +46,7 @@ function NewUser({ reload }: { reload: () => void; }) {
             <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "permission")}>SCOUT</EditableCell>
             <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "reliable")} checkbox>{user?.reliable ?? false}</EditableCell>
             <td />
+            <td />
             <td onClick={() => saveUser()}>
                 <PlusCircle />
             </td>

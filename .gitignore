@@ -5,4 +5,3 @@ storage
 shared/config.ts
 data.csv
 server/migrations
-server/config
