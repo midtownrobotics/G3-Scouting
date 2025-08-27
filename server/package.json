@@ -5,7 +5,8 @@
     "main": "index.ts",
     "scripts": {
         "dev": "npx nodemon --require tsconfig-paths/register --ignore \"settings.json\" index.ts",
-        "build": "tsc --project tsconfig.json"
+        "build": "tsc --project tsconfig.json",
+        "prod": "node ./dist/server/index.js"
     },
     "author": "",
     "license": "ISC",

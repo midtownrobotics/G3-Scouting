@@ -1,14 +1,16 @@
 import * as fs from 'fs';
 import path from 'path';
 import { Settings } from './types';
+import { PRODUCTION } from '@shared/config';
 
-function getFile(relativePath: string): Promise<any> {
+function getSettingsFile(relativePath: string): Promise<any> {
     return new Promise<any>((resolve) => {
         fs.readFile(path.join(__dirname, relativePath), (err, data) => {
             let finalData: any;
             try {
                 finalData = JSON.parse(data.toString());
             } catch {
+                if (data === undefined) throw new Error("Your settings file does not exist.");
                 finalData = data.toString();
             }
             resolve(finalData);
@@ -16,8 +18,10 @@ function getFile(relativePath: string): Promise<any> {
     });
 }
 
+const settingsDir = PRODUCTION ? "/../../storage/settings.json" : "/storage/settings.json"
+
 async function getSettings(): Promise<Settings> {
-    const settings = await getFile("/storage/settings.json") as Settings;
+    const settings = await getSettingsFile(settingsDir) as Settings;
     return settings;
 }
 

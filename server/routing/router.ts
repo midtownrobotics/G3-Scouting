@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-if (PRODUCTION) app.use(express.static(path.join(__dirname + "../../../client/dist")));
+if (PRODUCTION) app.use(express.static(path.join(__dirname + "../../../../../client/dist")));
 
 app.post("/api/login", loginHandler);
 app.use("/api", authHandler);
