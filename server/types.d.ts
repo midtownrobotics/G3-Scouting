@@ -1,4 +1,3 @@
-import { Permission } from "@shared/schemas/user";
 import { Request } from "express";
 import UserModel from "./models/users/UserModel";
 import { MatchData } from "@shared/schemas/data";

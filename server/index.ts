@@ -1,3 +1,4 @@
+require('module-alias/register')
 import { PORT, PRODUCTION } from "@shared/config";
 import Form, { FormType } from "@shared/forms/Form";
 import formComponents from "@shared/forms/FormComponents";

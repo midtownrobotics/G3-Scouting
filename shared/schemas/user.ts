@@ -1,5 +1,5 @@
-import z from 'zod'
-import { Assignment, UserBlockAssignment } from './schedule'
+import { z } from 'zod';
+import { Assignment, UserBlockAssignment } from './schedule';
 import { Permission } from '../permissions';
 import { NextMatch } from './data';
 
@@ -10,18 +10,18 @@ export const SimpleUser = z.object({
     reliable: z.coerce.boolean(),
     redAlliance: z.boolean(),
     slackLinked: z.boolean()
-})
-export type SimpleUser = z.infer<typeof SimpleUser>
+});
+export type SimpleUser = z.infer<typeof SimpleUser>;
 
 export const CreateUser = SimpleUser.and(z.object({
     password: z.string()
-}))
-export type CreateUser = z.infer<typeof CreateUser>
+}));
+export type CreateUser = z.infer<typeof CreateUser>;
 
 export const SaveableInputData = z.object({
     value: z.string()
-})
-export type SaveableInputData = z.infer<typeof SaveableInputData>
+});
+export type SaveableInputData = z.infer<typeof SaveableInputData>;
 
 export const UserInformation = z.object({
     user: SimpleUser.and(z.object({
@@ -30,7 +30,7 @@ export const UserInformation = z.object({
     })),
     currentAssignment: Assignment.optional()
 });
-export type UserInformation = z.infer<typeof UserInformation>
+export type UserInformation = z.infer<typeof UserInformation>;
 
 export const SlackData = z.object({
     id: z.string(),
@@ -39,5 +39,5 @@ export const SlackData = z.object({
         image_24: z.string(),
         email: z.string()
     })
-})
-export type SlackData = z.infer<typeof SlackData>
+});
+export type SlackData = z.infer<typeof SlackData>;
