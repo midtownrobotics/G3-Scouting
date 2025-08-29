@@ -1,3 +1,4 @@
+import { DEV_API_URL } from "@shared/config";
 import "./App.css";
 import { getPageFromKey, usePage } from "./pageManager";
 import Login from "./pages/Login";
@@ -9,6 +10,18 @@ import { useUserData } from "./userData";
 function App() {
     const { pageKey, pageInstance } = usePage();
     const { apiConnection, loggedIn } = useUserData();
+
+    if (window.location.href.includes("/docs")) {
+        const url = new URL(DEV_API_URL);
+        const docsUrl = url.origin + "/docs";
+        return (
+            <div className="text-center mx-4">
+                <h1>Looks like you meant to go to the docs page!</h1>
+                <h3>If you are hosting the site in dev mode, you need to visit the docs on the express server.</h3>
+                <h4>Based on your config.ts they <b className="text-decoration-underline">may</b> be at <a href={docsUrl}>{docsUrl}</a>.</h4>
+            </div>
+        )
+    }
 
     return (
         <div className="d-flex flex-column min-vh-100">

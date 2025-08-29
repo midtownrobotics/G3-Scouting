@@ -23,11 +23,6 @@ slackAPIRouter.get("/getSlackInfo", async (req: AuthReq, res) => {
     res.send(data.user);
 });
 
-slackAPIRouter.get("/getClientId", async (req, res) => {
-    const id = await getSettingsValue("slackClientId");
-    res.send({ id });
-});
-
 slackAPIRouter.get("/getLinkCode", async (req: AuthReq, res) => {
     if (!req.user) { res.sendStatus(400); return; }
     res.send({ code: createLinkCode(req.user?.id) });

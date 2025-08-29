@@ -3,8 +3,7 @@ import UserModel from "./models/users/UserModel";
 import { MatchData } from "@shared/schemas/data";
 
 export type Settings = {
-    slackClientId: string;
-    slackClientSecret: string;
+    teamNumber: number;
     slackToken: string;
     theBlueAlliance: string;
     nexus: string;

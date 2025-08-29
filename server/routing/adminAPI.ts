@@ -46,22 +46,16 @@ createValueRoute(async () => {
 }, "EventKey");
 
 createValueRoute(async () => {
-    return await getSettingsValue("slackClientId");
-}, async (val) => {
-    await setSettingsValue("slackClientId", val);
-}, "SlackClientId");
-
-createValueRoute(async () => {
     return await getSettingsValue("slackToken");
 }, async (val) => {
     return await setSettingsValue("slackToken", val);
 }, "SlackOathToken");
 
 createValueRoute(async () => {
-    return await getSettingsValue("slackClientSecret");
+    return (await getSettingsValue("teamNumber")).toString();
 }, async (val) => {
-    return await setSettingsValue("slackClientSecret", val);
-}, "SlackClientSecret");
+    if (isFinite(parseInt(val))) return await setSettingsValue("teamNumber", parseInt(val));
+}, "TeamNumber");
 
 createValueRoute(async () => {
     return await getSettingsValue("theBlueAlliance");

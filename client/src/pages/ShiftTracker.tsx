@@ -85,7 +85,7 @@ export default function ShiftTracker() {
 
                                 return (
                                     <Col key={idx}>
-                                        <Card className="shadow-sm h-100 border-0 rounded-4 hover-card">
+                                        <Card className="shadow-sm h-100 rounded-4 hover-card" style={{backgroundColor: "rgb(238, 238, 238)"}}>
                                             <Card.Body className="d-flex flex-column align-items-center text-center">
                                                 <Card.Title className="fw-semibold">{s.name}</Card.Title>
                                                 <Card.Text className="text-muted d-flex align-items-center">

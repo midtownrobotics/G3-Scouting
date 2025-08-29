@@ -12,6 +12,7 @@ import userSettingsAPIRouter from './userSettingsAPI';
 import dataApiRouter from './dataAPI';
 import leadAPIrouter from './leadAPI';
 import pitAPIRouter from './pitAPI';
+import docsRouter from './docsRouter';
 
 const app = express();
 export const server = http.createServer(app);
@@ -19,6 +20,8 @@ export const server = http.createServer(app);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(docsRouter);
 
 if (PRODUCTION) app.use(express.static(path.join(__dirname + "../../../../../client/dist")));
 

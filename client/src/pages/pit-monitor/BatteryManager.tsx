@@ -101,7 +101,7 @@ export default function BatteryManager() {
                                     <div className="d-flex align-items-center gap-2">
                                         <select
                                             className="form-select"
-                                            style={{ width: "150px" }}
+                                            style={{ width: "120px" }}
                                             value={b.state}
                                             onChange={(e) => updateState(b.id ?? -1, e.target.value as BatteryState)}
                                             disabled={working}
