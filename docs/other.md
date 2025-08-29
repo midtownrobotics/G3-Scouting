@@ -1,4 +1,4 @@
-[↩️ Return to the docs home.](./docs.md)
+[↩️ Return to the docs home.](./home.md)
 
 # Other Pages
 
