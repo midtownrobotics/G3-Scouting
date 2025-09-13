@@ -39,6 +39,10 @@ class UserModel extends Model<User, UserCreationAttributes> {
     @HasMany(() => UserBlockAssignmentModel, { as: "schedule" })
     public schedule!: UserBlockAssignmentModel[];
 
+    public get slackLinked() {
+        return this.slackId !== undefined && this.slackId !== null;
+    }
+
     /**
      * Creates a user model.
      * @param username The user's username.

@@ -1,6 +1,7 @@
-import { Optional } from "sequelize";
+import { InferAttributes, Optional } from "sequelize";
 import { NextMatch } from "@shared/schemas/data";
-import { Permission } from "../settings";
+import { Permission } from "@shared/permissions";
+import UserBlockAssignmentModel from "./scheduling/UserBlockAssignmentModel";
 
 export interface User {
     id: number;
@@ -13,7 +14,7 @@ export interface User {
     lastMatchScouted?: number;
     assignedMatches: number[];
     reliable: boolean;
-    schedule: InferAttributes<UserBlockAssignmentModel>
+    schedule?: InferAttributes<UserBlockAssignmentModel>
 }
 
 export interface UserCreationAttributes extends Optional<User, 'id'> { }

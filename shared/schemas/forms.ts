@@ -1,7 +1,7 @@
-import { FormType } from '@shared/forms/Form';
-import z from 'zod';
+import { z } from 'zod';
 import formComponents from '../forms/FormComponents';
 import { FormResponse } from './data';
+import { FormType } from '../forms/Form';
 
 export const SerializedComponent = z.object({
     type: z.enum(Object.keys(formComponents) as [keyof typeof formComponents, ...(keyof typeof formComponents)[]]),

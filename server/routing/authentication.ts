@@ -16,7 +16,7 @@ setTimeout(destroyOldSessions, 10 * 1000);
 const SESSION_DURATION_MS = 12 * 60 * 60 * 1000;
 
 /** Urls to not run auth on. Exclude `"/api"` */
-const ignoreUrls: string[] = ["/slack/cmdLink"];
+const ignoreUrls: string[] = ["/slack/cmdLink", "/pit/nexusWebhook"];
 
 export async function authHandler(req: AuthReq, res: Response, next: NextFunction) {
     if (ignoreUrls.includes(req.url)) return next();

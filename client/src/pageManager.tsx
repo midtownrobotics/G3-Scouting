@@ -9,6 +9,8 @@ import { PageKey } from "@shared/types";
 import FormMaker from "./pages/form-maker/FormMaker";
 import ShiftTracker from "./pages/ShiftTracker";
 import Scheduler from "./pages/scheduler/Scheduler";
+import PitMonitor from "./pages/pit-monitor/PitMonitor";
+import BatteryManager from "./pages/pit-monitor/BatteryManager";
 
 /** Gets the JSX element for a page from its respective {@link PageKey}. */
 export const getPageFromKey = (pageKey: PageKey) => {
@@ -21,6 +23,8 @@ export const getPageFromKey = (pageKey: PageKey) => {
     if (pageKey === "home") return <Home />;
     if (pageKey === "shift-tracker") return <ShiftTracker />;
     if (pageKey === "scheduler") return <Scheduler />;
+    if (pageKey === "pit-monitor") return <PitMonitor />;
+    if (pageKey === "battery-manager") return <BatteryManager />;
 
     const { setPageKey } = usePage();
     setPageKey("home");

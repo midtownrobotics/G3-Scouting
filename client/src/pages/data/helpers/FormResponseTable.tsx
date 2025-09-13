@@ -10,7 +10,7 @@ export default function FormResponseTable({ formResponseData }: { formResponseDa
         return formResponseData.responses.map(response => {
             const row: { [key: string]: string | number; } = {
                 team: response.team,
-                match: response.match,
+                match: response.match ?? -1,
                 submittedAt: response.submittedAt ?? "UNKNOWN"
             };
             for (const qr of response.responses) {

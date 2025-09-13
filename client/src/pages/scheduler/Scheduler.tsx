@@ -116,6 +116,18 @@ function Scheduler() {
         });
     }, []);
 
+    useEffect(() => {
+        function handleKey(e: KeyboardEvent) {
+            if (/^[1-9]$/.test(e.key)) {
+                if ((parseInt(e.key) - 1) >= assignments.length) return;
+                setSelectedAssignment(parseInt(e.key) - 1);
+            }
+        }
+
+        window.addEventListener("keydown", handleKey);
+        return () => window.removeEventListener("keydown", handleKey);
+    }, [assignments]);
+
     const deploySchedules = () => {
         setSaving(true);
 

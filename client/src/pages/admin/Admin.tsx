@@ -13,6 +13,7 @@ function Admin() {
                 <UserTable />
             </div>
 
+            <br />
             <hr />
 
             <div id="settings">
@@ -21,13 +22,10 @@ function Admin() {
                     <tbody>
                         <tr>
                             <td>
-                                <SaveableTextInput get={"/admin/getSlackClientSecret"} post={"/admin/setSlackClientSecret"}>Slack Client Secret</SaveableTextInput>
-                            </td>
-                            <td>
-                                <SaveableTextInput get={"/admin/getSlackClientId"} post={"/admin/setSlackClientId"}>Slack Client ID</SaveableTextInput>
-                            </td>
-                            <td>
                                 <SaveableTextInput get={"/admin/getSlackOathToken"} post={"/admin/setSlackOathToken"}>Slack Oath Token</SaveableTextInput>
+                            </td>
+                            <td>
+                                <SaveableTextInput get={"/admin/getTeamNumber"} post={"/admin/setTeamNumber"}>Team Number</SaveableTextInput>
                             </td>
                         </tr>
                         <tr>
@@ -35,6 +33,7 @@ function Admin() {
                                 <SaveableTextInput get={"/admin/getTbaToken"} post={"/admin/setTbaToken"}>TBA Token</SaveableTextInput>
                             </td>
                             <td>
+                                <SaveableTextInput get={"/admin/getNexusToken"} post={"/admin/setNexusToken"}>Nexus Token</SaveableTextInput>
                             </td>
                             <td>
                                 <SaveableTextInput get={"/admin/getEventKey"} post={"/admin/setEventKey"}>Event Key</SaveableTextInput>
@@ -43,8 +42,6 @@ function Admin() {
                     </tbody>
                 </table>
             </div>
-
-            <hr />
         </div>
     );
 }

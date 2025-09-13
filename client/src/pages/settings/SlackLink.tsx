@@ -42,7 +42,7 @@ export default function SlackLink() {
                     }
                 </div>
                 <p>
-                    Click to copy then paste this command into any slack channel and send it to link your account.
+                    Click the copy icon then paste this command into any slack channel and send it to link your account.
                 </p>
                 <OverlayTrigger
                     placement="top"

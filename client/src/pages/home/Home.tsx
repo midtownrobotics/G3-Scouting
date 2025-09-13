@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Card, Container, Spinner, Table } from "react-bootstrap";
 import { fetchAPIJSON } from "../../API";
 import { toFormattedTime } from "../scheduler/utils";
-import { compareBlocksByDate, condenseSchedule, getCurrentBlockMins, getCurrentDate, getFormattedAssignmentDuration, makeDateFromDateString, softenColor } from "./utils";
+import { compareBlocksByDate, condenseSchedule, getFormattedAssignmentDuration, makeDateFromDateString, softenColor } from "./utils";
+import { getCurrentBlockMins, getCurrentDate } from "../../utils";
 
 function Home() {
     const [userData, setUserData] = useState<UserInformation>()

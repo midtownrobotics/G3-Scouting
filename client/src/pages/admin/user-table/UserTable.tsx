@@ -30,12 +30,13 @@ function UserTable() {
             <Table className="rounded-3 overflow-hidden" style={{ marginBottom: 0 }}>
                 <thead>
                     <tr>
-                        <td>ID</td>
-                        <td>Username</td>
-                        <td>Password</td>
-                        <td>Permission</td>
-                        <td>Reliable</td>
-                        <td>Alliance</td>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>Permission</th>
+                        <th>Reliable?</th>
+                        <th>Red Alliance?</th>
+                        <th>Slack Linked?</th>
                         <td colSpan={2} />
                     </tr>
                 </thead>

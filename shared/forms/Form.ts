@@ -2,7 +2,6 @@ import { FormResponse, FormResponseData } from "../schemas/data";
 import { SerializedForm } from "../schemas/forms";
 import { FormComponent } from "./FormComponents";
 import { generateRandomString, toAlphanumeric } from "./FormUtils";
-import FormResponseByTeamModel from "../../server/models/forms/FormResponseModels";
 
 export enum FormType {
     TEAM = "TEAM",
@@ -71,15 +70,7 @@ export default class Form {
 
         return form;
     }
-
-    /** Gets response data for this form, if form has associated data. 
-     * @param minAccuracy The minimum accuracy for responses to be included in the data result.
-     * @returns `null` if there are no reponses. Be sure to pass `true` into FormModel.getForm(s).
-     */
-    public updateResponseData(models: FormResponseByTeamModel[]): void {
-        this.responses = models.map(m => m.toJSON());
-    }
-
+    
     /**
      * **Removes all currently added components** and new ones.
      * @param components The array of components to add.
@@ -95,6 +86,10 @@ export default class Form {
         this.components = Array.from(uniqueMap.values());
     }
 
+    /** Gets response data for this form, if form has associated data. 
+     * @param minAccuracy The minimum accuracy for responses to be included in the data result.
+     * @returns `null` if there are no reponses. Be sure to pass `true` into FormModel.getForm(s).
+     */
     public getResponseData(minAccuracy?: number): FormResponseData | null {
         if (!this.responses) return null;
         const questions = this.components.filter(c => c.metadata !== null).map(q => q.metadata!);

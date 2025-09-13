@@ -24,7 +24,7 @@ export default async function assignForMatch(nextMatch: number) {
         const allianceTeams = alliance === Alliance.RED ? redTeams : blueTeams;
 
         for (const user of users) {
-            if ((await user.getCurrentAssignment())?.type !== AssignmentType.SCOUTING) continue;
+            if ((await user.getCurrentAssignment())?.type !== AssignmentType.ASSIGNED) continue;
             const i = assigned.length;
             const userAlliance = user.redAlliance ? Alliance.RED : Alliance.BLUE;
             if (userAlliance !== alliance) continue;    

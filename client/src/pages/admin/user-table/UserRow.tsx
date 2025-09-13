@@ -56,6 +56,9 @@ function UserRow({ user, reload }: { user: SimpleUser, reload: () => void }) {
             <EditableCell isEditing={editing} onchange={(v) => setUserProp(v, "permission")}>{editedUser.permission}</EditableCell>
             <EditableCell isEditing={editing} onchange={(v) => setUserProp(v, "reliable")} checkbox>{editedUser.reliable}</EditableCell>
             <EditableCell isEditing={editing} onchange={(v) => setUserProp(v, "redAlliance")} checkbox>{editedUser.redAlliance}</EditableCell>
+            <td>
+                <input type="checkbox" checked={user.slackLinked} />
+                </td>
             <td onClick={() => editing ? saveUser() : setEditing(true)}>
                 {editing ? <Floppy /> : <Pencil />}
             </td>

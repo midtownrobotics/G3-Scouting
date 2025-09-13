@@ -1,30 +1,47 @@
 import * as fs from 'fs';
 import path from 'path';
 import { Settings } from './types';
+import { PRODUCTION } from '@shared/config';
 
-function getFile(relativePath: string): Promise<any> {
+const settingsDir = PRODUCTION ? "/../../storage/settings.json" : "/storage/settings.json"
+
+async function getSettings(): Promise<Settings> {
     return new Promise<any>((resolve) => {
-        fs.readFile(path.join(__dirname, relativePath), (err, data) => {
+        fs.readFile(path.join(__dirname, settingsDir), (err, data) => {
             let finalData: any;
             try {
                 finalData = JSON.parse(data.toString());
             } catch {
-                finalData = data.toString();
+                if (data === undefined) {
+                    console.log("WARNING: \"settings.json\" not found. Resetting file...")
+                    const settings: Settings = {
+                        teamNumber: 0,
+                        slackToken: '',
+                        theBlueAlliance: '',
+                        nexus: '',
+                        eventKey: '',
+                        match: {
+                            number: 0,
+                            teams: [],
+                            blue: [],
+                            red: []
+                        }
+                    };
+                    writeSettings(settings);
+                    finalData = settings;
+                } else {
+                    finalData = data.toString();
+                }
             }
             resolve(finalData);
         });
     });
 }
 
-async function getSettings(): Promise<Settings> {
-    const settings = await getFile("/storage/settings.json") as Settings;
-    return settings;
-}
-
 async function writeSettings(data: Settings) {
     return new Promise<true>((resolve, reject) => {
         fs.writeFile(
-            path.join(__dirname, "storage/settings.json"),
+            path.join(__dirname, settingsDir),
             JSON.stringify(data, null, 2),
             (err) => {
                 if (err) return reject(err);

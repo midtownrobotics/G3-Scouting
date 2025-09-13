@@ -11,6 +11,8 @@ import slackAPIRouter from './slackAPI';
 import userSettingsAPIRouter from './userSettingsAPI';
 import dataApiRouter from './dataAPI';
 import leadAPIrouter from './leadAPI';
+import pitAPIRouter from './pitAPI';
+import docsRouter from './docsRouter';
 
 const app = express();
 export const server = http.createServer(app);
@@ -19,13 +21,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-if (PRODUCTION) app.use(express.static(path.join(__dirname + "../../../client/dist")));
+app.use(docsRouter);
+
+if (PRODUCTION) app.use(express.static(path.join(__dirname + "../../../../../client/dist")));
 
 app.post("/api/login", loginHandler);
 app.use("/api", authHandler);
 
 app.use("/api", genericAPIRouter);
 app.use("/api/admin", adminAPIRouter);
+app.use("/api/pit", pitAPIRouter);
 app.use("/api/forms", formAPIRouter);
 app.use("/api/data", dataApiRouter)
 app.use("/api/slack", slackAPIRouter);

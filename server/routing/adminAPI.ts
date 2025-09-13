@@ -11,6 +11,7 @@ import { getSettingsValue, setSettingsValue } from '../settings';
 import { SerializedForm } from '@shared/schemas/forms';
 import Form from '@shared/forms/Form';
 import FormModel from '../models/forms/FormModel';
+import { permission } from 'process';
 
 const adminAPIRouter = express.Router();
 
@@ -45,28 +46,28 @@ createValueRoute(async () => {
 }, "EventKey");
 
 createValueRoute(async () => {
-    return await getSettingsValue("slackClientId");
-}, async (val) => {
-    await setSettingsValue("slackClientId", val);
-}, "SlackClientId");
-
-createValueRoute(async () => {
     return await getSettingsValue("slackToken");
 }, async (val) => {
     return await setSettingsValue("slackToken", val);
 }, "SlackOathToken");
 
 createValueRoute(async () => {
-    return await getSettingsValue("slackClientSecret");
+    return (await getSettingsValue("teamNumber")).toString();
 }, async (val) => {
-    return await setSettingsValue("slackClientSecret", val);
-}, "SlackClientSecret");
+    if (isFinite(parseInt(val))) return await setSettingsValue("teamNumber", parseInt(val));
+}, "TeamNumber");
 
 createValueRoute(async () => {
     return await getSettingsValue("theBlueAlliance");
 }, async (val) => {
     return await setSettingsValue("theBlueAlliance", val);
 }, "TbaToken");
+
+createValueRoute(async () => {
+    return await getSettingsValue("nexus");
+}, async (val) => {
+    return await setSettingsValue("nexus", val);
+}, "NexusToken");
 
 adminAPIRouter.post("/addUser", async (req: Request, res: Response) => {
     const body = CreateUser.safeParse(req.body);
@@ -96,16 +97,16 @@ adminAPIRouter.post("/deleteUser", async (req: Request, res: Response) => {
 });
 
 adminAPIRouter.get("/getUsers", async (req: Request, res: Response) => {
+    const users: SimpleUser[] = (await UserModel.findAll()).map(u => ({
+        username: u.username,
+        id: u.id,
+        permission: u.permission,
+        redAlliance: u.redAlliance,
+        reliable: u.reliable,
+        slackLinked: u.slackLinked
+    }));
 
-    const users = await UserModel.findAll();
-    const body = z.array(SimpleUser).safeParse(users);
-
-    if (body.success && body.data) {
-        res.json(body.data);
-        return;
-    }
-
-    res.sendStatus(500);
+    res.json(users);
 });
 
 adminAPIRouter.post("/editUser", async (req: Request, res: Response) => {

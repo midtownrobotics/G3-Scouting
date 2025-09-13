@@ -5,7 +5,7 @@ import { postAPI } from "../../../API";
 import EditableCell from "../EditableCell";
 import { Permission } from "@shared/permissions";
 
-const defaultUser: Partial<CreateUser> = { id: -1, redAlliance: true, permission: Permission.SCOUT };
+const defaultUser: Partial<CreateUser> = { id: -1, redAlliance: true, permission: Permission.SCOUT, slackLinked: false };
 
 function NewUser({ reload }: { reload: () => void; }) {
     const [user, setUser] = useState<Partial<CreateUser>>(defaultUser);
@@ -27,7 +27,6 @@ function NewUser({ reload }: { reload: () => void; }) {
         } else {
             setEditing(true);
             if (result.error.errors[0].code == "invalid_type") {
-                alert(user.permission)
                 alert("Expected " + (result.error.errors[0] as any).expected + " in " + result.error.errors[0].path[0] + ".");
             }
         }
@@ -45,6 +44,7 @@ function NewUser({ reload }: { reload: () => void; }) {
             <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "password")}>{user.password}</EditableCell>
             <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "permission")}>SCOUT</EditableCell>
             <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "reliable")} checkbox>{user?.reliable ?? false}</EditableCell>
+            <td />
             <td />
             <td onClick={() => saveUser()}>
                 <PlusCircle />
