@@ -1,7 +1,6 @@
 import express from 'express';
 import { z } from 'zod';
-import assignForMatch, { currentAssignments } from '../data/assignForMatch';
-import { getSettingsValue } from '../settings';
+import assignForMatch, { getAllCurrentAssignmentStatuses } from '../data/assignForMatch';
 
 const leadAPIrouter = express.Router();
 
@@ -16,7 +15,7 @@ leadAPIrouter.post("/assignForMatch", async (req, res) => {
 });
 
 leadAPIrouter.get("/getCurrentAssignment", async (req, res) => {
-    res.send({ assignments: currentAssignments });
+    res.send({ assignments: await getAllCurrentAssignmentStatuses() });
 });
 
 export default leadAPIrouter;

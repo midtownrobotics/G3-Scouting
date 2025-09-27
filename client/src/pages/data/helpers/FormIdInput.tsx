@@ -3,14 +3,14 @@ import { useEffect, useState } from "react";
 import { Button, Form, InputGroup } from "react-bootstrap";
 import { fetchAPIJSON } from "../../../API";
 
-export default function FormIdInput({ onSubmit }: { onSubmit: (value: string) => void; }) {
+export default function FormIdInput({ onChange }: { onChange: (value: string) => void; }) {
     const [value, setValue] = useState<string>();
     const [forms, setForms] = useState<SerializedForm[]>();
 
     useEffect(() => {
         const form = new URLSearchParams(window.location.search).get("form");
         if (!form) return;
-        onSubmit(form);
+        onChange(form);
         setValue(form);
     }, []);
 
@@ -22,9 +22,11 @@ export default function FormIdInput({ onSubmit }: { onSubmit: (value: string) =>
         });
     }, []);
 
-    const handleSubmit = () => {
+    const handleChange = (v: string) => {
         if (value === undefined) return;
-        onSubmit(value);
+        if (!forms?.map(f => f.id).includes(v)) return;
+        setValue(v)
+        onChange(value);
 
         const url = new URL(window.location.href);
         url.searchParams.set("form", value.toString() ?? "");
@@ -35,7 +37,7 @@ export default function FormIdInput({ onSubmit }: { onSubmit: (value: string) =>
         <InputGroup className="mb-3" style={{ maxWidth: "300px" }}>
             <Form.Select
                 value={value}
-                onChange={(e) => setValue(e.target.value)}
+                onChange={(e) => onChange(e.target.value)}
             >
                 <option value="">-- Choose a form --</option>
                 {forms?.map((f) => (
@@ -44,9 +46,6 @@ export default function FormIdInput({ onSubmit }: { onSubmit: (value: string) =>
                     </option>
                 ))}
             </Form.Select>
-            <Button variant="primary" onClick={handleSubmit}>
-                Submit
-            </Button>
         </InputGroup>
     );
 }

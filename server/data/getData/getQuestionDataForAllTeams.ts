@@ -21,7 +21,7 @@ export default async function getQuestionDataForAllTeams(formId: string, minAccu
 
         const teamAgg = teamMap.get(team)!;
         for (const { question, response } of formResponse.responses) {
-            aggregateResponse(teamAgg, metadataMap, `${formResponse.formId}-${question}`, response, formResponse.match);
+            aggregateResponse(teamAgg, metadataMap, `${formResponse.formId}-${question}`, response, formResponse.userId ?? -1, formResponse.match);
         }
     }
 
@@ -30,7 +30,8 @@ export default async function getQuestionDataForAllTeams(formId: string, minAccu
     Array.from(metadataMap.values()).forEach((q, i) => {
         questionData.push({
             metadata: q,
-            teamData: []
+            teamData: [],
+            stats: {}
         });
     });
 
@@ -52,23 +53,46 @@ export default async function getQuestionDataForAllTeams(formId: string, minAccu
         }
     }
 
+    function percentile(sortedArr: number[], p: number): number {
+        if (sortedArr.length === 0) return NaN;
+        const index = (p / 100) * (sortedArr.length - 1);
+        const lower = Math.floor(index);
+        const upper = Math.ceil(index);
+        const weight = index - lower;
+        if (upper >= sortedArr.length) return sortedArr[lower];
+        return sortedArr[lower] * (1 - weight) + sortedArr[upper] * weight;
+    }
+
     for (const q of questionData) {
         if (q.metadata.classification !== "quantitative" && q.metadata.type !== "number") continue;
-        let maxAverage: typeof q.maxAverage;
+
+        let maxAverage: typeof q.stats.maxAverage;
+        const values: number[] = [];
+
         const total = q.teamData.reduce((acc, v) => {
             const average = v.questionData.average;
             if (typeof average === "number") {
+                values.push(average);
+
                 if (!maxAverage || average > maxAverage.average) {
                     maxAverage = { average, team: v.team };
-                };
+                }
                 return acc + average;
             }
             return acc;
         }, 0);
-        const average = total / q.teamData.length;
-        q.totalAverage = isFinite(average) ? average : 0;
-        q.maxAverage = maxAverage;
+
+        const average = total / values.length;
+        values.sort((a, b) => a - b);
+
+        q.stats.totalAverage = isFinite(average) ? average : 0;
+        q.stats.maxAverage = maxAverage;
+
+        q.stats.percentile25 = percentile(values, 25);
+        q.stats.percentile50 = percentile(values, 50);
+        q.stats.percentile75 = percentile(values, 75);
     }
+
 
     return questionData;
 }

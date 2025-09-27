@@ -16,6 +16,7 @@ export default async function scoreAllianceData(
 
     const matchTbaData = await getMatchData(match);
     if (!matchTbaData) return false;
+    if (matchTbaData.actual_time === undefined) return false;
 
     const alliances = {
         blue: matchTbaData.alliances.blue.team_keys.map(t => parseInt(t.slice(3))),
@@ -52,7 +53,7 @@ export default async function scoreAllianceData(
             totalValue += teamValue / teamData.length;
         }
 
-        totalAccuracy += weightedAccuracy(totalValue, realValue);
+        totalAccuracy += totalValue / realValue;
         scoredQuestions++;
     }
 
@@ -84,19 +85,4 @@ export default async function scoreAllianceData(
     };
 
     return score;
-}
-
-function weightedAccuracy(input: number, real: number): number {
-    if (real === 0 && input === 0) return 100;
-
-    const diff = Math.abs(input - real);
-
-    if (diff <= 0.5) return 95;
-    if (diff <= 1) return 90;
-    if (diff <= 2) return 80;
-
-    const scale = Math.max(real, input, 3);
-
-    const accuracy = Math.min(Math.max(0, 1 - diff / scale), 0.8);
-    return +(accuracy * 100).toFixed(2);
 }

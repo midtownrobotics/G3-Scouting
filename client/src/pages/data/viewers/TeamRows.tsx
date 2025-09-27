@@ -22,7 +22,7 @@ export default function TeamRows({ hideSelector, accuracy }: { hideSelector?: bo
         <div className="p-3">
             <h1>Raw Team Data</h1>
             <br />
-            <TeamNumberInput onSubmit={v => setTeam(v)} />
+            <TeamNumberInput onChange={v => setTeam(v)} />
         </div>
     );
 
@@ -31,7 +31,7 @@ export default function TeamRows({ hideSelector, accuracy }: { hideSelector?: bo
             {!hideSelector && <>
                 <h1>Raw Team Data</h1>
                 <br />
-                <TeamNumberInput onSubmit={v => setTeam(v)} />
+                <TeamNumberInput onChange={v => setTeam(v)} />
             </>}
             {formsResponseData.map(f =>
                 <div key={f.formId}>

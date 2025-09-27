@@ -53,7 +53,7 @@ export default function FormComp({
             ))}
         </BSForm>
     );
-1
+
     if (form.type === FormType.ALLIANCE) return (
         <BSForm>
             <hr />

@@ -46,7 +46,7 @@ export default function AveragedRows({ accuracy }: {accuracy: number}) {
             <div className="p-3">
                 <h1>Team Averages</h1>
                 <br />
-                <FormIdInput onSubmit={setFormId} />
+                <FormIdInput onChange={setFormId} />
             </div>
         );
     }
@@ -55,7 +55,7 @@ export default function AveragedRows({ accuracy }: {accuracy: number}) {
         <div className="p-3">
             <h1>Team Averages</h1>
             <br />
-            <FormIdInput onSubmit={setFormId} />
+            <FormIdInput onChange={setFormId} />
             <br />
             <SortableTable
                 columns={columns}

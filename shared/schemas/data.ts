@@ -80,6 +80,7 @@ export const QuestionData = z.object({
     average: z.string().or(z.number()).optional(),
     responses: z.array(z.object({
         response: z.string(),
+        scout: z.number(),
         match: z.number().optional()
     })),
 });
@@ -88,11 +89,16 @@ export type QuestionData = z.infer<typeof QuestionData>;
 /** Data about a question, including its responses and average for multiple teams. */
 export const MultiTeamQuestionData = z.object({
     metadata: QuestionMetadata,
-    totalAverage: z.number().optional(),
-    maxAverage: z.object({
-        average: z.number(),
-        team: z.number()
-    }).optional(),
+    stats: z.object({
+        percentile25: z.number().nullish(),
+        percentile50: z.number().nullish(),
+        percentile75: z.number().nullish(),
+        totalAverage: z.number().nullish(),
+        maxAverage: z.object({
+            average: z.number(),
+            team: z.number()
+        }).optional(),
+    }),
     teamData: z.array(z.object({
         questionData: QuestionData,
         team: z.number()
@@ -103,17 +109,16 @@ export type MultiTeamQuestionData = z.infer<typeof MultiTeamQuestionData>;
 export const NextMatch = z.object({
     number: z.number(),
     team: z.number(),
-    teams: z.array(z.number())
+    teams: z.array(z.number()),
+    finished: z.boolean()
 });
 export type NextMatch = z.infer<typeof NextMatch>;
 
 /** Info about scout's current assignments. */
-export const CurrentAssignment = z.object({
+export const CurrentAssignment = NextMatch.and(z.object({
     username: z.string(),
     userId: z.number(),
-    team: z.number(),
-    teams: z.array(z.number())
-});
+}));
 export type CurrentAssignment = z.infer<typeof CurrentAssignment>;
 
 export const MatchData = z.object({
@@ -123,3 +128,9 @@ export const MatchData = z.object({
     red: z.array(z.number()),
 })
 export type MatchData = z.infer<typeof MatchData>;
+
+export const TeamData = z.object({
+    number: z.number(),
+    name: z.string()
+})
+export type TeamData = z.infer<typeof TeamData>;

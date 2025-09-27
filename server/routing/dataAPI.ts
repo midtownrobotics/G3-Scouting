@@ -6,8 +6,19 @@ import getTeamRows from '../data/getData/getTeamRows';
 import FormModel from '../models/forms/FormModel';
 import getAllQuestionData from "../data/getData/getAllQuestionData";
 import { numberParser } from "../utils";
+import { getAllTeams } from "server/externalApis/tba/tba";
 
 const dataApiRouter = express.Router();
+
+/** 
+ * Gets all teams! 
+ * {@link FormResponseData} 
+ */
+dataApiRouter.get("/getAllTeams", async (req, res) => {
+    const data = await getAllTeams();
+    if (!data) { res.sendStatus(400); return; }
+    res.send(data.map(t => ({number: t.team_number, name: t.nickname})));
+});
 
 /** 
  * Gets the form response data for one form. 

@@ -20,7 +20,7 @@ export default function FormRows({ accuracy }: {accuracy: number}) {
             <div className="p-3">
                 <h1>Form Data</h1>
                 <br />
-                <FormIdInput onSubmit={setFormId} />
+                <FormIdInput onChange={setFormId} />
             </div>
         );
     }
@@ -29,7 +29,7 @@ export default function FormRows({ accuracy }: {accuracy: number}) {
         <div className="p-3">
             <h1>Form Data</h1>
             <br />
-            <FormIdInput onSubmit={setFormId} />
+            <FormIdInput onChange={setFormId} />
             <br />
             <FormResponseTable formResponseData={formResponseData}/>
         </div>

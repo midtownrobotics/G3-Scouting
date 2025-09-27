@@ -1,252 +1,198 @@
-// import { LineChart, RadarChart } from "@mui/x-charts";
-// import { QuestionData } from "@shared/schemas/data";
-// import { useEffect, useRef, useState } from "react";
-// import { Card, Col, Form, Row, Table } from "react-bootstrap";
-// import { z } from "zod";
-// import { fetchAPIJSON } from "../../../API";
-// import TeamNumberInput from "../helpers/TeamNumberInput";
-// import TeamDataPage from "./TeamRows";
+import { PieChart, RadarChart } from "@mui/x-charts";
+import { MultiTeamQuestionData } from "@shared/schemas/data";
+import { useEffect, useState } from "react";
+import { Card, Table } from "react-bootstrap";
+import { z } from "zod";
+import { fetchAPIJSON } from "../../../API";
+import { numberParser } from "../../../utils";
+import TeamNumberInput from "../helpers/TeamNumberInput";
 
-// export default function TeamSummary({ accuracy }: {accuracy: number}) {
-//     const [_, forceUpdate] = useState(0);
-//     const [questionData, setQuestionData] = useState<QuestionData[]>();
-//     const questionsLineGraphSelected = useRef(new Map<string, boolean>());
-//     const questionsSkillChartSelected = useRef(new Map<string, boolean>());
-//     const [selectedPieGraphQuestion, setSelectedPieGraphQuestion] = useState<string>();
-//     const [team1, setTeam1] = useState<number>();
+export default function TeamSummary({ accuracy }: { accuracy: number }) {
+    const [data, setData] = useState<MultiTeamQuestionData[]>([]);
+    const [team, setTeam] = useState<number>();
 
-//     useEffect(() => {
-//         if (team1 === undefined) return;
-//         fetchAPIJSON(`/data/getTeamData/${team1}/${accuracy}`, z.object({ 
-//             data: z.array(QuestionData) 
-//         })).then(res => {
-//             if (res) setQuestionData(res.data);
-//         });
-//     }, [team1, accuracy]);
+    useEffect(() => {
+        if (team === undefined) return;
+        fetchAPIJSON(`/data/getAllQuestionData/${accuracy}`, z.object({
+            data: z.array(MultiTeamQuestionData)
+        })).then(res => {
+            console.log(res)
+            if (res) setData(res.data);
+        });
+    }, [team, accuracy]);
 
-//     if (!questionData) return (
-//         <div className="p-3">
-//             <h1>Team Data Summary</h1>
-//             <br />
-//             <TeamNumberInput onSubmit={v => setTeam1(v)} />
-//         </div>
-//     );
+    const numerical = data.filter(q => q.metadata.type == "number" && q.metadata.classification == "quantitative");
+    const multipleChoice = data.filter(q => q.metadata.type == "string" && q.metadata.classification == "quantitative");
+    const qualitative = data.filter(q => q.metadata.classification == "qualitative");
 
-//     const averageableQuestions = questionData.filter((q) => q.average !== undefined);
+    const fillRadarChart = true;
 
-//     const skillCharableQuestions = questionData.filter((q) => q.average !== undefined && q.questionMeta.classification == "quantitative" && q.questionMeta.type == "number");
-//     const skillChartSelectedQuestions = skillCharableQuestions.filter(q => questionsSkillChartSelected.current.get(q.questionFormId));
+    return (
+        <div className="p-3">
+            <h1>Team Data Summary</h1>
+            <TeamNumberInput onChange={v => setTeam(v)} />
+            <Card className="mb-3">
+                <Card.Body>
+                    <Card.Title>
+                        <h2>Team #{team}</h2>
+                        <h2></h2>
+                        <h5>
+                            {data[0]?.teamData.find(t => t.team == team)?.questionData.responses.length || 0} responses from matches:{" "}
+                            {(() => {
+                                const responses = data[0]?.teamData.find((t) => t.team === team)?.questionData.responses ?? [];
+                                if (responses.length === 0) return "N/A";
 
-//     const quanitativeStringQuestions = questionData.filter((q) => q.questionMeta.classification == "quantitative" && q.questionMeta.type == "string");
+                                const counts = responses.reduce<Record<number, number>>((acc, { match }) => {
+                                    if (match == null) return acc;
+                                    acc[match] = (acc[match] ?? 0) + 1;
+                                    return acc;
+                                }, {});
 
-//     const lineGraphableQuestions = questionData.filter((q) => q.questionMeta.classification == "quantitative" && q.questionMeta.type == "number");
-//     const lineGraphSelectedQuestions = lineGraphableQuestions
-//         .filter((q) => questionsLineGraphSelected.current.get(q.questionFormId))
-//         .map((q) => {
-//             const grouped = q.responses.reduce((acc, curr) => {
-//                 const key = curr.matchNumber;
-//                 if (!acc.has(key)) acc.set(key, []);
-//                 acc.get(key)!.push(parseFloat(curr.response));
-//                 return acc;
-//             }, new Map<number, number[]>());
+                                return Object.entries(counts)
+                                    .sort(([a], [b]) => Number(a) - Number(b))
+                                    .map(([match, times]) => (
+                                        <span key={match}>
+                                            {match}
+                                            {times > 1 && <sup>{times}</sup>}
+                                        </span>
+                                    ))
+                                    .reduce<React.ReactNode[]>((acc, el, idx) => {
+                                        if (idx > 0) acc.push(", ");
+                                        acc.push(el);
+                                        return acc;
+                                    }, []);
+                            })()}
+                        </h5>
+                    </Card.Title>
+                </Card.Body>
+            </Card>
+            <Card className="mb-3">
+                <Card.Body>
+                    <Card.Title>
+                        <h1>Skill Chart</h1>
+                        <h5>Average per match</h5>
+                    </Card.Title>
+                    <Card.Text>
+                        <RadarChart
+                            width={500}
+                            height={400}
+                            series={[
+                                {
+                                    data: numerical.map(q =>
+                                        numberParser(
+                                            q.teamData.find(t => t.team === team)?.questionData.average
+                                        ) ?? 0
+                                    ),
+                                    label: team?.toString(),
+                                    fillArea: fillRadarChart,
+                                    color: "red"
+                                },
+                                {
+                                    data: numerical.map(q => q.stats.percentile25 ?? 0),
+                                    label: "25th",
+                                    fillArea: fillRadarChart,
+                                    color: "#050ceb"
+                                },
+                                {
+                                    data: numerical.map(q => q.stats.percentile50 ?? 0),
+                                    label: "50th",
+                                    fillArea: fillRadarChart,
+                                    color: "#326da8"
+                                },
+                                {
+                                    data: numerical.map(q => q.stats.percentile75 ?? 0),
+                                    label: "75th",
+                                    fillArea: fillRadarChart,
+                                    color: "#3299a8"
+                                },
+                                // Shows best team
+                                // {
+                                //     data: numerical.map(q => q.stats.maxAverage?.average ?? 0),
+                                //     valueFormatter: (v, c) => (`${Math.round(v * 1000) / 1000} - Team ${numerical[c.dataIndex].stats.maxAverage?.team || 0}`),
+                                //     label: "Best",
+                                //     fillArea: fillRadarChart,
+                                //     color: "#a8a632ff"
+                                // }
+                            ]}
+                            radar={{
+                                metrics: numerical.map(q => q.metadata.name)
+                            }}
+                        />
+                    </Card.Text>
+                </Card.Body>
+            </Card>
+            <Card className="mb-3">
+                <Card.Body>
+                    <Card.Title>
+                        <h1>Multiple Choice</h1>
+                        <h5>Count of selected</h5>
+                    </Card.Title>
+                    <Card.Text>
+                        <div className="d-flex flex-wrap justify-content-center gap-4">
+                            {multipleChoice.map((q, i) => (
+                                <div key={i} style={{ flex: "1 1 300px", minWidth: "250px", maxWidth: "300px" }}>
+                                    <h5 className="text-center me-5">{q.metadata.name}</h5>
+                                    <PieChart
+                                        height={200}
+                                        series={[
+                                            {
+                                                data: (() => {
+                                                    const responses = q.teamData.find(t => t.team === team)?.questionData.responses;
+                                                    if (!responses) return [];
+                                                    const counts = responses.reduce<Record<string, number>>((acc, { response }) => {
+                                                        acc[response] = (acc[response] ?? 0) + 1;
+                                                        return acc;
+                                                    }, {});
 
-//             const averagedResponses = Array.from(grouped.entries()).map(([matchNumber, values]) => {
-//                 const avg = values.reduce((a, b) => a + b, 0) / values.length;
-//                 return { matchNumber, response: avg.toFixed(2) };
-//             });
+                                                    return Object.entries(counts).map(([label, value], id) => ({
+                                                        id,
+                                                        label,
+                                                        value,
+                                                    }));
+                                                })()
+                                            }
+                                        ]}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </Card.Text>
+                </Card.Body>
+            </Card>
+            <Card className="mb-3">
+                <Card.Body>
+                    <Card.Title>
+                        <h1>Open Ended</h1>
+                    </Card.Title>
+                    <Card.Text>
+                        {qualitative.map(q => {
+                            const hasMatchAssociated = q.teamData.find(t => t.team == team)?.questionData.responses.some(r => r.match !== undefined);
 
-//             averagedResponses.sort((a, b) => b.matchNumber - a.matchNumber);
-
-//             return { ...q, responses: averagedResponses };
-//         });
-
-//     const lineGraphMatchNumbers = Array.from(
-//         new Set(lineGraphSelectedQuestions.flatMap((q) => q.responses.map((r) => r.matchNumber)))
-//     ).sort((a, b) => a - b);
-
-//     const pieGraphQuestion = quanitativeStringQuestions.find((q) => q.questionFormId == selectedPieGraphQuestion);
-//     const pieGraphResponses = pieGraphQuestion?.responses.sort((a, b) => a.matchNumber - b.matchNumber);
-
-//     const qualitativeQuestions = questionData.filter(
-//         (q) => q.questionMeta.classification == "qualitative"
-//     );
-
-//     return (
-//         <div className="p-3">
-//             <TeamNumberInput onSubmit={v => setTeam1(v)} />
-//             <h2 className="mb-4">Team {team1} Summary</h2>
-
-//             <Card className="mb-4">
-//                 <Card.Header as="h5">Averages</Card.Header>
-//                 <Card.Body>
-//                     <Table bordered responsive size="sm" className="text-center">
-//                         <thead>
-//                             <tr>
-//                                 {averageableQuestions.map((q, i) => <th key={i}>{q.questionMeta.name}</th>)}
-//                             </tr>
-//                         </thead>
-//                         <tbody>
-//                             <tr>
-//                                 {averageableQuestions.map((q, i) => <td key={i}>{q.average}</td>)}
-//                             </tr>
-//                         </tbody>
-//                     </Table>
-//                 </Card.Body>
-//             </Card>
-
-//             <Card className="mb-4">
-//                 <Card.Header as="h5">Line Graphs</Card.Header>
-//                 <Card.Body>
-//                     <Row className="mb-3">
-//                         {lineGraphableQuestions.map((q, i) => (
-//                             <Col xs={6} md={4} lg={3} key={i}>
-//                                 <Form.Check
-//                                     type="checkbox"
-//                                     id={`lgqs-${i}`}
-//                                     label={q.questionMeta.name}
-//                                     checked={questionsLineGraphSelected.current.get(q.questionFormId) ?? false}
-//                                     onChange={() => {
-//                                         const current = questionsLineGraphSelected.current.get(q.questionFormId) ?? false;
-//                                         questionsLineGraphSelected.current.set(q.questionFormId, !current);
-//                                         forceUpdate((x) => x + 1);
-//                                     }}
-//                                 />
-//                             </Col>
-//                         ))}
-//                     </Row>
-
-//                     {lineGraphSelectedQuestions.length > 0 &&
-//                         <div className="bg-light rounded p-3">
-//                             <LineChart
-//                                 height={300}
-//                                 xAxis={[{ data: lineGraphMatchNumbers, label: "Match" }]}
-//                                 series={lineGraphSelectedQuestions.map((q) => ({
-//                                     label: q.questionMeta.name,
-//                                     data: lineGraphMatchNumbers.map((matchNumber) => {
-//                                         const res = q.responses.find((r) => r.matchNumber === matchNumber);
-//                                         return res ? parseFloat(res.response) : null;
-//                                     }),
-//                                 }))}
-//                             />
-//                         </div>
-//                     }
-//                 </Card.Body>
-//             </Card>
-
-//             <Card className="mb-4">
-//                 <Card.Header as="h5">Skill Graph</Card.Header>
-//                 <Card.Body>
-//                     <Row className="mb-3">
-//                         {skillCharableQuestions.map((q, i) => (
-//                             <Col xs={6} md={4} lg={3} key={i}>
-//                                 <Form.Check
-//                                     type="checkbox"
-//                                     id={`skqs-${i}`}
-//                                     label={q.questionMeta.name}
-//                                     checked={questionsSkillChartSelected.current.get(q.questionFormId) ?? false}
-//                                     onChange={() => {
-//                                         const current = questionsSkillChartSelected.current.get(q.questionFormId) ?? false;
-//                                         questionsSkillChartSelected.current.set(q.questionFormId, !current);
-//                                         forceUpdate((x) => x + 1);
-//                                     }}
-//                                 />
-//                             </Col>
-//                         ))}
-//                     </Row>
-
-//                     {skillChartSelectedQuestions.length >= 3 &&
-//                         <div className="bg-light rounded p-3">
-//                             <RadarChart
-//                                 height={300}
-//                                 series={[{ label: team1?.toString(), data: skillChartSelectedQuestions.map(q => parseFloat(q.average ?? "0")) }]}
-//                                 radar={{
-//                                     max: 120,
-//                                     metrics: skillChartSelectedQuestions.map(q => ({ name: q.questionMeta.name, max: Math.ceil((parseInt(q.average ?? "0") + 1) / 2) * 2 })),
-//                                 }}
-//                             />
-//                         </div>
-//                     }
-//                 </Card.Body>
-//             </Card>
-
-//             <Card className="mb-4">
-//                 <Card.Header as="h5">Multiselect Responses</Card.Header>
-//                 <Card.Body>
-//                     <Row className="mb-3">
-//                         {quanitativeStringQuestions.map((q, i) => (
-//                             <Col xs={12} md={6} lg={4} key={i}>
-//                                 <Form.Check
-//                                     type="radio"
-//                                     name="pie-question"
-//                                     id={`pgqs-${i}`}
-//                                     label={q.questionMeta.name}
-//                                     checked={selectedPieGraphQuestion === q.questionFormId}
-//                                     onChange={() => setSelectedPieGraphQuestion(
-//                                         selectedPieGraphQuestion === q.questionFormId ? undefined : q.questionFormId
-//                                     )}
-//                                 />
-//                             </Col>
-//                         ))}
-//                     </Row>
-
-//                     {pieGraphResponses && (() => {
-//                         const grouped = new Map<number, string[]>();
-//                         pieGraphResponses.forEach((r) => {
-//                             if (!grouped.has(r.matchNumber)) grouped.set(r.matchNumber, []);
-//                             grouped.get(r.matchNumber)!.push(r.response);
-//                         });
-
-//                         const matchNumbers = Array.from(grouped.keys()).sort((a, b) => a - b);
-//                         const maxRows = Math.max(...Array.from(grouped.values()).map((r) => r.length));
-//                         const rows = [];
-
-//                         for (let i = 0; i < maxRows; i++) {
-//                             rows.push(
-//                                 <tr key={i}>
-//                                     <th>{i === 0 ? "Value" : ""}</th>
-//                                     {matchNumbers.map((mn) => {
-//                                         const values = grouped.get(mn)!;
-//                                         return <td key={mn + "-" + i}>{values[i] ?? ""}</td>;
-//                                     })}
-//                                 </tr>
-//                             );
-//                         }
-
-//                         return (
-//                             <Table bordered responsive size="sm" className="text-center align-middle">
-//                                 <thead>
-//                                     <tr>
-//                                         <th>Match</th>
-//                                         {matchNumbers.map((mn) => <th key={mn}>{mn}</th>)}
-//                                     </tr>
-//                                 </thead>
-//                                 <tbody>{rows}</tbody>
-//                             </Table>
-//                         );
-//                     })()}
-//                 </Card.Body>
-//             </Card>
-
-//             <Card className="mb-4">
-//                 <Card.Header as="h5">Qualitative Notes</Card.Header>
-//                 <Card.Body>
-//                     {qualitativeQuestions.map((q, i) => (
-//                         <div className="mb-3" key={i}>
-//                             <h6 className="fw-bold">{q.questionMeta.name}</h6>
-//                             {q.responses.map((r, j) => (
-//                                 <p className="mb-1" key={j}><strong>{r.matchNumber}:</strong> {r.response}</p>
-//                             ))}
-//                         </div>
-//                     ))}
-//                 </Card.Body>
-//             </Card>
-
-//             <Card>
-//                 <Card.Header as="h5">Form Data</Card.Header>
-//                 <Card.Body>
-//                     <TeamDataPage hideSelector={true} />
-//                 </Card.Body>
-//             </Card>
-//         </div>
-//     );
-// }
+                            return (<div>
+                                <h3>{q.metadata.name}</h3>
+                                <Table>
+                                    <thead>
+                                        <tr>
+                                            <th>Scout</th>
+                                            {hasMatchAssociated && <th>Match</th>}
+                                            <th>Response</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {q.teamData.find(t => t.team == team)?.questionData.responses.map(r =>
+                                            <tr>
+                                                <td>{r.scout}</td>
+                                                {hasMatchAssociated && <td>{r.match}</td>}
+                                                <td>{r.response}</td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </Table>
+                            </div>)
+                        })}
+                    </Card.Text>
+                </Card.Body>
+            </Card>
+        </div>
+    )
+}

@@ -3,7 +3,6 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "proxy": "https://vscode.grayjn.com/proxy/3001/",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

@@ -4,17 +4,18 @@ import AveragedRows from "./viewers/AveragedRows";
 import FormRows from "./viewers/FormRows";
 import TeamRows from "./viewers/TeamRows";
 import { makeUrlParam } from "../../utils";
+import TeamSummary from "./viewers/TeamSummary";
 
 const VIEW_OPTIONS: { title: string; description: string; component: (a: number) => JSX.Element; }[] = [
     {
         title: "Team Summary View",
         description: "Get a summary of a team's performance and compare with others.",
-        component: () => <h1 children="WIP" /> // <TeamSummary />
+        component: (a) =>  <TeamSummary accuracy={a} />
     },
     {
         title: "Team Compare View",
         description: "Compare the summaries of two teams.",
-        component: () => <h1 children="WIP" /> //
+        component: () => <h1 children="WIP" />
     },
     {
         title: "Raw Team Data",

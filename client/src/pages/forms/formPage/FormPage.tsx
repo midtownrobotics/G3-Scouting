@@ -7,6 +7,7 @@ import FormComp from "../../../partials/FormComp";
 import { useUserData } from "../../../userData";
 import './FormPage.css';
 import { Alliance } from "@shared/forms/FormUtils";
+import { AssignmentType } from "@shared/schemas/schedule";
 
 function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
     const [answers, setAnswers] = useState(new Map<string, string>());
@@ -93,7 +94,20 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
         alert("SUBMIT FAILED! CHECK INTERNET!");
     };
 
-    if (!form.current) return (<h1>This is not possible...</h1>);
+    if (!form.current) return (<h1>You can't be here.</h1>);
+
+    if (!form.current.openSubmission && (nextMatch == null || nextMatch.number !== matchData?.number)) return (
+        <div id="form-page">
+            {userData?.currentAssignment?.type === AssignmentType.ASSIGNED ?
+                <h1>Waiting for next assingment...</h1> : (
+                    <>
+                        <h1>You aren't currently assigned to scout.</h1>
+                        <h3>This form is locked, so you must be assigned to access it.</h3>
+                    </>
+                )
+            }
+        </div>
+    )
 
     return (
         <div id="form-page">
@@ -103,7 +117,7 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
                 answers={answers}
                 handleAnswerChange={handleAnswerChange}
                 form={form.current}
-                match={nextMatch?.number}
+                match={nextMatch?.number ?? matchData?.number}
                 team={team}
                 teams={teams}
                 alliance={alliance}

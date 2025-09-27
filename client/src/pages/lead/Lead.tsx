@@ -82,6 +82,7 @@ export default function Lead() {
                             <tr>
                                 <th>User</th>
                                 <th>Team</th>
+                                <th>Submitted</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -89,6 +90,7 @@ export default function Lead() {
                                 <tr>
                                     <td>{a.username}</td>
                                     <td>{a.team}</td>
+                                    <td><input type={"checkbox"} disabled checked={a.finished} /></td>
                                 </tr>
                             )}
                         </tbody>

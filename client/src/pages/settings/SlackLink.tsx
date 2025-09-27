@@ -20,6 +20,7 @@ export default function SlackLink() {
     }, []);
 
     const openSlack = () => {
+        if (btnDisabled) return;
         window.location.href = "slack://open";
         window.open("https://slack.com/workspace-signin");
     };
@@ -42,16 +43,16 @@ export default function SlackLink() {
                     }
                 </div>
                 <p>
-                    Click the copy icon then paste this command into any slack channel and send it to link your account.
+                    Click the copy icon, paste into any slack channel, and send!
                 </p>
                 <OverlayTrigger
                     placement="top"
-                    overlay={<Tooltip id="tooltip-top">Hello, I'm a tooltip!</Tooltip>}
+                    overlay={<Tooltip id="tooltip-top">Copy the code first!</Tooltip>}
+                    show={btnDisabled ? undefined : false}
                 >
                     <Button
                         variant="primary"
                         onClick={openSlack}
-                        disabled={btnDisabled}
                     >
                         Open Slack
                     </Button>
