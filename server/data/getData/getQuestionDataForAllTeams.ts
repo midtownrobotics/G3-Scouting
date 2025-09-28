@@ -8,7 +8,6 @@ export default async function getQuestionDataForAllTeams(formId: string, minAccu
 
     const metadataMap = new Map<string, QuestionMetadata>();
     for (const q of formData.questions) {
-        if (q.classification !== "quantitative") continue;
         metadataMap.set(q.namespaceId, q);
     }
 
@@ -92,7 +91,6 @@ export default async function getQuestionDataForAllTeams(formId: string, minAccu
         q.stats.percentile50 = percentile(values, 50);
         q.stats.percentile75 = percentile(values, 75);
     }
-
 
     return questionData;
 }

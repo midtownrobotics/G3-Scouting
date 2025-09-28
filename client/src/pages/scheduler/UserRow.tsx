@@ -26,7 +26,7 @@ function UserRow(
 
     return (
         <tr>
-            <td>{user.username}</td>
+            <td className="sticky-col">{user.username}</td>
             {blocks.map((b, bi) => {
                 const cellIndex: [number, number] = [index, bi];
                 return (

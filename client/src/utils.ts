@@ -103,8 +103,8 @@ export function formatDuration(since?: number) {
 }
 
 /** Parses a number and rounds if decimal is defined. */
-export function numberParser(val: string | number | undefined, decimal?: number) {
-    if (val === undefined) return undefined;
+export function numberParser(val: string | number | undefined | null, decimal?: number) {
+    if (val == undefined) return undefined;
     if (typeof val === "string") val = parseFloat(val);
     if (Number.isNaN(val)) return undefined;
     if (decimal === undefined) return val;

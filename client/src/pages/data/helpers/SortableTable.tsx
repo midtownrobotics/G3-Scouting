@@ -17,6 +17,8 @@ export function SortableTable<T>({
     onSort,
     rowKey,
 }: Props<T>) {
+    if (new Set(rows.map(r => rowKey(r))).size !== rows.length) return ("Internal error building table: Duplicate row keys")
+
     return (
         <div className="table-responsive" style={{ maxHeight: "70vh", overflowY: "auto" }}>
             <Table bordered hover size="sm" className="mb-0">

@@ -88,7 +88,7 @@ export default class Form {
 
     /** Gets response data for this form, if form has associated data. 
      * @param minAccuracy The minimum accuracy for responses to be included in the data result.
-     * @returns `null` if there are no reponses. Be sure to pass `true` into FormModel.getForm(s).
+     * @returns `null` if there are no responses. Be sure to pass `true` into FormModel.getForm(s).
      */
     public getResponseData(minAccuracy?: number): FormResponseData | null {
         if (!this.responses) return null;

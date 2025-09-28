@@ -7,7 +7,7 @@ import FormResponseTable from "../helpers/FormResponseTable";
 
 export default function TeamRows({ hideSelector, accuracy }: { hideSelector?: boolean, accuracy: number; }) {
     const [formsResponseData, setFormsResponseData] = useState<FormResponseData[]>();
-    const [team, setTeam] = useState<number>(parseInt(new URLSearchParams(window.location.search).get("team") ?? "0"));
+    const [team, setTeam] = useState<number>();
 
     useEffect(() => {
         if (team === undefined) return;

@@ -44,7 +44,6 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
         setSubmitting(true);
 
         if (!form.current) return submittingFail();
-        if (!nextMatch) return submittingFail();
 
         let res: Response | null;
 
@@ -66,7 +65,7 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
                     responses: r[1],
                     team: parseInt(r[0]),
                     formId: form.current?.id,
-                    match: nextMatch.number
+                    match: nextMatch?.number ?? matchData?.number
                 })),
             } as SubmittedResponse);
         } else {
@@ -76,8 +75,8 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
                 response: {
                     responses: Array.from(answers).map(([question, response]) => ({ question, response })),
                     formId: form.current.id,
-                    match: nextMatch.number,
-                    team,
+                    match: nextMatch?.number ?? matchData?.number,
+                    team
                 }
             } as SubmittedResponse);
         }
@@ -91,7 +90,7 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
 
     const submittingFail = () => {
         setSubmitting(false);
-        alert("SUBMIT FAILED! CHECK INTERNET!");
+        alert("Submit FAILED. Check internet and try again.");
     };
 
     if (!form.current) return (<h1>You can't be here.</h1>);

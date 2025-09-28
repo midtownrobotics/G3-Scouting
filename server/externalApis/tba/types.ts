@@ -61,3 +61,16 @@ export const TbaTeamSimpleData = z.object({
     country: z.string()
 }).passthrough()
 export type TbaTeamSimpleData = z.infer<typeof TbaTeamSimpleData>;
+
+export const TbaTeamMediaData = z.object({
+    details: z.object({
+        base64Image: z.string().optional()
+    }),
+    direct_url: z.string(),
+    view_url: z.string(),
+    type: z.string(),
+    foreign_key: z.string(),
+    preferred: z.boolean(),
+    team_keys: z.array(z.string()),
+}).passthrough()
+export type TbaTeamMediaData = z.infer<typeof TbaTeamMediaData>;

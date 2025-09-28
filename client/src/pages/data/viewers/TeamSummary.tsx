@@ -1,41 +1,86 @@
 import { PieChart, RadarChart } from "@mui/x-charts";
-import { MultiTeamQuestionData } from "@shared/schemas/data";
+import { FormResponseData, MiscTeamData, MultiTeamQuestionData } from "@shared/schemas/data";
 import { useEffect, useState } from "react";
 import { Card, Table } from "react-bootstrap";
 import { z } from "zod";
 import { fetchAPIJSON } from "../../../API";
 import { numberParser } from "../../../utils";
 import TeamNumberInput from "../helpers/TeamNumberInput";
+import FormResponseTable from "../helpers/FormResponseTable";
 
 export default function TeamSummary({ accuracy }: { accuracy: number }) {
     const [data, setData] = useState<MultiTeamQuestionData[]>([]);
+    const [fullData, setFullData] = useState<MultiTeamQuestionData[]>([]);
     const [team, setTeam] = useState<number>();
+    const [rows, setRows] = useState<FormResponseData[]>([]);
+    const [stats, setStats] = useState<MiscTeamData>();
 
     useEffect(() => {
         if (team === undefined) return;
-        fetchAPIJSON(`/data/getAllQuestionData/${accuracy}`, z.object({
-            data: z.array(MultiTeamQuestionData)
+        fetchAPIJSON(`/data/getTeamRows/${team}/${accuracy}`, z.object({
+            data: z.array(FormResponseData)
         })).then(res => {
-            console.log(res)
-            if (res) setData(res.data);
+            if (res) setRows(res.data);
         });
     }, [team, accuracy]);
 
+    useEffect(() => {
+        if (team === undefined) return;
+        fetchAPIJSON(`/data/getMiscTeamData/${team}`, MiscTeamData).then(res => setStats(res));
+    }, [team]);
+
+    useEffect(() => {
+        fetchAPIJSON(`/data/getAllQuestionData/${accuracy}`, z.object({
+            data: z.array(MultiTeamQuestionData)
+        })).then(res => { if (res) setData(res.data); });
+    }, [accuracy]);
+
+    useEffect(() => {
+        fetchAPIJSON(`/data/getAllQuestionData`, z.object({
+            data: z.array(MultiTeamQuestionData)
+        })).then(res => { if (res) setFullData(res.data); });
+    }, [])
+
     const numerical = data.filter(q => q.metadata.type == "number" && q.metadata.classification == "quantitative");
     const multipleChoice = data.filter(q => q.metadata.type == "string" && q.metadata.classification == "quantitative");
-    const qualitative = data.filter(q => q.metadata.classification == "qualitative");
+    const qualitative = fullData.filter(q => q.metadata.classification == "qualitative");
 
     const fillRadarChart = true;
 
     return (
         <div className="p-3">
             <h1>Team Data Summary</h1>
-            <TeamNumberInput onChange={v => setTeam(v)} />
+            <TeamNumberInput onChange={setTeam} />
             <Card className="mb-3">
                 <Card.Body>
                     <Card.Title>
-                        <h2>Team #{team}</h2>
-                        <h2></h2>
+                        <div className="d-flex gap-2">
+                            {stats?.avatarBase64 && <img src={`data:image/png;base64,${stats.avatarBase64}`} width={40} height={40} style={{background: "gray"}} />}
+                            <h2>{stats?.nickname}</h2>
+                        </div>
+                        <h4>Team #{team}</h4>
+                        <br />
+                        <Table style={{width: "25%"}}>
+                            <tbody>
+                                <tr>
+                                    <th>EPA</th>
+                                    <td>{stats?.epa}</td>
+                                </tr>
+                                <tr>
+                                    <th>Rank</th>
+                                    <td>{stats?.rank}</td>
+                                </tr>
+                                <tr>
+                                    <th>WLT</th>
+                                    <td>{stats?.record.wins}-{stats?.record.losses}-{stats?.record.ties}</td>
+                                </tr>
+                                <tr>
+                                    <th>W%</th>
+                                    <td>{Math.round((stats?.record.winrate ?? 0) * 100)}%</td>
+                                </tr>
+                            </tbody>
+                        </Table>
+                        <br />
                         <h5>
                             {data[0]?.teamData.find(t => t.team == team)?.questionData.responses.length || 0} responses from matches:{" "}
                             {(() => {
@@ -73,7 +118,7 @@ export default function TeamSummary({ accuracy }: { accuracy: number }) {
                         <h5>Average per match</h5>
                     </Card.Title>
                     <Card.Text>
-                        <RadarChart
+                        {(numerical && numerical.length > 0) && <RadarChart
                             width={500}
                             height={400}
                             series={[
@@ -117,7 +162,7 @@ export default function TeamSummary({ accuracy }: { accuracy: number }) {
                             radar={{
                                 metrics: numerical.map(q => q.metadata.name)
                             }}
-                        />
+                        />}
                     </Card.Text>
                 </Card.Body>
             </Card>
@@ -161,12 +206,16 @@ export default function TeamSummary({ accuracy }: { accuracy: number }) {
             </Card>
             <Card className="mb-3">
                 <Card.Body>
-                    <Card.Title>
+                    <Card.Title className="mb-4">
                         <h1>Open Ended</h1>
+                        <h5>Ignores accuracy</h5>
                     </Card.Title>
                     <Card.Text>
                         {qualitative.map(q => {
-                            const hasMatchAssociated = q.teamData.find(t => t.team == team)?.questionData.responses.some(r => r.match !== undefined);
+                            const responses = q.teamData.find(t => t.team == team)?.questionData.responses
+                            if (!responses) return <h6>No data to display.</h6>;
+                            const hasMatchAssociated = responses.some(r => r.match !== undefined);
+                            const empty = responses.filter(r => r.response.trim() === "").length;
 
                             return (<div>
                                 <h3>{q.metadata.name}</h3>
@@ -179,17 +228,34 @@ export default function TeamSummary({ accuracy }: { accuracy: number }) {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {q.teamData.find(t => t.team == team)?.questionData.responses.map(r =>
-                                            <tr>
+                                        {responses.map(r => <>
+                                            {r.response.trim() !== "" && <tr>
                                                 <td>{r.scout}</td>
                                                 {hasMatchAssociated && <td>{r.match}</td>}
                                                 <td>{r.response}</td>
-                                            </tr>
-                                        )}
+                                            </tr>}
+                                        </>)}
                                     </tbody>
                                 </Table>
+                                {empty > 0 && <h6>(+{empty} blank responses)</h6>}
                             </div>)
                         })}
+                    </Card.Text>
+                </Card.Body>
+            </Card>
+            <Card className="mb-3">
+                <Card.Body>
+                    <Card.Title className="mb-4">
+                        <h1>Response Rows</h1>
+                        <h5>Raw form responses</h5>
+                    </Card.Title>
+                    <Card.Text>
+                        {rows.map(f =>
+                            <div key={f.formId}>
+                                <h3>{f.formId}</h3>
+                                <FormResponseTable formResponseData={f} />
+                            </div>
+                        )}
                     </Card.Text>
                 </Card.Body>
             </Card>

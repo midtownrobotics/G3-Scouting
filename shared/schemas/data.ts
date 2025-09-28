@@ -134,3 +134,21 @@ export const TeamData = z.object({
     name: z.string()
 })
 export type TeamData = z.infer<typeof TeamData>;
+
+export const MiscTeamData = z.object({
+    record: z.object({
+        wins: z.number(),
+        ties: z.number(),
+        losses: z.number(),
+        count: z.number(),
+        winrate: z.number()
+    }),
+    rank: z.number(),
+    rp: z.number(),
+    epa: z.number(),
+    avatarBase64: z.string().optional(),
+    nickname: z.string(),
+    fullName: z.string(),
+    team: z.number()
+})
+export type MiscTeamData = z.infer<typeof MiscTeamData>;

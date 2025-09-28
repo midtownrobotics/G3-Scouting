@@ -1,4 +1,4 @@
-import { FormResponseData, QuestionData, MultiTeamQuestionData } from "@shared/schemas/data";
+import { FormResponseData, QuestionData, MultiTeamQuestionData, MiscTeamData } from "@shared/schemas/data";
 import express from 'express';
 import getQuestionDataForAllTeams from '../data/getData/getQuestionDataForAllTeams';
 import getQuestionDataForTeam from '../data/getData/getQuestionDataForTeam';
@@ -7,6 +7,7 @@ import FormModel from '../models/forms/FormModel';
 import getAllQuestionData from "../data/getData/getAllQuestionData";
 import { numberParser } from "../utils";
 import { getAllTeams } from "server/externalApis/tba/tba";
+import getMiscTeamData from "server/data/getData/getMiscTeamData";
 
 const dataApiRouter = express.Router();
 
@@ -42,7 +43,7 @@ dataApiRouter.get("/getTeamRows/:teamNumber{/:minAccuracy}", async (req, res) =>
 
 /** 
  * Gets data about each question as it pertains to a certain team.
- * {@link QuestionData} 
+ * {@link QuestionData[]} 
  */
 dataApiRouter.get("/getTeamData/:teamNumber{/:minAccuracy}", async (req, res) => {
     const data = await getQuestionDataForTeam(parseInt(req.params.teamNumber), numberParser(req.params.minAccuracy));
@@ -68,6 +69,16 @@ dataApiRouter.get("/getAllQuestionData{/:minAccuracy}", async (req, res) => {
     const data = await getAllQuestionData(numberParser(req.params.minAccuracy));
     if (!data) { res.sendStatus(400); return; }
     res.send({ data });
+});
+
+/** 
+ * Gets general stats about a team.
+ * {@link MiscTeamData} 
+ */
+dataApiRouter.get("/getMiscTeamData/:team", async (req, res) => {
+    const data = await getMiscTeamData(parseInt(req.params.team));
+    if (!data) { res.sendStatus(400); return; }
+    res.send({ ...data });
 });
 
 export default dataApiRouter;

@@ -4,6 +4,7 @@ import { getSettingsValue } from "../../settings";
 import {
     TbaMatchData,
     TbaTeamEventData,
+    TbaTeamMediaData,
     TbaTeamSimpleData,
 } from "./types";
 
@@ -102,4 +103,21 @@ export async function getTeamMatchData(
 export async function getAllTeams(): Promise<TbaTeamSimpleData[] | undefined> {
     const event = await getSettingsValue("eventKey");
     return fetchAndParse(`/event/${event}/teams/simple`, z.array(TbaTeamSimpleData));
+}
+
+/**
+ * Gets all team media data.
+ * @returns An array of {@link TbaTeamMediaData} or `undefined`. 
+ */
+export async function getTeamMedia(team: number): Promise<TbaTeamMediaData[] | undefined> {
+    const year = new Date().getFullYear();
+    return fetchAndParse(`/team/frc${team}/media/${year}`, z.array(TbaTeamMediaData));
+}
+
+/**
+ * Gets team simple data.
+ * @returns Team data in the form of {@link TbaTeamSimpleData} or `undefined`. 
+ */
+export async function getTeamData(team: number): Promise<TbaTeamSimpleData | undefined> {
+    return fetchAndParse(`/team/frc${team}/simple`, TbaTeamSimpleData);
 }

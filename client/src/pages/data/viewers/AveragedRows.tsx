@@ -24,6 +24,7 @@ export default function AveragedRows({ accuracy }: {accuracy: number}) {
         const columns = [{ key: "team", label: "Team" }, { key: "responsesLength", label: "Responses" }];
         
         for (const { metadata, teamData } of teamQuestionData ?? []) {
+            if (metadata.classification === "qualitative") continue;
             columns.push({ key: metadata.namespaceId, label: metadata.name });
             for (const { team, questionData } of teamData) {
                 if (!table.has(team)) table.set(team, { team, responsesLength: questionData.responses.length });
