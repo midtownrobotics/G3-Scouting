@@ -17,7 +17,7 @@ export const FormResponse = z.object({
     userId: z.number().optional(),
     submittedAt: z.string().optional(),
     id: z.number().optional(),
-    accuracyScore: z.number().nullable().optional()
+    accuracyScore: z.number().nullish()
 });
 export type FormResponse = z.infer<typeof FormResponse>;
 
@@ -128,6 +128,17 @@ export const MatchData = z.object({
     red: z.array(z.number()),
 })
 export type MatchData = z.infer<typeof MatchData>;
+
+export const ExtendedMatchData = MatchData.and(z.object({
+    winner: z.enum(["red", "blue", ""]).nullish(),
+    score: z.object({
+        red: z.number().nullish(),
+        blue: z.number().nullish()
+    }),
+    posted: z.boolean(),
+    time: z.coerce.date().nullish()
+}))
+export type ExtendedMatchData = z.infer<typeof ExtendedMatchData>;
 
 export const TeamData = z.object({
     number: z.number(),

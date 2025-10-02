@@ -1,4 +1,6 @@
-main, footer, #login-page {
+main,
+footer,
+#login-page {
     background-color: #ffffff;
     padding: 15px;
 }
@@ -8,7 +10,9 @@ footer {
     text-align: center;
 }
 
-html, body, #root {
+html,
+body,
+#root {
     height: 100%;
     margin: 0;
 }
@@ -24,4 +28,27 @@ html, body, #root {
 .card-hover:hover {
     box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
     transform: translateY(-3px);
+}
+
+/* keep links visually plain but preserve an accessible focus ring */
+a.plain-link,
+a.plain-link:link,
+a.plain-link:visited {
+    text-decoration: none;
+    /* remove underline */
+    color: inherit;
+    /* use surrounding text color */
+}
+
+a.plain-link:hover,
+a.plain-link:active {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* IMPORTANT: keep a visible focus style for keyboard users */
+a.plain-link:focus {
+    outline: 3px solid rgba(13, 110, 253, 0.25);
+    /* Bootstrap-ish focus ring */
+    outline-offset: 2px;
 }

@@ -1,0 +1,4 @@
+export const getTeamSummaryUrl = (team: number, accuracy: number = getAccuracy()) => `/?page=data&viewer=0&team=${team}&accuracy=${accuracy}`;
+export const getMatchUrl = (match: number, accuracy: number = getAccuracy()) => `/?page=data&viewer=1&match=${match}&accuracy=${accuracy}`;
+
+const getAccuracy = () => parseInt(new URLSearchParams(window.location.search).get("accuracy") ?? "0");

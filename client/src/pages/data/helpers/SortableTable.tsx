@@ -1,4 +1,6 @@
+import { JSX } from "react";
 import { Table } from "react-bootstrap";
+import { getMatchUrl, getTeamSummaryUrl } from "./utils";
 
 interface Props<T> {
     columns: { key: string; label: string; }[];
@@ -18,6 +20,12 @@ export function SortableTable<T>({
     rowKey,
 }: Props<T>) {
     if (new Set(rows.map(r => rowKey(r))).size !== rows.length) return ("Internal error building table: Duplicate row keys")
+
+    const formatCellData = (data: string, key: string): JSX.Element => {
+        if (key === "_team") return <a href={getTeamSummaryUrl(parseInt(data))} target="_blank">{data}</a>;
+        if (key === "_match") return <a href={getMatchUrl(parseInt(data))} target="_blank">{data}</a>;
+        return <span>{data}</span>;
+    };
 
     return (
         <div className="table-responsive" style={{ maxHeight: "70vh", overflowY: "auto" }}>
@@ -41,7 +49,7 @@ export function SortableTable<T>({
                         <tr key={rowKey(row)}>
                             {columns.map(col => (
                                 <td key={col.key} style={{ verticalAlign: "middle", whiteSpace: "nowrap" }}>
-                                    {(row as any)[col.key] ?? 0}
+                                    {formatCellData(((row as any)[col.key] ?? 0), col.key)}
                                 </td>
                             ))}
                         </tr>

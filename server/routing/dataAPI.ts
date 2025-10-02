@@ -1,13 +1,14 @@
-import { FormResponseData, QuestionData, MultiTeamQuestionData, MiscTeamData } from "@shared/schemas/data";
+import { FormResponseData, MatchData, MiscTeamData, MultiTeamQuestionData, QuestionData } from "@shared/schemas/data";
 import express from 'express';
+import getMatchData from "server/data/getData/getMatchData";
+import getMiscTeamData from "server/data/getData/getMiscTeamData";
+import { getAllTeams } from "server/externalApis/tba/tba";
+import getAllQuestionData from "../data/getData/getAllQuestionData";
 import getQuestionDataForAllTeams from '../data/getData/getQuestionDataForAllTeams';
 import getQuestionDataForTeam from '../data/getData/getQuestionDataForTeam';
-import getTeamRows from '../data/getData/getTeamRows';
+import { getMatchRows, getTeamRows } from '../data/getData/getSpecificRows';
 import FormModel from '../models/forms/FormModel';
-import getAllQuestionData from "../data/getData/getAllQuestionData";
 import { numberParser } from "../utils";
-import { getAllTeams } from "server/externalApis/tba/tba";
-import getMiscTeamData from "server/data/getData/getMiscTeamData";
 
 const dataApiRouter = express.Router();
 
@@ -23,7 +24,7 @@ dataApiRouter.get("/getAllTeams", async (req, res) => {
 
 /** 
  * Gets the form response data for one form. 
- * {@link FormResponseData} 
+ * {@link FormResponseData[]} 
  */
 dataApiRouter.get("/getFormData/:formId{/:minAccuracy}", async (req, res) => {
     const data = (await FormModel.getForm(req.params.formId, true))?.getResponseData(numberParser(req.params.minAccuracy));
@@ -37,6 +38,16 @@ dataApiRouter.get("/getFormData/:formId{/:minAccuracy}", async (req, res) => {
  */
 dataApiRouter.get("/getTeamRows/:teamNumber{/:minAccuracy}", async (req, res) => {
     const data = await getTeamRows(parseInt(req.params.teamNumber), numberParser(req.params.minAccuracy));
+    if (!data) { res.sendStatus(400); return; }
+    res.send({ data });
+});
+
+/** 
+ * Gets the form response data for all forms where responses are about a certain match. 
+ * {@link FormResponseData[]} 
+ */
+dataApiRouter.get("/getMatchRows/:teamNumber{/:minAccuracy}", async (req, res) => {
+    const data = await getMatchRows(parseInt(req.params.teamNumber), numberParser(req.params.minAccuracy));
     if (!data) { res.sendStatus(400); return; }
     res.send({ data });
 });
@@ -77,6 +88,16 @@ dataApiRouter.get("/getAllQuestionData{/:minAccuracy}", async (req, res) => {
  */
 dataApiRouter.get("/getMiscTeamData/:team", async (req, res) => {
     const data = await getMiscTeamData(parseInt(req.params.team));
+    if (!data) { res.sendStatus(400); return; }
+    res.send({ ...data });
+});
+
+/** 
+ * Gets match data.
+ * {@link MatchData} 
+ */
+dataApiRouter.get("/getMatchData/:match", async (req, res) => {
+    const data = await getMatchData(parseInt(req.params.match));
     if (!data) { res.sendStatus(400); return; }
     res.send({ ...data });
 });

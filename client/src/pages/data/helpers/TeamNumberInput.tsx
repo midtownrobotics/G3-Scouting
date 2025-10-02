@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { FormControl, InputGroup, ListGroup } from "react-bootstrap";
 import { fetchAPIJSON } from "../../../API";
 import { z } from "zod";
-import { numberParser } from "../../../utils";
 
 type TeamNumberInputProps = {
     onChange: (number: number) => void;

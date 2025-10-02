@@ -5,6 +5,7 @@ import FormRows from "./viewers/FormRows";
 import TeamRows from "./viewers/TeamRows";
 import { makeUrlParam } from "../../utils";
 import TeamSummary from "./viewers/TeamSummary";
+import MatchReview from "./viewers/MatchReview";
 
 const VIEW_OPTIONS: { title: string; description: string; component: (a: number) => JSX.Element; }[] = [
     {
@@ -13,9 +14,9 @@ const VIEW_OPTIONS: { title: string; description: string; component: (a: number)
         component: (a) =>  <TeamSummary accuracy={a} />
     },
     {
-        title: "Team Compare View",
-        description: "Compare the summaries of two teams.",
-        component: () => <h1 children="WIP" />
+        title: "Match Review/Preview",
+        description: "See estimated and previous scores for matches.",
+        component: (a) => <MatchReview accuracy={a} />
     },
     {
         title: "Raw Team Data",

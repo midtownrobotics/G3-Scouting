@@ -7,6 +7,7 @@ import { fetchAPIJSON } from "../../../API";
 import { numberParser } from "../../../utils";
 import TeamNumberInput from "../helpers/TeamNumberInput";
 import FormResponseTable from "../helpers/FormResponseTable";
+import { getMatchUrl } from "../helpers/utils";
 
 export default function TeamSummary({ accuracy }: { accuracy: number }) {
     const [data, setData] = useState<MultiTeamQuestionData[]>([]);
@@ -96,10 +97,10 @@ export default function TeamSummary({ accuracy }: { accuracy: number }) {
                                 return Object.entries(counts)
                                     .sort(([a], [b]) => Number(a) - Number(b))
                                     .map(([match, times]) => (
-                                        <span key={match}>
+                                        <a key={match} href={getMatchUrl(parseInt(match), accuracy)} target="_blank">
                                             {match}
                                             {times > 1 && <sup>{times}</sup>}
-                                        </span>
+                                        </a>
                                     ))
                                     .reduce<React.ReactNode[]>((acc, el, idx) => {
                                         if (idx > 0) acc.push(", ");
@@ -132,12 +133,12 @@ export default function TeamSummary({ accuracy }: { accuracy: number }) {
                                     fillArea: fillRadarChart,
                                     color: "red"
                                 },
-                                {
-                                    data: numerical.map(q => q.stats.percentile25 ?? 0),
-                                    label: "25th",
-                                    fillArea: fillRadarChart,
-                                    color: "#050ceb"
-                                },
+                                // {
+                                //     data: numerical.map(q => q.stats.percentile25 ?? 0),
+                                //     label: "25th",
+                                //     fillArea: fillRadarChart,
+                                //     color: "#050ceb"
+                                // },
                                 {
                                     data: numerical.map(q => q.stats.percentile50 ?? 0),
                                     label: "50th",
@@ -148,7 +149,7 @@ export default function TeamSummary({ accuracy }: { accuracy: number }) {
                                     data: numerical.map(q => q.stats.percentile75 ?? 0),
                                     label: "75th",
                                     fillArea: fillRadarChart,
-                                    color: "#3299a8"
+                                    color: "#3299a8",
                                 },
                                 // Shows best team
                                 // {
