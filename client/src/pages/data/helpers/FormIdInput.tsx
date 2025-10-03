@@ -23,13 +23,14 @@ export default function FormIdInput({ onChange }: { onChange: (value: string) =>
     }, []);
 
     const handleChange = (v: string) => {
-        if (value === undefined) return;
+        if (v === undefined) return;
         if (!forms?.map(f => f.id).includes(v)) return;
+                
         setValue(v)
-        onChange(value);
+        onChange(v);
 
         const url = new URL(window.location.href);
-        url.searchParams.set("form", value.toString() ?? "");
+        url.searchParams.set("form", v.toString() ?? "");
         window.history.pushState({}, "", url.toString());
     };
 
@@ -37,7 +38,7 @@ export default function FormIdInput({ onChange }: { onChange: (value: string) =>
         <InputGroup className="mb-3" style={{ maxWidth: "300px" }}>
             <Form.Select
                 value={value}
-                onChange={(e) => onChange(e.target.value)}
+                onChange={(e) => handleChange(e.target.value)}
             >
                 <option value="">-- Choose a form --</option>
                 {forms?.map((f) => (

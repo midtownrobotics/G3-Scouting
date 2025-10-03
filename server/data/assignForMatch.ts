@@ -12,7 +12,7 @@ export default async function assignForMatch(nextMatch: number) {
     const redTeams = match.alliances.red.team_keys.map(t => parseInt(t.slice(3)));
     const blueTeams = match.alliances.blue.team_keys.map(t => parseInt(t.slice(3)));
     const allTeams = redTeams.concat(blueTeams);
-    if (allTeams.length !== 6) return;
+    // if (allTeams.length !== 6) return;
 
     const users = await UserModel.findAll();
     for (const alliance of [Alliance.RED, Alliance.BLUE]) {
@@ -23,18 +23,24 @@ export default async function assignForMatch(nextMatch: number) {
             if ((await user.getCurrentAssignment())?.type !== AssignmentType.ASSIGNED) continue;
             const i = assigned.length;
             const userAlliance = user.redAlliance ? Alliance.RED : Alliance.BLUE;
-            if (userAlliance !== alliance) continue;    
+            if (userAlliance !== alliance) continue;
             const team = allianceTeams[i % 3];
-    
+
+            const newAssignment = {
+                number: nextMatch,
+                team,
+                teams: allianceTeams,
+                finished: false,
+                username: user.username,
+                userId: user.id
+            };
+
             await user.update({
                 assignedMatches: [...user.assignedMatches, nextMatch],
-                nextMatch: {
-                    number: nextMatch,
-                    team,
-                    teams: allianceTeams,
-                    finished: false
-                }
+                nextMatch: newAssignment
             });
+
+            assigned.push(newAssignment);
         }
     }
 
@@ -59,6 +65,6 @@ export async function getAllCurrentAssignmentStatuses(): Promise<CurrentAssignme
             userId: u.id,
             username: u.username
         }));
-    
+
     return assignments;
 }

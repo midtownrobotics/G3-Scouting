@@ -52,3 +52,17 @@ a.plain-link:focus {
     /* Bootstrap-ish focus ring */
     outline-offset: 2px;
 }
+
+@keyframes spin360 {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spin-once {
+    animation: spin360 1s linear forwards;
+}

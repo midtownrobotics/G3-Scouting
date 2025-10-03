@@ -5,7 +5,7 @@ export default function Footer() {
             <h6 className="mb-3">Need help? Visit <a href="/docs" target="_blank">the docs</a>.</h6>
             <h6 className="mb-1">Parts of this site are powered by:</h6>
 
-            <div className="d-flex justify-content-center gap-4 flex-wrap">
+            <div className="d-flex justify-content-center row-gap-1 column-gap-4 flex-wrap mb-0">
                 <a
                     href="https://www.thebluealliance.com/apidocs"
                     target="_blank"

@@ -5,18 +5,18 @@ import FormResponseByTeamModel from "../../models/forms/FormResponseModels";
 import { keepTryingQuery } from "../../models/modelUtils";
 import AccuracyScoreModel from "../../models/validation/AccuracyScoreModel";
 import ScoutAccuracyScoreModel from "../../models/validation/ScoutAccuracyScoreModel";
+import { TbaMatchData } from "server/externalApis/tba/types";
+import { numberParser } from "server/utils";
 
 export default async function scoreAllianceData(
-    match: number,
+    matchTbaData: TbaMatchData,
     alliance: "red" | "blue",
     formData: FormResponseData
 ): Promise<number | false> {
-    const currentModel = await keepTryingQuery(() => AccuracyScoreModel.findOne({ where: { match, alliance } }));
-    if (currentModel !== null && currentModel.score !== null) return currentModel.score;
+    const match = matchTbaData.match_number;
 
-    const matchTbaData = await getMatchData(match);
-    if (!matchTbaData) return false;
-    if (matchTbaData.actual_time === undefined) return false;
+    // const currentModel = await keepTryingQuery(() => AccuracyScoreModel.findOne({ where: { match, alliance } }));
+    // if (currentModel !== null && currentModel.score !== null) return currentModel.score;
 
     const alliances = {
         blue: matchTbaData.alliances.blue.team_keys.map(t => parseInt(t.slice(3))),
@@ -48,16 +48,25 @@ export default async function scoreAllianceData(
             let teamValue = 0;
             for (const response of teamData) {
                 const value = response.responses.find(r => r.question === question.id)?.response;
-                teamValue += parseInt(value ?? "0");
+                teamValue += numberParser(value) ?? 0;
             }
-            totalValue += teamValue / teamData.length;
+            if (teamData.length > 0) {
+                totalValue += teamValue / teamData.length;
+            }
         }
 
-        totalAccuracy += totalValue / realValue;
-        scoredQuestions++;
-    }
+        const error = Math.abs(totalValue - realValue) / realValue;
+        const toAdd = 1 - error;
 
-    const score = +(totalAccuracy / scoredQuestions).toFixed(2);
+        if (!isNaN(toAdd) && isFinite(toAdd)) {
+            totalAccuracy += toAdd;
+            scoredQuestions++;
+        }
+    }
+    
+    const score = scoredQuestions > 0 ? Math.round(totalAccuracy / scoredQuestions * 10000) / 100 : 0;
+
+    // console.log(match, score);
 
     const [model, created] = await keepTryingQuery(() => AccuracyScoreModel.findOrCreate({
         where: { match, alliance },

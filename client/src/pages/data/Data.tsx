@@ -6,6 +6,7 @@ import TeamRows from "./viewers/TeamRows";
 import { makeUrlParam } from "../../utils";
 import TeamSummary from "./viewers/TeamSummary";
 import MatchReview from "./viewers/MatchReview";
+import { defaultAccuracy } from "./helpers/utils";
 
 const VIEW_OPTIONS: { title: string; description: string; component: (a: number) => JSX.Element; }[] = [
     {
@@ -88,14 +89,14 @@ export default function Data() {
                                 <input
                                     style={{ width: "35px", height: "25px" }}
                                     className="text-center"
-                                    value={accuracy ?? 90}
+                                    value={accuracy ?? defaultAccuracy}
                                     onChange={e => setAccuracy(parseInt(e.target.value))}
                                 />
                                 <Form.Label className="ms-1 me-0 mb-1">%</Form.Label>
                             </div>
                         </Card.Body>
                     </Card>
-                    {VIEW_OPTIONS[viewer].component(accuracy ?? 90)}
+                    {VIEW_OPTIONS[viewer].component(accuracy ?? defaultAccuracy)}
                 </div>
             )}
         </div>

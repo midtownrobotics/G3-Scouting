@@ -19,7 +19,7 @@ export function SortableTable<T>({
     onSort,
     rowKey,
 }: Props<T>) {
-    if (new Set(rows.map(r => rowKey(r))).size !== rows.length) return ("Internal error building table: Duplicate row keys")
+    if (new Set(rows.map(r => rowKey(r))).size !== rows.length) return ("Internal error building table: Duplicate row keys. Rows: " + rows.map(r => rowKey(r)).join(" ,"))
 
     const formatCellData = (data: string, key: string): JSX.Element => {
         if (key === "_team") return <a href={getTeamSummaryUrl(parseInt(data))} target="_blank">{data}</a>;

@@ -14,14 +14,15 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
     const [submitting, setSubmitting] = useState(false);
     const [matchData, setMatchData] = useState<MatchData>()
 
+    const userDataProvider = useUserData();
+    const userData = userDataProvider.userData;
+    const nextMatch = userData?.user.nextMatch;
+
     useEffect(() => {
         fetchAPIJSON("/getCurrentMatch", MatchData).then(res => {
             if (res) setMatchData(res);
         })
-    }, [])
-
-    const { userData } = useUserData();
-    const nextMatch = userData?.user.nextMatch;
+    }, [nextMatch])
 
     const [team, setTeam] = useState(nextMatch?.team);
     const [teams, setTeams] = useState(nextMatch?.teams);
@@ -81,7 +82,9 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
             } as SubmittedResponse);
         }
 
-        setSubmitting(false);
+        userDataProvider.apiStatusRefresh();
+
+        setTimeout(() => setSubmitting(false), 1000)
 
         if (res?.status !== 200) return submittingFail();
 
@@ -95,10 +98,10 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
 
     if (!form.current) return (<h1>You can't be here.</h1>);
 
-    if (!form.current.openSubmission && (nextMatch == null || nextMatch.number !== matchData?.number)) return (
+    if (!form.current.openSubmission && (nextMatch == null || nextMatch.number !== matchData?.number || nextMatch.finished)) return (
         <div id="form-page">
             {userData?.currentAssignment?.type === AssignmentType.ASSIGNED ?
-                <h1>Waiting for next assingment...</h1> : (
+                <h1>Waiting for next assignment...</h1> : (
                     <>
                         <h1>You aren't currently assigned to scout.</h1>
                         <h3>This form is locked, so you must be assigned to access it.</h3>

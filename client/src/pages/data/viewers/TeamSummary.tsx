@@ -120,8 +120,8 @@ export default function TeamSummary({ accuracy }: { accuracy: number }) {
                     </Card.Title>
                     <Card.Text>
                         {(numerical && numerical.length > 0) && <RadarChart
-                            width={500}
-                            height={400}
+                            style={{ maxWidth: "500px", minHeight: "250px" }}
+                            // height={400}
                             series={[
                                 {
                                     data: numerical.map(q =>

@@ -14,7 +14,7 @@ export function scheduleReminders() {
             const current = await user.getCurrentAssignment();
             const next = await user.getAssignment(nextId);
             if (current?.id !== undefined && current?.id !== next?.id) {
-                sendSlackMessage(user.slackId, `REMINDER: At ${nextTime}, your assignment will switch to "${next?.name}".`);
+                sendSlackMessage(user.slackId, `REMINDER: At ${nextTime}, your assignment will switch to ${next?.name}.`);
             }
         }
     });

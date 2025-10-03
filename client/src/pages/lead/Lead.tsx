@@ -3,11 +3,13 @@ import { Button, Card, Container, Form, Row, Col, Spinner, Table } from "react-b
 import { fetchAPIJSON, postAPI } from "../../API";
 import { z } from "zod";
 import { CurrentAssignment, MatchData } from "@shared/schemas/data";
+import { ArrowClockwise } from "react-bootstrap-icons";
 
 export default function Lead() {
     const [currentMatch, setCurrentMatch] = useState(-1);
     const [matchInput, setMatchInput] = useState(-1);
     const [assignments, setAssignments] = useState<CurrentAssignment[]>();
+    const [spin, setSpin] = useState(false);
 
     const getMatchData = () => {
         fetchAPIJSON("/getCurrentMatch", MatchData).then(res => {
@@ -16,7 +18,6 @@ export default function Lead() {
                 setMatchInput(res.number + 1);
                 return;
             }
-            setTimeout(getMatchData, 500);
         });
 
         fetchAPIJSON("/lead/getCurrentAssignment", z.object({ 
@@ -26,11 +27,16 @@ export default function Lead() {
                 setAssignments(res.assignments);
                 return;
             }
-            setTimeout(getMatchData, 500);
         });
     };
 
     useEffect(getMatchData, []);
+
+    const reload = async () => {
+        getMatchData();
+        setSpin(true);
+        setTimeout(() => setSpin(false), 1000);
+    }
 
     const handleSetMatch = async () => {
         setCurrentMatch(-1);
@@ -74,8 +80,8 @@ export default function Lead() {
 
             <Card className="mt-4">
                 <Card.Body>
-                    <Card.Title>
-                        Current Assignments
+                    <Card.Title className="d-flex align-items-center ">
+                        Current Assignments <Button variant="link" className="text-dark" onClick={reload}><ArrowClockwise className={spin ? "spin-once" : ""} size={20}/></Button>
                     </Card.Title>
                     <Table striped style={{ display: assignments === undefined ? "none" : "block" }}>
                         <thead>
@@ -90,7 +96,7 @@ export default function Lead() {
                                 <tr>
                                     <td>{a.username}</td>
                                     <td>{a.team}</td>
-                                    <td><input type={"checkbox"} disabled checked={a.finished} /></td>
+                                    <td className="user-select-none"><input type={"checkbox"} checked={a.finished} /></td>
                                 </tr>
                             )}
                         </tbody>
