@@ -7,7 +7,7 @@ import { fetchAPIJSON } from "../../../API";
 import { numberParser } from "../../../utils";
 import TeamNumberInput from "../helpers/TeamNumberInput";
 import FormResponseTable from "../helpers/FormResponseTable";
-import { getMatchUrl } from "../helpers/utils";
+import { getMatchUrl, isMatchRelated } from "../helpers/utils";
 
 export default function TeamSummary({ accuracy }: { accuracy: number }) {
     const [data, setData] = useState<MultiTeamQuestionData[]>([]);
@@ -42,9 +42,9 @@ export default function TeamSummary({ accuracy }: { accuracy: number }) {
         })).then(res => { if (res) setFullData(res.data); });
     }, [])
 
-    const numerical = data.filter(q => q.metadata.type == "number" && q.metadata.classification == "quantitative");
-    const multipleChoice = data.filter(q => q.metadata.type == "string" && q.metadata.classification == "quantitative");
-    const qualitative = fullData.filter(q => q.metadata.classification == "qualitative");
+    const numerical = data.filter(q => q.metadata.type == "number" && q.metadata.classification == "quantitative" && isMatchRelated(q.metadata));
+    const multipleChoice = data.filter(q => q.metadata.type == "string" && q.metadata.classification == "quantitative" && isMatchRelated(q.metadata));
+    const qualitative = fullData.filter(q => q.metadata.classification == "qualitative" && isMatchRelated(q.metadata));
 
     const fillRadarChart = true;
 
@@ -214,7 +214,7 @@ export default function TeamSummary({ accuracy }: { accuracy: number }) {
                     <Card.Text>
                         {qualitative.map(q => {
                             const responses = q.teamData.find(t => t.team == team)?.questionData.responses
-                            if (!responses) return <h6>No data to display.</h6>;
+                            if (!responses) return <></>;
                             const hasMatchAssociated = responses.some(r => r.match !== undefined);
                             const empty = responses.filter(r => r.response.trim() === "").length;
 
@@ -255,6 +255,7 @@ export default function TeamSummary({ accuracy }: { accuracy: number }) {
                             <div key={f.formId}>
                                 <h3>{f.formId}</h3>
                                 <FormResponseTable formResponseData={f} />
+                                <br />
                             </div>
                         )}
                     </Card.Text>

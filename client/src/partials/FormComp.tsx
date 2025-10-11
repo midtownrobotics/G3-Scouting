@@ -87,7 +87,7 @@ export default function FormComp({
         </BSForm>
     );
 
-    if (form.type === FormType.NO_MATCH) return (
+    if (form.type === FormType.NO_MATCH || form.type === FormType.SINGLE_TEAM_RESPONSE) return (
         <BSForm>
             <hr />
             <SpecialInput value={team} setter={setTeam}>Team Number</SpecialInput>

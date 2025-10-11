@@ -5,7 +5,7 @@ import { postAPI } from "../../../API";
 import EditableCell from "../EditableCell";
 import { Permission } from "@shared/permissions";
 
-const defaultUser: Partial<CreateUser> = { id: -1, redAlliance: true, permission: Permission.SCOUT, slackLinked: false };
+const defaultUser: Partial<CreateUser> = { id: -1, redAlliance: true, permission: Permission.DATA, slackLinked: false };
 
 function NewUser({ reload }: { reload: () => void; }) {
     const [user, setUser] = useState<Partial<CreateUser>>(defaultUser);
@@ -42,7 +42,7 @@ function NewUser({ reload }: { reload: () => void; }) {
             <td />
             <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "username")}>{user.username}</EditableCell>
             <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "password")}>{user.password}</EditableCell>
-            <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "permission")}>SCOUT</EditableCell>
+            <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "permission")}>DATA</EditableCell>
             <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "reliable")} checkbox>{user?.reliable ?? false}</EditableCell>
             <td />
             <td />

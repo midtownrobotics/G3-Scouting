@@ -99,4 +99,23 @@ async function testCode() {
     // insertCsvDataIntoDb();
 
     // console.log((await getEventStatus())?.matches)
+
+    // return;
+
+    // const things = (await FormResponseByTeamModel.findAll()).filter(a => {
+    //     const date = new Date(a.submittedAt)
+    //     return date.getMonth() < 8 || date.getDate() !== 3;
+    // });
+
+    // things.forEach(t => console.log(t.submittedAt));
+    // things.forEach(t => t.destroy());
+
+    // const users = await UserModel.findAll();
+    
+    // users.forEach(u => {
+    //     if (u.permission == Permission.SCOUT) {
+    //         u.set("permission", Permission.DATA);
+    //         u.save();
+    //     }
+    // });
 }

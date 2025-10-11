@@ -4,9 +4,9 @@ import { Card, Table } from "react-bootstrap";
 import { z } from "zod";
 import { fetchAPIJSON } from "../../../API";
 import { numberParser } from "../../../utils";
-import MatchNumberInput from "../helpers/MatchNumberInput";
-import { getTeamSummaryUrl } from "../helpers/utils";
 import FormResponseTable from "../helpers/FormResponseTable";
+import MatchNumberInput from "../helpers/MatchNumberInput";
+import { getTeamSummaryUrl, isMatchRelated } from "../helpers/utils";
 
 export default function MatchReview({ accuracy }: { accuracy: number }) {
     const [data, setData] = useState<MultiTeamQuestionData[]>([]);
@@ -15,8 +15,8 @@ export default function MatchReview({ accuracy }: { accuracy: number }) {
     const [rows, setRows] = useState<FormResponseData[]>([]);
 
     const review = matchData?.posted;
-    const qualitative = data.filter(q => q.metadata.classification === "qualitative");
-    const quantitative = data.filter(q => q.metadata.classification === "quantitative");
+    const qualitative = data.filter(q => q.metadata.classification === "qualitative" && isMatchRelated(q.metadata));
+    const quantitative = data.filter(q => q.metadata.classification === "quantitative" && isMatchRelated(q.metadata));
 
     useEffect(() => {
         fetchAPIJSON(`/data/getAllQuestionData/${accuracy}`, z.object({

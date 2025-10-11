@@ -1,12 +1,13 @@
 import { QuestionMetadata, QuestionValidationData } from "../schemas/data";
 import { SerializedComponent } from "../schemas/forms";
+import { FormType } from "./Form";
 
 export abstract class FormComponent {
     protected id: string = "none";
     public getId = () => this.id;
-    public setMetadata(id: string, formId: string) {
+    public setMetadata(id: string, formId: string, formType: FormType) {
         this.id = id;
-        this._setMetadata(id, formId);
+        this._setMetadata(id, formId, formType);
     }
     public get needsValidation() {
         return (
@@ -16,14 +17,14 @@ export abstract class FormComponent {
         )
     }
 
-    protected abstract _setMetadata(id: string, formId: string): void;
+    protected abstract _setMetadata(id: string, formId: string, formType: FormType): void;
     public abstract name: string | null;
     public abstract metadata: QuestionMetadata | null;
     public abstract toJSON(): SerializedComponent;
 
-    public static fromJSON(json: SerializedComponent, formId: string): FormComponent {
+    public static fromJSON(json: SerializedComponent, formId: string, formType: FormType): FormComponent {
         const instance = new formComponents[json.type](...(json.creationArgs as [any, any, any]));
-        instance.setMetadata(json.id, formId);
+        instance.setMetadata(json.id, formId, formType);
         return instance;
     }
 }
@@ -85,12 +86,13 @@ export class MultipleChoice extends FormComponent {
         super();
     }
 
-    public _setMetadata(id: string, formId: string): void {
+    public _setMetadata(id: string, formId: string, formType: FormType): void {
         this.metadata = {
             type: "string",
             classification: "quantitative",
             id,
             formId,
+            formType,
             namespaceId: `${formId}-${id}`,
             name: this.name
         };
@@ -118,13 +120,14 @@ export class ShortResponse extends FormComponent {
         super();
     }
 
-    public _setMetadata(id: string, formId: string): void {
+    public _setMetadata(id: string, formId: string, formType: FormType): void {
         this.metadata = {
             name: this.name,
             type: "string",
             classification: "qualitative",
             id,
             formId,
+            formType,
             namespaceId: `${formId}-${id}`,
         };
     }
@@ -151,13 +154,14 @@ export class Number extends FormComponent {
         super();
     }
 
-    public _setMetadata(id: string, formId: string): void {
+    public _setMetadata(id: string, formId: string, formType: FormType): void {
         this.metadata = {
             type: "number",
             classification: "quantitative",
             name: this.name,
             id,
             formId,
+            formType,
             namespaceId: `${formId}-${id}`,
             validation: this.validation
         };

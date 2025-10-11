@@ -1,5 +1,7 @@
-import { FormType } from "@shared/forms/Form";
+import { FormType as FormTypeEnum } from "@shared/forms/Form";
 import { z } from "zod";
+
+export const FormType = z.nativeEnum(FormTypeEnum);
 
 /** A question: response pair. Contains the **NON-NAMESPACED** questionId and a response. */
 export const QuestionResponse = z.object({
@@ -24,11 +26,11 @@ export type FormResponse = z.infer<typeof FormResponse>;
 /** A response that is sent from the client to the server. */
 export const SubmittedResponse = z.union([
     z.object({
-        type: z.literal(FormType.TEAM),
+        type: z.literal(FormTypeEnum.TEAM),
         response: FormResponse
     }),
     z.object({
-        type: z.literal(FormType.ALLIANCE),
+        type: z.literal(FormTypeEnum.ALLIANCE),
         teams: z.array(z.number()),
         responses: z.array(FormResponse)
     }),
@@ -50,6 +52,7 @@ export const QuestionMetadata = z.union([
         name: z.string(),
         id: z.string(),
         formId: z.string(),
+        formType: FormType,
         namespaceId: z.string(),
         type: z.enum(["string", "number"]),
         classification: z.enum(["qualitative", "quantitative"])
@@ -58,6 +61,7 @@ export const QuestionMetadata = z.union([
         name: z.string(),
         id: z.string(),
         formId: z.string(),
+        formType: FormType,
         namespaceId: z.string(),
         type: z.literal("number"),
         classification: z.literal("quantitative"),
@@ -69,6 +73,7 @@ export type QuestionMetadata = z.infer<typeof QuestionMetadata>;
 /** Contains information about the form responses including the form id, the questions, and the responses themselves. */
 export const FormResponseData = z.object({
     formId: z.string(),
+    formType: FormType,
     responses: z.array(FormResponse),
     questions: z.array(QuestionMetadata)
 });

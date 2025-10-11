@@ -30,7 +30,7 @@ export default function SpecialInput({
                 style={{ maxWidth: "150px" }}
                 type="text"
                 value={value || ""}
-                disabled={setter === undefined}
+                disabled={setter === undefined && children !== "Team Number"}
                 onChange={e => onChange(e.target.value)}
             />
         </Form.Group>

@@ -6,7 +6,8 @@ import { generateRandomString, toAlphanumeric } from "./FormUtils";
 export enum FormType {
     TEAM = "TEAM",
     ALLIANCE = "ALLIANCE",
-    NO_MATCH = "NO_MATCH"
+    NO_MATCH = "NO_MATCH",
+    SINGLE_TEAM_RESPONSE = "SINGLE_TEAM_RESPONSE"
 }
 
 export default class Form {
@@ -38,7 +39,7 @@ export default class Form {
      */
     public addComponent(component: FormComponent): boolean {
         if (this.components.some(c => c.name && c.name == component.name)) return false;
-        component.setMetadata(`${component.name || generateRandomString(6)}-${this.maxComponentId++}`, this.id);
+        component.setMetadata(`${component.name || generateRandomString(6)}-${this.maxComponentId++}`, this.id, this.type);
         this.components.push(component);
         return true;
     }
@@ -66,7 +67,7 @@ export default class Form {
         form.deployed = json.deployed;
         form.openSubmission = json.openSubmission;
         form.maxComponentId = json.maxComponentId ?? 0;
-        form.setComponents(json.components.map(c => FormComponent.fromJSON(c, json.id)));
+        form.setComponents(json.components.map(c => FormComponent.fromJSON(c, json.id, json.type)));
 
         return form;
     }
@@ -96,6 +97,7 @@ export default class Form {
 
         return {
             formId: this.id,
+            formType: this.type,
             questions,
             responses: (
                 minAccuracy === undefined
