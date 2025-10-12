@@ -1,5 +1,5 @@
 import Form from "@shared/forms/Form";
-import { getAllMatches } from "../../externalApis/tba/tba";
+import { getAllMatches, getMatchData } from "../../externalApis/tba/tba";
 import FormModel from "../../models/forms/FormModel";
 import scoreAllianceData from "./scoreResponse";
 
@@ -24,9 +24,12 @@ export async function scoreUnscoredMatches(form: Form, matchNumbers?: number[]) 
     if (formData === null) return;
 
     for (const match of matchNumbers) {
+        const matchData = await getMatchData(match);
+        if (matchData === undefined) return;
+        
         for (const alliance of ["red", "blue"] as const) {
             // renderProgress(match * 2 + (alliance == "red" ? 0 : 1) - 1, matchNumbers.length * 2);
-            await scoreAllianceData(match, alliance, formData);
+            await scoreAllianceData(matchData, alliance, formData);
         }
     }
 }

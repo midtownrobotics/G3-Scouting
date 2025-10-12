@@ -18,8 +18,9 @@ async function fetchNexus(url: string) {
 
 export async function getEventStatus() {
     // const event = await getSettingsValue("eventKey");
-    const event = "demo2192";
+    const event = "2025gagai1";
     const fetched = await fetchNexus(`/event/${event}`);
+    console.log(fetched)
     if (!fetched) return undefined;
     const data = NexusEventStatus.safeParse(await fetched.json());
     if (data.success) return data.data;

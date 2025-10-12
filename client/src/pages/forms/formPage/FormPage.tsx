@@ -7,20 +7,22 @@ import FormComp from "../../../partials/FormComp";
 import { useUserData } from "../../../userData";
 import './FormPage.css';
 import { Alliance } from "@shared/forms/FormUtils";
+import { AssignmentType } from "@shared/schemas/schedule";
 
 function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
     const [answers, setAnswers] = useState(new Map<string, string>());
     const [submitting, setSubmitting] = useState(false);
     const [matchData, setMatchData] = useState<MatchData>()
 
+    const userDataProvider = useUserData();
+    const userData = userDataProvider.userData;
+    const nextMatch = userData?.user.nextMatch;
+
     useEffect(() => {
         fetchAPIJSON("/getCurrentMatch", MatchData).then(res => {
             if (res) setMatchData(res);
         })
-    }, [])
-
-    const { userData } = useUserData();
-    const nextMatch = userData?.user.nextMatch;
+    }, [nextMatch])
 
     const [team, setTeam] = useState(nextMatch?.team);
     const [teams, setTeams] = useState(nextMatch?.teams);
@@ -43,7 +45,6 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
         setSubmitting(true);
 
         if (!form.current) return submittingFail();
-        if (!nextMatch) return submittingFail();
 
         let res: Response | null;
 
@@ -65,7 +66,7 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
                     responses: r[1],
                     team: parseInt(r[0]),
                     formId: form.current?.id,
-                    match: nextMatch.number
+                    match: nextMatch?.number ?? matchData?.number
                 })),
             } as SubmittedResponse);
         } else {
@@ -75,13 +76,15 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
                 response: {
                     responses: Array.from(answers).map(([question, response]) => ({ question, response })),
                     formId: form.current.id,
-                    match: nextMatch.number,
-                    team,
+                    match: nextMatch?.number ?? matchData?.number,
+                    team
                 }
             } as SubmittedResponse);
         }
 
-        setSubmitting(false);
+        userDataProvider.apiStatusRefresh();
+
+        setTimeout(() => setSubmitting(false), 1000)
 
         if (res?.status !== 200) return submittingFail();
 
@@ -90,10 +93,23 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
 
     const submittingFail = () => {
         setSubmitting(false);
-        alert("SUBMIT FAILED! CHECK INTERNET!");
+        alert("Submit FAILED. Check internet and try again.");
     };
 
-    if (!form.current) return (<h1>This is not possible...</h1>);
+    if (!form.current) return (<h1>You can't be here.</h1>);
+
+    if (!form.current.openSubmission && (nextMatch == null || nextMatch.number !== matchData?.number || nextMatch.finished)) return (
+        <div id="form-page">
+            {userData?.currentAssignment?.type === AssignmentType.ASSIGNED ?
+                <h1>Waiting for next assignment...</h1> : (
+                    <>
+                        <h1>You aren't currently assigned to scout.</h1>
+                        <h3>This form is locked, so you must be assigned to access it.</h3>
+                    </>
+                )
+            }
+        </div>
+    )
 
     return (
         <div id="form-page">
@@ -103,11 +119,11 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
                 answers={answers}
                 handleAnswerChange={handleAnswerChange}
                 form={form.current}
-                match={nextMatch?.number}
+                match={nextMatch?.number ?? matchData?.number}
                 team={team}
                 teams={teams}
                 alliance={alliance}
-                setTeam={form.current.openSubmission ? setTeam : undefined}
+                setTeam={setTeam}//{form.current.openSubmission ? setTeam : undefined}
                 setAlliance={form.current.openSubmission ? setAlliance : undefined}
             />
 

@@ -34,7 +34,7 @@ slackAPIRouter.post("/cmdLink", async (req, res) => {
 
     res.send({
         type: "mrkdwn",
-        text: `Account linked succesfully, you can now <${SITE_URL}/?page=settings&linkSuccess|return to the settings page>.`
+        text: `Account linked successfully, you can now <${SITE_URL}/?page=settings&linkAttempt|return to the settings page>.`
     });
 });
 

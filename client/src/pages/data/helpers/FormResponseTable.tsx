@@ -9,9 +9,11 @@ export default function FormResponseTable({ formResponseData }: { formResponseDa
         if (!formResponseData) return [];
         return formResponseData.responses.map(response => {
             const row: { [key: string]: string | number; } = {
-                team: response.team,
-                match: response.match ?? -1,
-                submittedAt: response.submittedAt ?? "UNKNOWN"
+                _team: response.team,
+                _match: response.match ?? -1,
+                _scout: response.userId ?? "",
+                _score: response.accuracyScore ?? "",
+                _submittedAt: response.submittedAt ?? "UNKNOWN"
             };
             for (const qr of response.responses) {
                 row[qr.question] = qr.response;
@@ -23,10 +25,14 @@ export default function FormResponseTable({ formResponseData }: { formResponseDa
     const columns = useMemo(() => {
         if (!formResponseData) return [];
         return [
-            { label: "Team", key: "team" },
-            { label: "Match", key: "match" },
+            { label: "Team", key: "_team" },
+            // isMatchRelated(formResponseData) ? { label: "Match", key: "_match" } : false,
+            { label: "Match", key: "_match" },
+            { label: "Scout", key: "_scout" },
+            // isMatchRelated(formResponseData) ? { label: "Accuracy", key: "_score" } : false,
+            { label: "Accuracy", key: "_score" },
             ...formResponseData.questions.map(q => ({ label: q.name, key: q.id })),
-            { label: "Submitted At", key: "submittedAt" },
+            { label: "Submitted At", key: "_submittedAt" },
         ];
     }, [formResponseData]);
 
@@ -39,7 +45,7 @@ export default function FormResponseTable({ formResponseData }: { formResponseDa
             sortKey={sortKey}
             sortAsc={sortAsc}
             onSort={handleSort}
-            rowKey={(row) => `${row.team}-${row.match}-${row.submittedAt}`}
+            rowKey={(row) => `${row._team}-${row._match ?? "NA"}-${row._scout}-${row._submittedAt}`}
         />
     );
 }

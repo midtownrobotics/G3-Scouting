@@ -9,12 +9,60 @@
         text-align: left;
     }
 
-    input, button, select {
+    input,
+    button,
+    select {
         width: 140px;
         margin: 2px;
     }
 
+    table {
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    #schedule-table td {
+        border: 0.1px solid #dee2e6;
+    }
+
     .halfButton {
         width: 65px;
+    }
+
+    .sticky-col {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        background: white;
+    }
+
+    .sticky-header1 {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        background: white;
+    }
+
+    .sticky-header2 {
+        position: sticky;
+        top: 41px;
+        z-index: 3;
+        background: white;
+    }
+
+    .sticky-corner1 {
+        position: sticky;
+        top: 0;
+        left: 0;
+        z-index: 4;
+        background: white;
+    }
+
+    .sticky-corner2 {
+        position: sticky;
+        top: 41px;
+        left: 0;
+        z-index: 4;
+        background: white;
     }
 }

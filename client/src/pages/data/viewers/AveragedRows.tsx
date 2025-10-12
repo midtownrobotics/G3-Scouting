@@ -21,12 +21,13 @@ export default function AveragedRows({ accuracy }: {accuracy: number}) {
 
     const { rows, columns } = useMemo(() => {
         const table = new Map<number, { [key: string]: number | string | undefined; }>();
-        const columns = [{ key: "team", label: "Team" }, { key: "responsesLength", label: "Responses" }];
+        const columns = [{ key: "_team", label: "Team" }, { key: "_responsesLength", label: "Responses" }];
         
         for (const { metadata, teamData } of teamQuestionData ?? []) {
+            if (metadata.classification === "qualitative") continue;
             columns.push({ key: metadata.namespaceId, label: metadata.name });
             for (const { team, questionData } of teamData) {
-                if (!table.has(team)) table.set(team, { team, responsesLength: questionData.responses.length });
+                if (!table.has(team)) table.set(team, { "_team" : team, "_responsesLength": questionData.responses.length });
                 let average = questionData.average;
                 if (typeof average === "number") average = Math.round(average*100)/100
                 table.get(team)![metadata.namespaceId] = average;
@@ -46,7 +47,7 @@ export default function AveragedRows({ accuracy }: {accuracy: number}) {
             <div className="p-3">
                 <h1>Team Averages</h1>
                 <br />
-                <FormIdInput onSubmit={setFormId} />
+                <FormIdInput onChange={setFormId} />
             </div>
         );
     }
@@ -55,7 +56,7 @@ export default function AveragedRows({ accuracy }: {accuracy: number}) {
         <div className="p-3">
             <h1>Team Averages</h1>
             <br />
-            <FormIdInput onSubmit={setFormId} />
+            <FormIdInput onChange={setFormId} />
             <br />
             <SortableTable
                 columns={columns}
@@ -63,7 +64,7 @@ export default function AveragedRows({ accuracy }: {accuracy: number}) {
                 sortKey={sortKey}
                 sortAsc={sortAsc}
                 onSort={handleSort}
-                rowKey={(row) => row.team!}
+                rowKey={(row) => row["_team"]!}
             />
         </div>
     );

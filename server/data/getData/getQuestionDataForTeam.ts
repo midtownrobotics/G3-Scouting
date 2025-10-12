@@ -20,7 +20,7 @@ export default async function getQuestionDataForTeam(team: number, minAccuracy?:
             if (formResponse.team !== team) continue;
 
             for (const { question, response } of formResponse.responses) {
-                aggregateResponse(aggregation, metadataMap, `${formResponse.formId}-${question}`, response, formResponse.match);
+                aggregateResponse(aggregation, metadataMap, `${formResponse.formId}-${question}`, response, formResponse.userId ?? -1, formResponse.match);
             }
         }
     }

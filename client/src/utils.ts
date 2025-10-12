@@ -101,3 +101,14 @@ export function formatDuration(since?: number) {
     if (mins > 0) return `${mins}m ${secs % 60}s`;
     return `${secs}s`;
 }
+
+/** Parses a number and rounds if decimal is defined. */
+export function numberParser(val: string | number | undefined | null, decimal?: number) {
+    if (val == undefined) return undefined;
+    if (typeof val === "string") val = parseFloat(val);
+    if (Number.isNaN(val)) return undefined;
+    if (decimal === undefined) return val;
+
+    decimal = 10**decimal;
+    return Math.round(val*decimal)/decimal;
+}

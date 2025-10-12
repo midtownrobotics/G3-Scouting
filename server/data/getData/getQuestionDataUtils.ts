@@ -1,11 +1,12 @@
 import { QuestionMetadata } from "@shared/schemas/data";
 
-type StringAggregation = { values: Map<string, number>, responses: { response: string, match?: number; }[]; };
-type NumberAggregation = { sum: number, count: number, responses: { response: string, match?: number; }[]; };
+type StringAggregation = { values: Map<string, number>, responses: { response: string, match?: number, scout: number; }[]; };
+type NumberAggregation = { sum: number, count: number, responses: { response: string, match?: number, scout: number; }[]; };
 export type AggregationEntry = StringAggregation | NumberAggregation;
 
-/** Compute averages */
-export function computeAverage(metadata: QuestionMetadata, data: AggregationEntry): string | number {
+/** Compute averages. For MCQs most common response will be calculated and returned neatly. */
+export function computeAverage(metadata: QuestionMetadata, data: AggregationEntry): string | number | undefined {
+    if (metadata.classification === "qualitative") return undefined;
     if (metadata.type === "string" && "values" in data) {
         const values = Array.from(data.values.entries());
         const mostCommon = values.sort((a, b) => b[1] - a[1])[0];
@@ -15,7 +16,7 @@ export function computeAverage(metadata: QuestionMetadata, data: AggregationEntr
     } else if ("sum" in data) {
         return data.count === 0 ? 0 : data.sum / data.count;
     }
-    return "";
+    return undefined;
 }
 
 /** Get response data and add it to question aggregations. */
@@ -24,6 +25,7 @@ export function aggregateResponse(
     metadataMap: Map<string, QuestionMetadata>,
     namespacedId: string,
     response: string,
+    scout: number,
     match?: number
 ) {
     const key = namespacedId;
@@ -34,7 +36,7 @@ export function aggregateResponse(
         const entry = aggregation.get(key) ?? { values: new Map<string, number>(), responses: [] };
         if ("values" in entry) {
             entry.values.set(response, (entry.values.get(response) ?? 0) + 1);
-            entry.responses.push({ response, match });
+            entry.responses.push({ response, match, scout });
             aggregation.set(key, entry);
         }
     } else {
@@ -44,7 +46,7 @@ export function aggregateResponse(
         if ("sum" in entry) {
             entry.sum += value;
             entry.count += 1;
-            entry.responses.push({ response, match });
+            entry.responses.push({ response, match, scout });
             aggregation.set(key, entry);
         }
     }

@@ -88,12 +88,12 @@ function ScheduleTable({
             ref={containerRef}
             onMouseMove={handleMouseMove}
             onMouseLeave={stopScroll}
-            style={{ overflowX: "auto", maxWidth: "100%", position: "relative" }}
+            style={{ overflowX: "auto", maxWidth: "100%", position: "relative", maxHeight: "90vh" }}
         >
-            <Table bordered style={{ marginBottom: 0 }}>
+            <Table id="schedule-table" bordered style={{ marginBottom: 0 }}>
                 <thead>
                     <tr>
-                        <td></td>
+                        <td className="sticky-corner1"></td>
                         {Array.from(
                             blocks.reduce((map, block) => {
                                 const date = block.date;
@@ -101,12 +101,12 @@ function ScheduleTable({
                                 return map;
                             }, new Map<string, number>())
                         ).map(([date, count], i) => (
-                            <td key={i} colSpan={count}>{date}</td>
+                            <td className="sticky-header1" key={i} colSpan={count}>{date}</td>
                         ))}
                     </tr>
                     <tr>
-                        <td></td>
-                        {blocks.map((b, bi) => <td key={bi}>{toFormattedTime(b.time)}</td>)}
+                        <td className="sticky-corner2"></td>
+                        {blocks.map((b, bi) => <td className="sticky-header2" key={bi}>{toFormattedTime(b.time)}</td>)}
                     </tr>
                 </thead>
                 <tbody>

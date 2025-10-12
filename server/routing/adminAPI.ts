@@ -72,7 +72,12 @@ createValueRoute(async () => {
 adminAPIRouter.post("/addUser", async (req: Request, res: Response) => {
     const body = CreateUser.safeParse(req.body);
     if (body.success && body.data) {
-        await UserModel.addUser(body.data.username, body.data.password, body.data.permission, body.data.reliable);
+        try {
+            await UserModel.addUser(body.data.username, body.data.password, body.data.permission, body.data.reliable);
+        } catch (e) {
+            res.sendStatus(400);
+            return;
+        }
         res.sendStatus(200);
         return;
     }

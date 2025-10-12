@@ -1,7 +1,9 @@
+import { JSX } from "react";
 import { Table } from "react-bootstrap";
+import { getMatchUrl, getTeamSummaryUrl } from "./utils";
 
 interface Props<T> {
-    columns: { key: string; label: string; }[];
+    columns: (boolean | { key: string; label: string; })[];
     rows: T[];
     sortKey: string | null;
     sortAsc: boolean;
@@ -17,12 +19,21 @@ export function SortableTable<T>({
     onSort,
     rowKey,
 }: Props<T>) {
+    if (new Set(rows.map(r => rowKey(r))).size !== rows.length) return (<h3>{"Internal error building table: Duplicate row keys. Rows: " + rows.map(r => rowKey(r)).join(" ,")}</h3>)
+    const visibleColumns = columns.filter(col => typeof col !== "boolean");
+
+    const formatCellData = (data: string, key: string): JSX.Element => {
+        if (key === "_team") return <a href={getTeamSummaryUrl(parseInt(data))} target="_blank">{data}</a>;
+        if (key === "_match") return <a href={getMatchUrl(parseInt(data))} target="_blank">{data}</a>;
+        return <span>{data}</span>;
+    };
+
     return (
         <div className="table-responsive" style={{ maxHeight: "70vh", overflowY: "auto" }}>
             <Table bordered hover size="sm" className="mb-0">
                 <thead className="sticky-top bg-white shadow-sm">
                     <tr>
-                        {columns.map(col => (
+                        {visibleColumns.map(col => (
                             <th
                                 key={col.key}
                                 onClick={() => onSort(col.key)}
@@ -37,9 +48,9 @@ export function SortableTable<T>({
                 <tbody>
                     {rows.map(row => (
                         <tr key={rowKey(row)}>
-                            {columns.map(col => (
+                            {visibleColumns.map(col => (
                                 <td key={col.key} style={{ verticalAlign: "middle", whiteSpace: "nowrap" }}>
-                                    {(row as any)[col.key] ?? 0}
+                                    {formatCellData(((row as any)[col.key] ?? 0), col.key)}
                                 </td>
                             ))}
                         </tr>

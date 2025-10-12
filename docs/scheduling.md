@@ -11,7 +11,7 @@ This page is only available to users with the ADMIN permission.
 
 Use this to tell the scheduler which days your competition will take place. You can also assign roles for before a competition starts or after it ends.
 
-- A single day cannot extend beyond 12:30PM or start before 12:00AM.
+- A single day cannot extend beyond 11:30PM or start before 12:00AM.
 - You cannot add multiple timeframes for the same date.
 - The time in the top box must come before the time in the bottom box.
 - You ***cannot*** currently change a timeframe once it is created. You must delete it, which will reset the schedule for that day.
@@ -39,7 +39,7 @@ Properties:
 
 This is where you link your assignments, times, and users.
 
-- Each "time" listed in the 2nd row is actually a 30min block. So if the time says 05:00 PM, the block your scheduling for is from 5:00-5:30.
+- Each "time" listed in the 2nd row is actually a 30min block. So if the time says 05:00 PM, the block you're scheduling for is from 5:00-5:30.
 - You can select the assignment by clicking the ⭘ icon under an assignment, or using the number keys 1 through 9.
 - Putting your cursor near the left or right edge of the table will slowly scroll it in that direction.
 - Deleting an assignment will make all cells with that assignment go blank.

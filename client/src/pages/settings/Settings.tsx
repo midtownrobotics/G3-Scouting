@@ -9,10 +9,10 @@ import { useUserData } from "../../userData";
 export default function Settings() {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const linkSuccess = new URL(window.location.href).searchParams.has("linkSuccess");
+    const linkAttempt = new URL(window.location.href).searchParams.has("linkAttempt");
     const [slackData, setSlackData] = useState<SlackData>();
 
-    const { apiStatusRefresh } = useUserData();
+    const { apiStatusRefresh, userData } = useUserData();
 
     useEffect(() => {
         fetchAPIJSON("/slack/getSlackInfo", SlackData).then(res => {
@@ -44,9 +44,10 @@ export default function Settings() {
         <Container className="mt-3" style={{ maxWidth: "600px" }}>
             <h2 className="mb-4 text-center">Account Settings</h2>
 
-            {linkSuccess &&
-                <Alert variant="info">Slack account linked succesfully!</Alert>
-            }
+            {linkAttempt && (userData?.user.slackLinked === true ?
+                <Alert variant="info">Slack account linked succesfully!</Alert> :
+                <Alert variant="warning">Slack link failed. Please try again.</Alert>
+            )}
 
             <Card className="mb-4 shadow-sm">
                 <Card.Body>
