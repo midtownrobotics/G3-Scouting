@@ -21,6 +21,8 @@ function App() {
                 <h3>If you are hosting the site in dev mode, you need to visit the docs on the express server.</h3>
                 <h4>Based on your config.ts they <b className="text-decoration-underline">may</b> be at <a href={docsUrl}>{docsUrl}</a>.</h4>
                 <h4>You can also view them on <a href={ghDocs}>GitHub</a>.</h4>
+                <br />
+                <h4>Click <a href="/">here</a> to go back home.</h4>
             </div>
         )
     }
