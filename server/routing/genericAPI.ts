@@ -28,11 +28,15 @@ genericAPIRouter.get("/getCurrentMatch", async (req, res) => {
 genericAPIRouter.get("/me", async (req: AuthReq, res) => {
     const user = await UserModel.findByPk(req.user?.id);
 
+    res.setHeaders(new Headers({
+        "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+        "Pragma": "no-cache"
+    }))
+
     if (!user) {
         res.sendStatus(500);
         return;
     }
-
 
     const data: UserInformation = {
         user: {

@@ -42,9 +42,8 @@ export default function FormComp({
             <SpecialInput value={match}>Match Number</SpecialInput>
             <SpecialInput value={team} setter={setTeam}>Team Number</SpecialInput>
             {form.getComponents().map(c => (
-                <div className={dragging === c.getId() ? "bg-primary-subtle p-2" : ""}>
+                <div key={c.getId()} className={dragging === c.getId() ? "bg-primary-subtle p-2" : ""}>
                     <FormComponent
-                        key={c.getId()}
                         component={c}
                         onAnswerChange={handleAnswerChange}
                         answer={answers.get(c.getId())}

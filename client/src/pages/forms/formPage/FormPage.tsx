@@ -18,16 +18,23 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
     const userData = userDataProvider.userData;
     const nextMatch = userData?.user.nextMatch;
 
+    const [knownMatch, setKnownMatch] = useState<number>();
+
     useEffect(() => {
+        if (nextMatch?.number === knownMatch) return;
+        setKnownMatch(nextMatch?.number);
+
         fetchAPIJSON("/getCurrentMatch", MatchData).then(res => {
             if (res) setMatchData(res);
         })
+        if (nextMatch?.team !== undefined) {
+            setTeam(nextMatch.team);
+        }
     }, [nextMatch])
 
     const [team, setTeam] = useState(nextMatch?.team);
     const [teams, setTeams] = useState(nextMatch?.teams);
     const [alliance, _setAlliance] = useState(userData?.user.redAlliance ? Alliance.RED : Alliance.BLUE);
-
     const setAlliance = (a: Alliance) => {
         _setAlliance(a)
         setTeams(a === Alliance.RED ? matchData?.red : matchData?.blue)
@@ -89,6 +96,7 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
         if (res?.status !== 200) return submittingFail();
 
         setAnswers(new Map());
+        window.scrollTo(0, 0);
     };
 
     const submittingFail = () => {
