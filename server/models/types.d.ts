@@ -14,31 +14,8 @@ export interface User {
     lastMatchScouted?: number;
     assignedMatches: number[];
     reliable: boolean;
-    schedule?: InferAttributes<UserBlockAssignmentModel>
+    tokens: number;
+    schedule?: InferAttributes<UserBlockAssignmentModel>[]
 }
 
 export interface UserCreationAttributes extends Optional<User, 'id'> { }
-
-export interface Response {
-    id: number;
-    matchNum: string;
-    teamNum: string;
-    autoL1: string;
-    autoL2: string;
-    autoL3: string;
-    autoL4: string;
-    matchL1: string;
-    matchL2: string;
-    matchL3: string;
-    matchL4: string;
-    barge: string;
-    processor: string;
-    climb: string;
-    additionalNotes: string;
-    timestamp: string;
-    dealgify: string;
-    scoutId: string;
-    scout: string;
-}
-
-export interface ResponseCreationAttributes extends Optional<Response, 'id'> { }

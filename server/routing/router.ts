@@ -13,6 +13,7 @@ import dataApiRouter from './dataAPI';
 import leadAPIrouter from './leadAPI';
 import pitAPIRouter from './pitAPI';
 import docsRouter from './docsRouter';
+import gameAPIRouter from './gameAPI';
 
 const app = express();
 export const server = http.createServer(app);
@@ -36,3 +37,4 @@ app.use("/api/data", dataApiRouter)
 app.use("/api/slack", slackAPIRouter);
 app.use("/api/lead", leadAPIrouter);
 app.use("/api/userSettings", userSettingsAPIRouter);
+app.use("/api/game", gameAPIRouter);

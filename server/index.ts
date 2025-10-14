@@ -17,6 +17,7 @@ import { Settings } from "./types";
 import { LogColors } from "./utils";
 import { Permission } from "@shared/permissions";
 import { getEventStatus } from "./externalApis/nexus/nexus";
+import getTokensFromAccuracy from "./game/getTokensFromAccuracy";
 
 console.clear();
 console.log(``);
@@ -48,6 +49,17 @@ syncDatabase().then(() => {
 });
 
 async function testCode() {
+    const users = await UserModel.findAll();
+
+    // users.forEach(async u => {
+    //     const matches = await FormResponseByTeamModel.findAll({ where: { formId: "Quantitative", userId: u.id }});
+
+    //     let tokens = matches.length * 20;
+    //     matches.forEach(m => tokens += getTokensFromAccuracy(m.accuracyScore));
+
+    //     u.update({tokens});
+    // })
+
     // const form = new Form(FormType.TEAM, "Quantitative", "A quantitative scouting form.");
 
     // form.addComponent(new formComponents.SectionBreak("Autonomous"));

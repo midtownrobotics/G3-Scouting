@@ -1,12 +1,13 @@
 import { FormResponseData } from "@shared/schemas/data";
+import { TbaMatchData } from "server/externalApis/tba/types";
+import getTokensFromAccuracy from "server/game/getTokensFromAccuracy";
+import UserModel from "server/models/users/UserModel";
+import { numberParser } from "server/utils";
 import { getValueByPath } from "../../externalApis/tba/getValueByPath";
-import { getMatchData } from "../../externalApis/tba/tba";
 import FormResponseByTeamModel from "../../models/forms/FormResponseModels";
 import { keepTryingQuery } from "../../models/modelUtils";
 import AccuracyScoreModel from "../../models/validation/AccuracyScoreModel";
 import ScoutAccuracyScoreModel from "../../models/validation/ScoutAccuracyScoreModel";
-import { TbaMatchData } from "server/externalApis/tba/types";
-import { numberParser } from "server/utils";
 
 export default async function scoreAllianceData(
     matchTbaData: TbaMatchData,
@@ -80,6 +81,10 @@ export default async function scoreAllianceData(
 
     for (const userId of users) {
         if (userId === undefined) continue;
+
+        const user = await UserModel.findByPk(userId);
+        if (user) user.update({tokens: (user.tokens + getTokensFromAccuracy(score))});
+
         await keepTryingQuery(() => ScoutAccuracyScoreModel.findOrCreate({
             where: {
                 userId: userId,

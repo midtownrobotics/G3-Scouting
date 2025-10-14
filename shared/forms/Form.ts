@@ -93,6 +93,8 @@ export default class Form {
      */
     public getResponseData(minAccuracy?: number): FormResponseData | null {
         if (!this.responses) return null;
+        if (this.type === FormType.NO_MATCH || this.type === FormType.SINGLE_TEAM_RESPONSE) minAccuracy = undefined;
+        
         const questions = this.components.filter(c => c.metadata !== null).map(q => q.metadata!);
 
         return {

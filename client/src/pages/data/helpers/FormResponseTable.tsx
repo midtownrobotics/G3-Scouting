@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { SortableTable } from "./SortableTable";
 import { useSortableTable } from "./useSortableTable";
 import { FormResponseData } from "@shared/schemas/data";
+import { isMatchRelated } from "./utils";
 
 export default function FormResponseTable({ formResponseData }: { formResponseData: FormResponseData; }) {
 
@@ -26,11 +27,9 @@ export default function FormResponseTable({ formResponseData }: { formResponseDa
         if (!formResponseData) return [];
         return [
             { label: "Team", key: "_team" },
-            // isMatchRelated(formResponseData) ? { label: "Match", key: "_match" } : false,
-            { label: "Match", key: "_match" },
+            isMatchRelated(formResponseData) ? { label: "Match", key: "_match" } : false,
             { label: "Scout", key: "_scout" },
-            // isMatchRelated(formResponseData) ? { label: "Accuracy", key: "_score" } : false,
-            { label: "Accuracy", key: "_score" },
+            isMatchRelated(formResponseData) ? { label: "Accuracy", key: "_score" } : false,
             ...formResponseData.questions.map(q => ({ label: q.name, key: q.id })),
             { label: "Submitted At", key: "_submittedAt" },
         ];

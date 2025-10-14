@@ -51,7 +51,8 @@ export type RankingRow = z.infer<typeof RankingRow>;
 export enum BatteryState {
     CHARGING = "Charging",
     IN_ROBOT = "In Robot",
-    IDLE = "Idle"
+    IDLE = "Idle",
+    BROKEN = "Broken"
 }
 
 export const BatteryData = z.object({

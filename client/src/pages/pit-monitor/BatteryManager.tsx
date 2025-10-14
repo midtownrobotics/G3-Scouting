@@ -108,6 +108,7 @@ export default function BatteryManager() {
                                         >
                                             <option value={BatteryState.CHARGING}>Charging</option>
                                             <option value={BatteryState.IDLE}>Idle</option>
+                                            <option value={BatteryState.BROKEN}>Broken</option>
                                             <option value={BatteryState.IN_ROBOT}>In Robot</option>
                                         </select>
                                         <button className="btn btn-danger" onClick={() => deleteBattery(b.id ?? -1)} disabled={working}>

@@ -36,6 +36,9 @@ class UserModel extends Model<User, UserCreationAttributes> {
     @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: 0 })
     public reliable!: boolean;
 
+    @Column({ type: DataType.DOUBLE, allowNull: false, defaultValue: 0})
+    public tokens!: number;
+
     @HasMany(() => UserBlockAssignmentModel, { as: "schedule" })
     public schedule!: UserBlockAssignmentModel[];
 
@@ -63,7 +66,8 @@ class UserModel extends Model<User, UserCreationAttributes> {
                     reliable,
                     password: hash,
                     redAlliance: redCount < blueCount,
-                    assignedMatches: []
+                    assignedMatches: [],
+                    tokens: 0
                 });
             }
         });

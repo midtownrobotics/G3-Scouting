@@ -3,6 +3,8 @@ import { CreationOptional, InferAttributes, InferCreationAttributes } from "sequ
 import { Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
 import FormModel from "./FormModel";
 import { FormType } from "@shared/forms/Form";
+import { User } from "../types";
+import UserModel from "../users/UserModel";
 
 @Table({ tableName: "form_responses_by_team" })
 export default class FormResponseByTeamModel extends Model<InferAttributes<FormResponseByTeamModel>, InferCreationAttributes<FormResponseByTeamModel>> {
@@ -31,13 +33,20 @@ export default class FormResponseByTeamModel extends Model<InferAttributes<FormR
     @Column({ type: DataType.FLOAT, defaultValue: null })
     accuracyScore!: number | null;
 
-    public static async submitResponse(r: SubmittedResponse, userId: number) {
+    public static async submitResponse(r: SubmittedResponse, user: UserModel) {
+        const form = await FormModel.findByPk(r.formId);
+        if (!form) return;
+
+        if (form.deployed && !form.openSubmission) {
+            user.update({tokens: user.tokens + 30});
+        }
+
         if (r.type === FormType.ALLIANCE) {
             for (const response of r.responses) {
-                FormResponseByTeamModel.createResponse(response, userId);
+                FormResponseByTeamModel.createResponse(response, user.id);
             }
         } else {
-            FormResponseByTeamModel.createResponse(r.response, userId);
+            FormResponseByTeamModel.createResponse(r.response, user.id);
         }
     }
 

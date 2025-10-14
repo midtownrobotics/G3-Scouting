@@ -9,9 +9,7 @@ import { UserDataProvider } from './userData.tsx';
 
 registerSW({
     onNeedRefresh() { },
-    onOfflineReady() {
-        alert('App ready to work offline!')
-    },
+    onOfflineReady() { },
 })
 
 createRoot(document.getElementById('root')!).render(
