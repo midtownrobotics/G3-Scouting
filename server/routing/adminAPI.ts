@@ -104,6 +104,7 @@ adminAPIRouter.post("/deleteUser", async (req: Request, res: Response) => {
 adminAPIRouter.get("/getUsers", async (req: Request, res: Response) => {
     const users: SimpleUser[] = (await UserModel.findAll()).map(u => ({
         username: u.username,
+        displayName: u.displayName,
         id: u.id,
         permission: u.permission,
         redAlliance: u.redAlliance,

@@ -49,7 +49,12 @@ syncDatabase().then(() => {
 });
 
 async function testCode() {
-    const users = await UserModel.findAll();
+    // const gray = await UserModel.findOne({ where: {username: "gjackson"} });
+
+    // gray?.update({ tokens: 90 });
+    // gray?.update({ tokens: 10000 });
+
+    // const users = await UserModel.findAll();
 
     // users.forEach(async u => {
     //     const matches = await FormResponseByTeamModel.findAll({ where: { formId: "Quantitative", userId: u.id }});

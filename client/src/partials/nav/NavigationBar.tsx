@@ -33,6 +33,7 @@ function NavigationBar() {
                         <NavPageLink page="data" onClick={onclick} />
                         <NavPageLink page="lead" onClick={onclick} />
                         <NavPageLink page="admin" onClick={onclick} />
+                        <NavPageLink page="game" onClick={onclick} />
 
                         <NavDropdown
                             title={<span style={{ color: morePages.includes(pageKey) || showDropdown ? "black" : "gray" }}>More</span>}

@@ -5,6 +5,7 @@ import { NextMatch } from './data';
 
 export const SimpleUser = z.object({
     username: z.string(),
+    displayName: z.string().nullish(),
     id: z.coerce.number(),
     permission: z.nativeEnum(Permission),
     reliable: z.coerce.boolean(),

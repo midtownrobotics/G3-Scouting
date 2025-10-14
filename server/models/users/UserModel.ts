@@ -16,6 +16,9 @@ class UserModel extends Model<User, UserCreationAttributes> {
     public username!: string;
 
     @Column({ type: DataType.TEXT, allowNull: true })
+    public displayName!: string | null;
+
+    @Column({ type: DataType.TEXT, allowNull: true })
     public slackId?: string | null;
 
     @Column({ type: DataType.TEXT, allowNull: false })
@@ -67,7 +70,8 @@ class UserModel extends Model<User, UserCreationAttributes> {
                     password: hash,
                     redAlliance: redCount < blueCount,
                     assignedMatches: [],
-                    tokens: 0
+                    tokens: 0,
+                    displayName: username
                 });
             }
         });

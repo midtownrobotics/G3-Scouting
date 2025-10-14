@@ -3,6 +3,7 @@ import express from 'express';
 import { z } from "zod";
 import SessionModel from "../models/users/SessionModel";
 import { AuthReq } from '../types';
+import { replaceProfanities } from 'no-profanity';
 
 const userSettingsAPIRouter = express.Router();
 
@@ -14,9 +15,23 @@ userSettingsAPIRouter.post("/resetPassword", async (req: AuthReq, res) => {
         where: { userId: req.user?.id }
     });
 
-    bcrypt.hash(body.data.password, 12, async function(err, hash) {
+    bcrypt.hash(body.data.password, 12, async function (err, hash) {
         if (!err) req.user?.update({ password: hash });
     });
+
+    res.sendStatus(200);
+});
+
+userSettingsAPIRouter.post("/setDisplayName", async (req: AuthReq, res) => {
+    const body = z.object({ displayName: z.string() }).safeParse(req.body);
+    if (!body.success || !body.data || !req.user) { res.sendStatus(400); return; }
+
+    let displayName = body.data.displayName;
+    displayName = displayName.substring(0, 20);
+
+    displayName = replaceProfanities(displayName);
+
+    req.user.update({ displayName });
 
     res.sendStatus(200);
 });

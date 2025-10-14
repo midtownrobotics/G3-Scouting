@@ -10,7 +10,8 @@ gameAPIRouter.get("/leaderboard/tokens", async (req, res) => {
     const leaderboard: TokenLeaderboardEntry[] = users.map(u => ({
         userId: u.id,
         username: u.username,
-        tokens: u.tokens
+        tokens: u.tokens,
+        displayName: u.displayName
     }));
     res.send(leaderboard.sort((a,b) => b.tokens - a.tokens));
 });

@@ -40,14 +40,48 @@ export default function Settings() {
         postAPI("/userSettings/sessionClear", {});
     };
 
+    const [displayName, setDisplayName] = useState(userData?.user.displayName);
+    const [displayNameLoading, setDisplayNameLoading] = useState(false);
+    const newDisplayName = () => {
+        setDisplayNameLoading(true);
+        postAPI("/userSettings/setDisplayName", { displayName }).then(() => {
+            setTimeout(() => setDisplayNameLoading(false), 5000);
+        });
+    };
+
     return (
         <Container className="mt-3" style={{ maxWidth: "600px" }}>
             <h2 className="mb-4 text-center">Account Settings</h2>
 
             {linkAttempt && (userData?.user.slackLinked === true ?
-                <Alert variant="info">Slack account linked succesfully!</Alert> :
+                <Alert variant="info">Slack account linked successfully!</Alert> :
                 <Alert variant="warning">Slack link failed. Please try again.</Alert>
             )}
+
+            <Card className="mb-4 shadow-sm">
+                <Card.Body>
+                    <Card.Title>
+                        Display Name
+                    </Card.Title>
+                    <p>Your display name is currently: <b>{userData?.user.displayName ?? userData?.user.username}</b></p>
+                    <div className="d-flex gap-3">
+                        <Form.Control
+                            value={displayName ?? ""}
+                            onChange={(e) => setDisplayName(e.target.value)}
+                            placeholder="New Display Name"
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") newDisplayName();
+                            }}
+                        />
+                        <Button
+                            style={{ width: "160px" }}
+                            variant="primary"
+                            onClick={newDisplayName}
+                            disabled={displayNameLoading}
+                        >Save</Button>
+                    </div>
+                </Card.Body>
+            </Card>
 
             <Card className="mb-4 shadow-sm">
                 <Card.Body>
