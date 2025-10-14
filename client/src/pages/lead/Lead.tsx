@@ -96,7 +96,7 @@ export default function Lead() {
                                 <tr>
                                     <td>{a.username}</td>
                                     <td>{a.team}</td>
-                                    <td className="user-select-none"><input type={"checkbox"} checked={a.finished} /></td>
+                                    <td className="user-select-none text-center"><input type={"checkbox"} checked={a.finished} /></td>
                                 </tr>
                             )}
                         </tbody>

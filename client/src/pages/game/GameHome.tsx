@@ -8,7 +8,9 @@ export function GameHome() {
             <br />
             <br />
             <br />
-            <Leaderboard />
+            <div className="d-flex justify-content-center">
+                <Leaderboard className="w-75" />
+            </div>
         </div>
     )
 }

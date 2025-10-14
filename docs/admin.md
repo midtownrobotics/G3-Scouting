@@ -5,7 +5,6 @@
 ---
 
 This page is only available to users with the ADMIN permission.
-<br>This page has not been optimized for mobile use.
 
 ## Users
 
