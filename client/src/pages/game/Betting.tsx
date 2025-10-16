@@ -1,8 +1,7 @@
 import { GamblingQuestion, ResponseBetData, ServerToClientMessage } from "@shared/schemas/game";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Button, Card, Form, InputGroup, Spinner } from "react-bootstrap";
+import { useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { Alert, Button, Card, Form, InputGroup, Spinner } from "react-bootstrap";
 import { Floppy, XSquareFill } from "react-bootstrap-icons";
-import { fetchAPIJSON } from "../../API";
 import { useUserData } from "../../userData";
 import { getWebsocket, sendWsMsg } from "./utils/websocket";
 
@@ -14,6 +13,7 @@ export function Betting() {
     const [inDbResponseIndex, setInDbResponseIndex] = useState(0);
     const [amount, setAmount] = useState(0);
     const [inDbAmount, setInDbAmount] = useState(0);
+    const [reconnectWsTries, reconnectWs] = useReducer((p) => p + 1, 0);
 
     const [betData, setBetData] = useState<ResponseBetData[]>([]);
 
@@ -25,7 +25,6 @@ export function Betting() {
     const tokens = userProvider.userData?.user.tokens ?? 0;
 
     useEffect(() => {
-        fetchAPIJSON("/game/getCurrentQuestion", GamblingQuestion).then(q => q && setQuestion(q));
         const ws = getWebsocket();
         websocket.current = ws;
 
@@ -33,6 +32,8 @@ export function Betting() {
             try {
                 const json = JSON.parse(e.data.toString());
                 const msg = ServerToClientMessage.parse(json);
+
+                console.log(msg.type)
 
                 switch (msg.type) {
                     case "betData":
@@ -42,17 +43,19 @@ export function Betting() {
                         setResponseLoading(false);
                         setInDbResponseIndex(() => msg.payload.responseIndex);
                         setResponseIndex(() => msg.payload.responseIndex);
-
                         setAmount(() => msg.payload.amount);
                         setInDbAmount(() => msg.payload.amount);
                         if (msg.payload.amount > 0) setBetPlaced(true);
+                        break;
+                    case "updateQuestion":
+                        setQuestion(() => msg.payload)
                         break;
                 }
             } catch (err) { };
         }
 
         return () => ws?.close();
-    }, []);
+    }, [reconnectWsTries]);
 
     function saveResponse() {
         if (question === undefined) return;
@@ -87,8 +90,18 @@ export function Betting() {
     if (question === undefined) return (<></>);
 
     return (
-        <div className="w-100 d-flex justify-content-center">
-            <Card className="w-md-50">
+        <div className="w-100">
+            {websocket.current?.readyState !== WebSocket.OPEN && <Alert variant="danger" className="w-50 mx-auto">
+                <span>
+                    WebSocket disconnected. Click&nbsp;
+                    <span
+                        className="text-primary text-decoration-underline cursor-pointer"
+                        onClick={reconnectWs}
+                    >here</span>
+                    &nbsp;to reconnect.
+                </span>
+            </Alert>}
+            <Card className="w-md-50 mx-auto">
                 <Card.Body>
 
                     <h2>Match {question.match}</h2>
@@ -128,7 +141,6 @@ export function Betting() {
                         style={{ width: "150px", borderColor: "lightgray" }}
                         disabled={
                             responseLoading ||
-                            (responseIndex === inDbResponseIndex && amount === inDbAmount) ||
                             amount < 1 ||
                             amount > tokens
                         }

@@ -11,7 +11,9 @@ export type TokenLeaderboardEntry = z.infer<typeof TokenLeaderboardEntry>;
 export const GamblingQuestion = z.object({
     match: z.number(),
     question: z.string(),
-    responses: z.array(z.string())
+    responses: z.array(z.string()),
+    locked: z.boolean(),
+    correctResponse: z.string().optional()
 })
 export type GamblingQuestion = z.infer<typeof GamblingQuestion>;
 
@@ -56,5 +58,10 @@ export const ServerToClientMessage = z.object({
         responseIndex: z.number(),
         amount: z.number()
     })
-}));
+})).or(z.object({
+    type: z.literal("updateQuestion"),
+    payload: GamblingQuestion
+})).or(z.object({
+    type: z.literal("ping")
+}));;
 export type ServerToClientMessage = z.infer<typeof ServerToClientMessage>;

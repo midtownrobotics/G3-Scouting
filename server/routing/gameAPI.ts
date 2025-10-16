@@ -1,8 +1,7 @@
-import express from 'express';
 import { GamblingQuestion, TokenLeaderboardEntry } from '@shared/schemas/game';
+import express from 'express';
+import { addQuestion, getQuestions } from 'server/game/gambling';
 import UserModel from 'server/models/users/UserModel';
-import { addQuestion, getCurrentQuestion, getQuestion, getQuestions } from 'server/game/gambling';
-import { getSettingsValue } from 'server/settings';
 
 const gameAPIRouter = express.Router();
 
@@ -21,11 +20,6 @@ gameAPIRouter.get("/leaderboard/tokens", async (req, res) => {
 /** {@link GamblingQuestion[]} */
 gameAPIRouter.get("/getQuestions", async (req, res) => {
     res.send(getQuestions());
-});
-
-/** {@link GamblingQuestion} */
-gameAPIRouter.get("/getCurrentQuestion", async (req, res) => {
-    res.send(await getCurrentQuestion());
 });
 
 gameAPIRouter.post("/setQuestion", async (req, res) => {

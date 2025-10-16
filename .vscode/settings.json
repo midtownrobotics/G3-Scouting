@@ -3,5 +3,6 @@
         "APIJSON",
         "grayjn",
         "Statbotics"
-    ]
+    ],
+    "javascript.format.semicolons": "insert"
 }

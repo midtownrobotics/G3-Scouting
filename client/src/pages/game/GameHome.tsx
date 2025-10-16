@@ -12,7 +12,8 @@ export function GameHome() {
 
     return (
         <div id="game-page" className="text-center">
-            <h1>G<sup>3<sup>3</sup></sup></h1>
+            <br />
+            <h1>G<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3</sup></sup></sup></sup></sup></sup></sup></sup></sup></sup></sup></sup></sup></sup></sup></sup></sup></sup></h1>
             <br />
             <Button onClick={() => setBookiePage(true)}>Open Bookie Page</Button>
             <br />

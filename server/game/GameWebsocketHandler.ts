@@ -2,7 +2,7 @@ import { ClientToServerMessage, ServerToClientMessage } from "@shared/schemas/ga
 import UserModel from "server/models/users/UserModel";
 import { getSettingsValue } from "server/settings";
 import { WebSocket } from "ws";
-import { bets, dropBet, getCurrentBetData, updateBet } from "./gambling";
+import { bets, dropBet, getCurrentBetData, getCurrentQuestion, updateBet } from "./gambling";
 
 type GameWebsocketData = {
     ws: WebSocket,
@@ -21,8 +21,14 @@ export default class GameWebsocketHandler {
         if (currentBetData) this.sendTo({
             type: "betData",
             payload: currentBetData
-        }, user.id);
-        
+        }, ws);
+
+        const currentQuestion = await getCurrentQuestion();
+        if (currentQuestion) this.sendTo({
+            type: "updateQuestion",
+            payload: currentQuestion
+        }, ws);
+
         this.sendTo({
             type: "userResponse",
             payload: {
@@ -30,7 +36,15 @@ export default class GameWebsocketHandler {
                 responseIndex: bets.get(currentMatch)?.get(user.id)?.responseIndex ?? 0,
                 amount: bets.get(currentMatch)?.get(user.id)?.amount ?? 0
             }
-        }, user.id)
+        }, ws);
+
+        const interval = setInterval(() => {
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: "ping" }))
+            } else {
+                clearInterval(interval)
+            }
+        }, 30000);
 
         ws.on("message", async (data) => {
             try {
@@ -62,7 +76,13 @@ export default class GameWebsocketHandler {
         }
     }
 
-    sendTo(msg: ServerToClientMessage, userId: number) {
-        this.sockets.find(s => s.user.id === userId)?.ws.send(JSON.stringify(msg));
+    sendTo(msg: ServerToClientMessage, userId: number): void;
+    sendTo(msg: ServerToClientMessage, websocket: WebSocket): void;
+    sendTo(msg: ServerToClientMessage, to: number | WebSocket) {
+        if (typeof to === "number") {
+            this.sockets.find(s => s.user.id === to)?.ws.send(JSON.stringify(msg));
+        } else {
+            to.send(JSON.stringify(msg));
+        }
     }
 }
