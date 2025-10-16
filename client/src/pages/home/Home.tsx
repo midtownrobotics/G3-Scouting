@@ -1,23 +1,13 @@
-import { UserInformation } from "@shared/schemas/user";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Card, Container, Spinner, Table } from "react-bootstrap";
-import { fetchAPIJSON } from "../../API";
-import { toFormattedTime } from "../scheduler/utils";
-import { compareBlocksByDate, condenseSchedule, getFormattedAssignmentDuration, makeDateFromDateString, softenColor } from "./utils";
+import { useUserData } from "../../userData";
 import { getCurrentBlockMins, getCurrentDate } from "../../utils";
+import { toFormattedTime } from "../scheduler/utils";
+import { condenseSchedule, getFormattedAssignmentDuration, makeDateFromDateString, softenColor } from "./utils";
 
 function Home() {
-    const [userData, setUserData] = useState<UserInformation>()
 
-    useEffect(() => {
-        fetchAPIJSON("/me", UserInformation).then(res => {
-            if (res) {
-                res.user.schedule = res.user.schedule.sort((a, b) => a.block.time - b.block.time)
-                res.user.schedule = res.user.schedule.sort((a, b) => compareBlocksByDate(a.block, b.block))
-                setUserData(res);
-            }
-        })
-    }, [])
+    const { userData } = useUserData();
 
     return !userData ? (
         <Container style={{ textAlign: "center" }}>
@@ -27,7 +17,7 @@ function Home() {
         <Container className="mt-4" id="home-page">
             <Card className="mb-4 shadow-sm">
                 <Card.Body>
-                    <Card.Title>Welcome back, {userData?.user.username}!</Card.Title>
+                    <Card.Title>Welcome back, {userData?.user.displayName ?? userData.user.username}!</Card.Title>
                     {userData?.currentAssignment && <Card.Text>You're current assignment is: {userData?.currentAssignment?.name}. You will be on this assignment for {getFormattedAssignmentDuration(userData.currentAssignment, userData.user.schedule)}.</Card.Text>}
                 </Card.Body>
             </Card>

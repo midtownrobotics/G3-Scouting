@@ -29,11 +29,6 @@ export async function authHandler(req: AuthReq, res: Response, next: NextFunctio
 
     const url: string = req.url.replace(/\/$/, '');
 
-    if (url == "api/status") {
-        req.user = user;
-        return next();
-    }
-
     const blacklist = getDisallowedApis(user.permission);
     if (blacklist.some(path => url.includes(path))) {
         res.sendStatus(403);

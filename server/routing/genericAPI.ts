@@ -48,7 +48,8 @@ genericAPIRouter.get("/me", async (req: AuthReq, res) => {
             schedule: user.schedule,
             nextMatch: user.nextMatch,
             slackLinked: user.slackLinked,
-            displayName: user.displayName
+            displayName: user.displayName,
+            tokens: user.tokens
         },
         currentAssignment: await user.getCurrentAssignment()
     };

@@ -109,7 +109,8 @@ adminAPIRouter.get("/getUsers", async (req: Request, res: Response) => {
         permission: u.permission,
         redAlliance: u.redAlliance,
         reliable: u.reliable,
-        slackLinked: u.slackLinked
+        slackLinked: u.slackLinked,
+        tokens: u.tokens
     }));
 
     res.json(users);

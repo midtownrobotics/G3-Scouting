@@ -10,7 +10,8 @@ export const SimpleUser = z.object({
     permission: z.nativeEnum(Permission),
     reliable: z.coerce.boolean(),
     redAlliance: z.boolean(),
-    slackLinked: z.boolean()
+    slackLinked: z.boolean(),
+    tokens: z.number()
 });
 export type SimpleUser = z.infer<typeof SimpleUser>;
 

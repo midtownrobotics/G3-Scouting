@@ -11,9 +11,6 @@ function App() {
     const { pageKey, pageInstance } = usePage();
     const { apiConnection, loggedIn } = useUserData();
 
-    console.log("HELPPPPPP")
-
-
     if (window.location.href.includes("/docs")) {
         const url = new URL(DEV_API_URL);
         const docsUrl = url.origin + "/docs";
