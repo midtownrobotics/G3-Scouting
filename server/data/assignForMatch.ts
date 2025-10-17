@@ -2,7 +2,7 @@ import { CurrentAssignment } from "@shared/schemas/data";
 import { AssignmentType } from "@shared/schemas/schedule";
 import { getAllMatches } from "../externalApis/tba/tba";
 import UserModel from "../models/users/UserModel";
-import { getSettingsValue, setSettingsValue } from "../settings";
+import { getSettingsValue, setSettingsValue } from "../other/settings";
 import { scoreAllForms } from "./reliability/scoreUnscoredMatches";
 import { Alliance } from "@shared/forms/FormUtils";
 

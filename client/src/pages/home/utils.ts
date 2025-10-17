@@ -4,7 +4,7 @@ import { DateString } from "@shared/types";
 import { getAssignmentDuration } from "../../utils";
 
 export function softenColor(hex?: string): string {
-    if (hex === undefined) return("hsl(0, 0.00%, 100.00%)")
+    if (hex === undefined) return ("hsl(0, 0.00%, 100.00%)")
 
     // Convert hex to RGB
     const bigint = parseInt(hex.slice(1), 16);
@@ -39,6 +39,13 @@ export function softenColor(hex?: string): string {
     return `hsl(${Math.round(h)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`;
 }
 
+export function getFormattedDate(d: Date) {
+    let [M, D, h, m] = [d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes()];
+    const amPm = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
+    return `${String(M).padStart(2, "0")}/${String(D).padStart(2, "0")} ${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")} ${amPm}`;
+}
+
 export function makeDateFromDateString(date: DateString): Date {
     const [year, month, day] = date.split("-").map(Number);
     return new Date(year, month - 1, day);
@@ -57,7 +64,7 @@ type CondensedRow = {
     blockIds: number[];
 };
 
-export function condenseSchedule(userData: UserInformation): CondensedRow[] {    
+export function condenseSchedule(userData: UserInformation): CondensedRow[] {
     const { schedule } = userData.user;
 
     const result: CondensedRow[] = [];

@@ -25,12 +25,33 @@ export const SaveableInputData = z.object({
 });
 export type SaveableInputData = z.infer<typeof SaveableInputData>;
 
+export const NotificationService = z.enum(["game", "userMessaging"]);
+export type NotificationService = z.infer<typeof NotificationService>;
+
+export const Notification = z.object({
+    to: z.number().or(z.literal("allUsers")),
+    from: z.object({
+        user: z.object({
+            id: z.number(),
+            username: z.string(),
+            displayName: z.string()
+        }).optional(),
+        service: NotificationService
+    }),
+    message: z.string(),
+    expiresAt: z.number(),
+    sentAt: z.number(),
+    priority: z.number()
+})
+export type Notification = z.infer<typeof Notification>;
+
 export const UserInformation = z.object({
     user: SimpleUser.and(z.object({
         schedule: z.array(UserBlockAssignment),
         nextMatch: NextMatch.nullish()
     })),
-    currentAssignment: Assignment.optional()
+    currentAssignment: Assignment.optional(),
+    notifications: z.array(Notification)
 });
 export type UserInformation = z.infer<typeof UserInformation>;
 

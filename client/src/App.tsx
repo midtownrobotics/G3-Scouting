@@ -6,10 +6,11 @@ import Footer from "./partials/Footer";
 import NavigationBar from "./partials/nav/NavigationBar";
 import OfflineBar from "./partials/offline-bar/OfflineBar";
 import { useUserData } from "./userData";
+import { Alert } from "react-bootstrap";
 
 function App() {
     const { pageKey, pageInstance } = usePage();
-    const { apiConnection, loggedIn } = useUserData();
+    const { apiConnection, loggedIn, userData } = useUserData();
 
     if (window.location.href.includes("/docs")) {
         const url = new URL(DEV_API_URL);
@@ -27,10 +28,18 @@ function App() {
         )
     }
 
+    const mostRecentNotification = userData?.notifications.filter(n => n.expiresAt > Date.now()).sort((a, b) => b.sentAt - a.sentAt).sort((a, b) => b.priority - a.priority)[0];
+
     return (
         <div className="d-flex flex-column min-vh-100">
             <OfflineBar show={!apiConnection && loggedIn} />
             <NavigationBar />
+
+            {mostRecentNotification && <Alert
+                variant="dark"
+                style={{ maxWidth: "85%", marginBottom: "-10px" }}
+                className="text-center w-auto mx-auto mt-2 py-2 px-4"
+            >{mostRecentNotification.message}</Alert>}
 
             <main className="flex-fill" key={`${pageKey}-${pageInstance}`}>
                 {loggedIn ? getPageFromKey(pageKey) : <Login />}

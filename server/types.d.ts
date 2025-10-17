@@ -6,6 +6,7 @@ export type Settings = {
     teamNumber: number;
     slackToken: string;
     theBlueAlliance: string;
+    nexusEventKey: string;
     nexus: string;
     eventKey: string;
     match: MatchData;

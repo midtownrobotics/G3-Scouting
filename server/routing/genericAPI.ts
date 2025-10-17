@@ -1,12 +1,12 @@
+import { UserScheduleData } from "@shared/schemas/schedule";
 import { UserInformation } from "@shared/schemas/user";
 import express from 'express';
-import UserModel from "../models/users/UserModel";
-import { AuthReq } from "../types";
-import { getSettingsValue } from "../settings";
 import AssignmentModel from "../models/scheduling/AssignmentModel";
-import UserBlockAssignmentModel from "../models/scheduling/UserBlockAssignmentModel";
 import BlockModel from "../models/scheduling/BlockModel";
-import { SendableSchedule, UserScheduleData } from "@shared/schemas/schedule";
+import UserModel from "../models/users/UserModel";
+import { getSettingsValue } from "../other/settings";
+import { AuthReq } from "../types";
+import { getNotifications } from "server/other/notifications";
 
 const genericAPIRouter = express.Router();
 
@@ -28,11 +28,6 @@ genericAPIRouter.get("/getCurrentMatch", async (req, res) => {
 genericAPIRouter.get("/me", async (req: AuthReq, res) => {
     const user = await UserModel.findByPk(req.user?.id);
 
-    res.setHeaders(new Headers({
-        "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
-        "Pragma": "no-cache"
-    }))
-
     if (!user) {
         res.sendStatus(500);
         return;
@@ -51,7 +46,8 @@ genericAPIRouter.get("/me", async (req: AuthReq, res) => {
             displayName: user.displayName,
             tokens: user.tokens
         },
-        currentAssignment: await user.getCurrentAssignment()
+        currentAssignment: await user.getCurrentAssignment(),
+        notifications: getNotifications(user.id)
     };
 
     res.send(data);

@@ -1,7 +1,7 @@
 import { Bet, GamblingQuestion, ResponseBetData } from "@shared/schemas/game";
 import UserModel from "server/models/users/UserModel";
 import { gameWsHandler } from "server/routing/router";
-import { getSettingsValue } from "server/settings";
+import { getSettingsValue } from "server/other/settings";
 
 const getCurrentMatch = async () => (await getSettingsValue("match")).number;
 

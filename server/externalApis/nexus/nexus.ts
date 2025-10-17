@@ -1,5 +1,5 @@
 import path from 'path';
-import { getSettingsValue } from "../../settings";
+import { getSettingsValue } from "../../other/settings";
 import { NexusEventStatus } from '@shared/schemas/pit';
 
 async function fetchNexus(url: string) {
@@ -17,8 +17,7 @@ async function fetchNexus(url: string) {
 }
 
 export async function getEventStatus() {
-    // const event = await getSettingsValue("eventKey");
-    const event = "2025gagai1";
+    const event = await getSettingsValue("nexusEventKey");
     const fetched = await fetchNexus(`/event/${event}`);
     console.log(fetched)
     if (!fetched) return undefined;

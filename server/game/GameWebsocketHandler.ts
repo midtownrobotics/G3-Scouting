@@ -1,6 +1,6 @@
 import { ClientToServerMessage, ServerToClientMessage } from "@shared/schemas/game";
 import UserModel from "server/models/users/UserModel";
-import { getSettingsValue } from "server/settings";
+import { getSettingsValue } from "server/other/settings";
 import { WebSocket } from "ws";
 import { bets, dropBet, getCurrentBetData, getCurrentQuestion, updateBet } from "./gambling";
 

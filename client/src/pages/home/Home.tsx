@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, Container, Spinner, Table } from "react-bootstrap";
 import { useUserData } from "../../userData";
 import { getCurrentBlockMins, getCurrentDate } from "../../utils";
 import { toFormattedTime } from "../scheduler/utils";
-import { condenseSchedule, getFormattedAssignmentDuration, makeDateFromDateString, softenColor } from "./utils";
+import { condenseSchedule, getFormattedAssignmentDuration, getFormattedDate, makeDateFromDateString, softenColor } from "./utils";
 
 function Home() {
-
     const { userData } = useUserData();
+
+    const [notifications, setNotifications] = useState(5);
 
     return !userData ? (
         <Container style={{ textAlign: "center" }}>
@@ -21,6 +22,31 @@ function Home() {
                     {userData?.currentAssignment && <Card.Text>You're current assignment is: {userData?.currentAssignment?.name}. You will be on this assignment for {getFormattedAssignmentDuration(userData.currentAssignment, userData.user.schedule)}.</Card.Text>}
                 </Card.Body>
             </Card>
+
+            {userData.notifications.length > 0 && <Card className="mb-4 shadow-sm">
+                <Card.Body>
+                    <Card.Title>Notifications</Card.Title>
+                    {userData.notifications.filter((_, i) => i < notifications).map(n =>
+                        <div>
+                            <i>{getFormattedDate(new Date(n.sentAt))}</i>
+                            <span> - {n.message}</span>
+                        </div>
+                    )}
+                    <span
+                        onClick={() => setNotifications(5)}
+                        className="text-decoration-underline text-primary cursor-pointer"
+                        hidden={notifications == 5}
+                    >Show Less</span>
+                    <span
+                        hidden={notifications == 5 || notifications >= userData.notifications.length}
+                    >&nbsp;|&nbsp;</span>
+                    <span
+                        onClick={() => setNotifications(notifications + 5)}
+                        className="text-decoration-underline text-primary cursor-pointer"
+                        hidden={notifications >= userData.notifications.length}
+                    >Show More</span>
+                </Card.Body>
+            </Card>}
 
             <Card className="shadow-sm">
                 <Card.Header>Your Schedule</Card.Header>

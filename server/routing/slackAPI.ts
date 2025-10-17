@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { AuthReq } from '../types';
 import { createLinkCode, linkWithCmd } from '../slack/slackLink';
 import { SITE_URL } from '@shared/config';
-import { getSettingsValue } from '../settings';
+import { getSettingsValue } from '../other/settings';
 
 const slackAPIRouter = express.Router();
 

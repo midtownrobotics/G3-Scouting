@@ -61,7 +61,16 @@ function Admin() {
               get="/admin/getEventKey"
               post="/admin/setEventKey"
             >
-              Event Key
+              TBA Event Key
+            </SaveableTextInput>
+          </Col>
+
+          <Col xs={12} md={6} lg={4}>
+            <SaveableTextInput
+              get="/admin/getNexusEventKey"
+              post="/admin/setNexusEventKey"
+            >
+              Nexus Event Key
             </SaveableTextInput>
           </Col>
         </Row>
