@@ -1,5 +1,8 @@
 import crypto from "crypto";
 import UserModel from "../models/users/UserModel";
+import { SlackData } from "@shared/schemas/user";
+import { parse } from "path";
+import { getSettingsValue } from "server/other/settings";
 
 const slackCmdLinkCodes = new Map<string, { userId: number; expiresAt: number; }>();
 
@@ -38,6 +41,32 @@ export async function linkWithCmd(code: string, userSlackId: string) {
     const user = await UserModel.findByPk(userId);
     if (!user) return false;
 
-    user.update({ slackId: userSlackId });
+    const slackData = await getUserSlackData(userSlackId);
+    const displayName = (
+        user.displayName ??
+        slackData?.profile.display_name ??
+        slackData?.profile.first_name ??
+        slackData?.profile.real_name
+    )?.substring(0, 15);
+
+    user.update({ slackId: userSlackId, displayName });
     return true;
+}
+
+export async function getUserSlackData(user: UserModel | undefined): Promise<SlackData | undefined>
+export async function getUserSlackData(id: string | undefined): Promise<SlackData | undefined>
+export async function getUserSlackData(data?: UserModel | string) {
+    const id = typeof data === "string" ? data : data?.slackId
+    if (!id) return;
+    const token = await getSettingsValue("slackToken");
+
+    const slackRes = await fetch(`https://slack.com/api/users.info?user=${id}`, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
+
+    const jsonData = (await slackRes.json()).user
+    const parsed = SlackData.safeParse(jsonData);
+    if (parsed.success) return parsed.data;
 }

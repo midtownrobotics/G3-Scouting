@@ -10,6 +10,7 @@ import { server } from "./routing/router";
 import { scheduleReminders } from "./slack/shiftReminders";
 import { LogColors } from "./utils";
 import { sendNotification } from "./other/notifications";
+import getTokensFromAccuracy from "./game/getTokensFromAccuracy";
 if (PRODUCTION) {
     require('module-alias/register');
 }
@@ -54,15 +55,15 @@ async function testCode() {
     // gray?.update({ tokens: 90 });
     // gray?.update({ tokens: 10000 });
 
-    // const users = await UserModel.findAll();
+    const users = await UserModel.findAll();
 
     // users.forEach(async u => {
     //     const matches = await FormResponseByTeamModel.findAll({ where: { formId: "Quantitative", userId: u.id }});
 
-    //     let tokens = matches.length * 20;
-    //     matches.forEach(m => tokens += getTokensFromAccuracy(m.accuracyScore));
+    //     let xp = matches.length * 20;
+    //     matches.forEach(m => xp += getTokensFromAccuracy(m.accuracyScore));
 
-    //     u.update({tokens});
+    //     u.update({xp});
     // })
 
     // const form = new Form(FormType.TEAM, "Quantitative", "A quantitative scouting form.");

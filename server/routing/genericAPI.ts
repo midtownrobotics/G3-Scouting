@@ -1,5 +1,5 @@
 import { UserScheduleData } from "@shared/schemas/schedule";
-import { UserInformation } from "@shared/schemas/user";
+import { UserInformation, UserProfile } from "@shared/schemas/user";
 import express from 'express';
 import AssignmentModel from "../models/scheduling/AssignmentModel";
 import BlockModel from "../models/scheduling/BlockModel";
@@ -7,6 +7,8 @@ import UserModel from "../models/users/UserModel";
 import { getSettingsValue } from "../other/settings";
 import { AuthReq } from "../types";
 import { getNotifications } from "server/other/notifications";
+import { z } from "zod";
+import { parse } from "papaparse";
 
 const genericAPIRouter = express.Router();
 
@@ -44,7 +46,8 @@ genericAPIRouter.get("/me", async (req: AuthReq, res) => {
             nextMatch: user.nextMatch,
             slackLinked: user.slackLinked,
             displayName: user.displayName,
-            tokens: user.tokens
+            tokens: user.tokens,
+            xp: user.xp
         },
         currentAssignment: await user.getCurrentAssignment(),
         notifications: getNotifications(user.id)
@@ -73,5 +76,12 @@ genericAPIRouter.get("/assignments", async (req, res) => {
 genericAPIRouter.get("/blocks", async (req, res) => {
     res.send(await BlockModel.findAll())
 })
+
+genericAPIRouter.get("/profiles", async (req, res) => {
+    const users = await UserModel.findAll();
+    const parsed = await z.array(UserProfile).safeParseAsync(users);
+    if (parsed.success) { res.send(parsed.data); return; }
+    res.sendStatus(400);
+});
 
 export default genericAPIRouter;

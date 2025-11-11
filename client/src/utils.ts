@@ -21,7 +21,7 @@ export function makeUrlParam(
     useEffect(() => {
         if (val === undefined) return;
         const url = new URL(window.location.href);
-        url.searchParams.set(name, val?.toString() ?? "");
+        url.searchParams.set(name, val.toString() ?? "");
         window.history.pushState({}, "", url.toString());
     }, [val]);
 }

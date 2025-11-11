@@ -27,7 +27,7 @@ userSettingsAPIRouter.post("/setDisplayName", async (req: AuthReq, res) => {
     if (!body.success || !body.data || !req.user) { res.sendStatus(400); return; }
 
     let displayName = body.data.displayName;
-    displayName = displayName.substring(0, 20);
+    displayName = displayName.substring(0, 12);
 
     displayName = replaceProfanities(displayName);
 

@@ -3,7 +3,7 @@ import { InputGroup } from "react-bootstrap";
 import { Floppy, Pencil } from "react-bootstrap-icons";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { fetchAPIJSON, postAPI } from "../../API";
-import { SaveableInputData } from "@shared/schemas/user";
+import { SaveableInputData } from "@shared/schemas/data";
 
 /**
  * A labeled text input that supports editing and saving via API endpoints.

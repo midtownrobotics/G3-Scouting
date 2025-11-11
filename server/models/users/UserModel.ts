@@ -42,6 +42,9 @@ class UserModel extends Model<User, UserCreationAttributes> {
     @Column({ type: DataType.DOUBLE, allowNull: false, defaultValue: 0})
     public tokens!: number;
 
+    @Column({ type: DataType.DOUBLE, allowNull: false, defaultValue: 0})
+    public xp!: number;
+
     @HasMany(() => UserBlockAssignmentModel, { as: "schedule" })
     public schedule!: UserBlockAssignmentModel[];
 
@@ -71,6 +74,7 @@ class UserModel extends Model<User, UserCreationAttributes> {
                     redAlliance: redCount < blueCount,
                     assignedMatches: [],
                     tokens: 0,
+                    xp: 0,
                     displayName: username
                 });
             }

@@ -168,3 +168,8 @@ export const MiscTeamData = z.object({
     team: z.number()
 })
 export type MiscTeamData = z.infer<typeof MiscTeamData>;
+
+export const SaveableInputData = z.object({
+    value: z.string()
+});
+export type SaveableInputData = z.infer<typeof SaveableInputData>;

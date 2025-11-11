@@ -54,6 +54,7 @@ function NavigationBar() {
                             <NavPageLink page="scheduler" onClick={onclick} dropdown />
                             <NavPageLink page="pit-monitor" onClick={onclick} dropdown />
                             <NavPageLink page="battery-manager" onClick={onclick} dropdown />
+                            <NavPageLink page="profiles" onClick={onclick} dropdown />
                         </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>

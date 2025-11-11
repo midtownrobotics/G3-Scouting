@@ -1,10 +1,10 @@
+import { SlackData } from "@shared/schemas/user";
 import { useEffect, useState } from "react";
 import { Alert, Button, Card, Container, Form, Spinner } from "react-bootstrap";
 import { BoxArrowRight, Key, Slack, Trash } from "react-bootstrap-icons";
 import { fetchAPIJSON, postAPI } from "../../API";
-import SlackLink from "./SlackLink";
-import { SlackData } from "@shared/schemas/user";
 import { useUserData } from "../../userData";
+import SlackLink from "./SlackLink";
 
 export default function Settings() {
     const [newPassword, setNewPassword] = useState("");
@@ -15,11 +15,7 @@ export default function Settings() {
     const { apiStatusRefresh, userData } = useUserData();
 
     useEffect(() => {
-        fetchAPIJSON("/slack/getSlackInfo", SlackData).then(res => {
-            if (res) {
-                setSlackData(res);
-            }
-        });
+        fetchAPIJSON("/slack/getSlackInfo", SlackData).then(res => res && setSlackData(res));
     }, []);
 
     const [passwordResetLoading, setPasswordResetLoading] = useState(false);
@@ -90,14 +86,17 @@ export default function Settings() {
                         Slack Account&nbsp;
                         {slackData &&
                             <img
-                                src={slackData?.profile.image_24}
+                                src={slackData?.profile.image_1024 ?? slackData?.profile.image_24}
+                                width={30}
+                                height={30}
                                 alt="new"
+                                style={{ borderRadius: "5px" }}
                             />
                         }
                     </Card.Title>
                     {slackData ? (
                         <div>
-                            <span>Slack account with email "{slackData.profile.email}" linked!</span>
+                            <span>Slack account linked!</span>
                             <br />
                             <span>Slack ID: {slackData.id}</span>
                         </div>

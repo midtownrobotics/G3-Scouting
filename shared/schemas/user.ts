@@ -11,7 +11,8 @@ export const SimpleUser = z.object({
     reliable: z.coerce.boolean(),
     redAlliance: z.boolean(),
     slackLinked: z.boolean(),
-    tokens: z.number()
+    tokens: z.number(),
+    xp: z.number()
 });
 export type SimpleUser = z.infer<typeof SimpleUser>;
 
@@ -19,11 +20,6 @@ export const CreateUser = SimpleUser.and(z.object({
     password: z.string()
 }));
 export type CreateUser = z.infer<typeof CreateUser>;
-
-export const SaveableInputData = z.object({
-    value: z.string()
-});
-export type SaveableInputData = z.infer<typeof SaveableInputData>;
 
 export const NotificationService = z.enum(["game", "userMessaging"]);
 export type NotificationService = z.infer<typeof NotificationService>;
@@ -59,8 +55,20 @@ export const SlackData = z.object({
     id: z.string(),
     profile: z.object({
         real_name: z.string(),
-        image_24: z.string(),
-        email: z.string()
-    })
-});
+        first_name: z.string(),
+        display_name: z.string().optional(),
+        image_1024: z.string().optional(),
+        image_24: z.string().optional(),
+        email: z.string().optional()
+    }).passthrough()
+}).passthrough();
 export type SlackData = z.infer<typeof SlackData>;
+
+export const UserProfile = z.object({
+    id: z.number(),
+    username: z.string(),
+    displayName: z.string().nullish(),
+    tokens: z.number(),
+    xp: z.number()
+});
+export type UserProfile = z.infer<typeof UserProfile>;

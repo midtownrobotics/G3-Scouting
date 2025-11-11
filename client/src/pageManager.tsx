@@ -12,6 +12,7 @@ import Scheduler from "./pages/scheduler/Scheduler";
 import PitMonitor from "./pages/pit-monitor/PitMonitor";
 import BatteryManager from "./pages/pit-monitor/BatteryManager";
 import { GameHome } from "./pages/game/GameHome";
+import { Profiles } from "./pages/profiles/Profiles";
 
 /** Gets the JSX element for a page from its respective {@link PageKey}. */
 export const getPageFromKey = (pageKey: PageKey) => {
@@ -27,6 +28,7 @@ export const getPageFromKey = (pageKey: PageKey) => {
     if (pageKey === "pit-monitor") return <PitMonitor />;
     if (pageKey === "battery-manager") return <BatteryManager />;
     if (pageKey === "game") return <GameHome />;
+    if (pageKey === "profiles") return <Profiles />;
 
     const { setPageKey } = usePage();
     setPageKey("home");
