@@ -4,6 +4,7 @@ import { Button, Form } from "react-bootstrap";
 import { fetchAPIJSON, postAPI } from "../../API";
 import { z } from "zod";
 import { Floppy, Trash } from "react-bootstrap-icons";
+import { MatchData } from "@shared/schemas/data";
 
 export function BookiePage() {
     const [questions, setQuestions] = useState<GamblingQuestion[]>([]);
@@ -11,9 +12,11 @@ export function BookiePage() {
     const [match, setMatch] = useState(1);
     const [newResponse, setNewResponse] = useState("");
     const [saving, setSaving] = useState(false);
+    const [currentMatch, setCurrentMatch] = useState<number>();
 
     useEffect(() => {
         fetchAPIJSON("/game/getQuestions", z.array(GamblingQuestion)).then(q => q && setQuestions(q));
+        fetchAPIJSON("/getCurrentMatch", MatchData).then(m => setCurrentMatch(m?.number));
     }, []);
 
     useEffect(() => {
@@ -24,7 +27,9 @@ export function BookiePage() {
             setQuestion({
                 match,
                 question: "",
-                responses: []
+                responses: [],
+                locked: false,
+                correctResponse: undefined
             });
         }
     }, [match, questions]);
@@ -64,6 +69,20 @@ export function BookiePage() {
             <div className="d-flex flex-column align-items-center w-md-50">
                 <h1>Bookie Page</h1>
                 <br />
+
+                <div className="mb-4 text-center">
+                    <h3>Questions Needing Correct Answers</h3>
+                    <div className="text-center">
+                    {questions.filter(q => !q.correctResponse && q.match <= (currentMatch ?? 0)).map(q => 
+                        <>
+                            <Button className="m-1" onClick={() => setMatch(q.match)}>Match {q.match}</Button>
+                            <Button className="m-1" onClick={() => setMatch(q.match)}>Match {q.match}</Button>
+                            <Button className="m-1" onClick={() => setMatch(q.match)}>Match {q.match}</Button>
+                            <Button className="m-1" onClick={() => setMatch(q.match)}>Match {q.match}</Button>
+                        </>
+                    )}
+                    </div>
+                </div>
 
                 <div className="d-flex gap-1 w-50">
                     <Button variant="dark" onClick={() => setMatch(match - 1)}>-</Button>

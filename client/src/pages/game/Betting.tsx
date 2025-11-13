@@ -1,7 +1,6 @@
 import { GamblingQuestion, ResponseBetData, ServerToClientMessage } from "@shared/schemas/game";
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
-import { Alert, Button, Card, Form, InputGroup, Spinner } from "react-bootstrap";
-import { Floppy, XSquareFill } from "react-bootstrap-icons";
+import { Alert, Button, Card, Form, InputGroup } from "react-bootstrap";
 import { useUserData } from "../../userData";
 import { getWebsocket, sendWsMsg } from "./utils/websocket";
 
@@ -10,16 +9,10 @@ export function Betting() {
     const websocket = useRef<WebSocket>(undefined);
 
     const [responseIndex, setResponseIndex] = useState(0);
-    const [inDbResponseIndex, setInDbResponseIndex] = useState(0);
     const [amount, setAmount] = useState(0);
-    const [inDbAmount, setInDbAmount] = useState(0);
     const [reconnectWsTries, reconnectWs] = useReducer((p) => p + 1, 0);
 
     const [betData, setBetData] = useState<ResponseBetData[]>([]);
-
-    const [responseLoading, setResponseLoading] = useState(false);
-
-    const [betPlaced, setBetPlaced] = useState(false);
 
     const userProvider = useUserData();
     const tokens = userProvider.userData?.user.tokens ?? 0;
@@ -33,19 +26,16 @@ export function Betting() {
                 const json = JSON.parse(e.data.toString());
                 const msg = ServerToClientMessage.parse(json);
 
-                console.log(msg.type)
+                console.log(msg)
 
                 switch (msg.type) {
                     case "betData":
-                        setBetData(msg.payload)
+                        console.log("got here")
+                        setBetData(() => msg.payload)
                         break;
                     case "userResponse":
-                        setResponseLoading(false);
-                        setInDbResponseIndex(() => msg.payload.responseIndex);
                         setResponseIndex(() => msg.payload.responseIndex);
                         setAmount(() => msg.payload.amount);
-                        setInDbAmount(() => msg.payload.amount);
-                        if (msg.payload.amount > 0) setBetPlaced(true);
                         break;
                     case "updateQuestion":
                         setQuestion(() => msg.payload)
@@ -59,7 +49,6 @@ export function Betting() {
 
     function saveResponse() {
         if (question === undefined) return;
-        setResponseLoading(true);
         sendWsMsg(websocket.current, {
             type: "placeBet",
             payload: {
@@ -70,27 +59,31 @@ export function Betting() {
         })
     }
 
-    function cancelBet() {
-        if (question === undefined) return;
-        sendWsMsg(websocket.current, {
-            type: "dropBet",
-            payload: {
-                match: question.match
-            }
-        })
-        setBetPlaced(false);
-    }
+    useEffect(() => {
+        console.log(amount)
+        if (amount == 0 && question?.match) {
+            sendWsMsg(websocket.current, {
+                type: "dropBet",
+                payload: {
+                    match: question.match
+                }
+            })
+        } else {
+            saveResponse();
+        }
+    }, [responseIndex, amount]);
 
     const maxPayout = useMemo(() => {
-        if (!betPlaced || betData[responseIndex] === undefined) return undefined;
+        if (amount == 0) return undefined;
+        if (betData[responseIndex] === undefined) return undefined;
         const pot = betData.reduce((a, b) => a + b.totalBet, 0);
-        return Math.round(pot * (inDbAmount / betData[inDbResponseIndex].totalBet));
-    }, [betPlaced, betData, responseIndex, inDbAmount, inDbResponseIndex]);
+        return Math.round(pot * (amount / betData[responseIndex].totalBet));
+    }, [betData, responseIndex]);
 
     if (question === undefined) return (<></>);
 
     return (
-        <div className="w-100">
+        <div>
             {websocket.current?.readyState !== WebSocket.OPEN && <Alert variant="danger" className="w-50 mx-auto">
                 <span>
                     WebSocket disconnected. Click&nbsp;
@@ -105,6 +98,7 @@ export function Betting() {
                 <Card.Body>
 
                     <h2>Match {question.match}</h2>
+                    <hr />
                     <h4>{question.question}</h4>
 
                     <div className="d-flex flex-column gap-2 w-100 justify-content-center mb-2">
@@ -121,6 +115,8 @@ export function Betting() {
                         )}
                     </div>
 
+                    <hr />
+
                     <div className="d-flex gap-2 w-100 justify-content-center mb-2">
                         <InputGroup style={{ width: "150px" }}>
                             <InputGroup.Text>$</InputGroup.Text>
@@ -134,30 +130,7 @@ export function Betting() {
                         </InputGroup>
                     </div>
 
-                    <Button
-                        variant="light"
-                        onClick={saveResponse}
-                        className="mb-2"
-                        style={{ width: "150px", borderColor: "lightgray" }}
-                        disabled={
-                            responseLoading ||
-                            amount < 1 ||
-                            amount > tokens
-                        }
-                    >
-                        {responseLoading ? <Spinner size="sm" /> : <div>Save <Floppy /></div>}
-                    </Button>
-
                     <br />
-
-                    <Button
-                        variant="light"
-                        onClick={cancelBet}
-                        className="mb-2"
-                        style={{ width: "150px", borderColor: "lightgray" }}
-                    >
-                        <div>Cancel <XSquareFill /></div>
-                    </Button>
 
                     {maxPayout !== undefined && <h5>Maximum payout: ${maxPayout.toLocaleString()}</h5>}
 

@@ -10,10 +10,10 @@ type GameWebsocketData = {
 }
 
 export default class GameWebsocketHandler {
-    private sockets: GameWebsocketData[] = [];
+    private sockets: Map<number, GameWebsocketData> = new Map();
 
     async add(ws: WebSocket, user: UserModel) {
-        this.sockets.push({ ws, user });
+        this.sockets.set(user.id, { ws, user });
 
         const currentMatch = (await getSettingsValue("match")).number;
 
@@ -66,13 +66,14 @@ export default class GameWebsocketHandler {
     }
 
     delete(userId: number) {
-        const i = this.sockets.findIndex(s => s.user.id === userId);
-        this.sockets.splice(i, 1);
+        this.sockets.delete(userId);
     }
 
     broadcast(msg: ServerToClientMessage) {
+        console.log("sending")
         for (const socket of this.sockets) {
-            socket.ws.send(JSON.stringify(msg));
+            console.log("sent to" + socket[1].user.username)
+            socket[1].ws.send(JSON.stringify(msg));
         }
     }
 
@@ -80,7 +81,7 @@ export default class GameWebsocketHandler {
     sendTo(msg: ServerToClientMessage, websocket: WebSocket): void;
     sendTo(msg: ServerToClientMessage, to: number | WebSocket) {
         if (typeof to === "number") {
-            this.sockets.find(s => s.user.id === to)?.ws.send(JSON.stringify(msg));
+            this.sockets.get(to)?.ws.send(JSON.stringify(msg));
         } else {
             to.send(JSON.stringify(msg));
         }

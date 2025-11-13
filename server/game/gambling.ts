@@ -7,8 +7,8 @@ const getCurrentMatch = async () => (await getSettingsValue("match")).number;
 
 const gamblingQuestions: GamblingQuestion[] = [{
     match: 25,
-    question: "What is Walton robotics team 2974?",
-    responses: ["No", "Yes"],
+    question: "How does this test question make you feel?",
+    responses: ["Good", "Bad", "Terrible"],
     locked: false,
     correctResponse: undefined
 }];
@@ -78,6 +78,9 @@ export async function dropBet(match: number, user: UserModel): Promise<boolean> 
     if (success && matchBets.size === 0) {
         bets.delete(currentMatch);
     }
+
+    console.log(success)
+
     if (!success) return false;
 
     await broadcastCurrentMatchBetData();
@@ -90,7 +93,6 @@ export async function updateBet(bet: Bet, user: UserModel): Promise<boolean> {
     if (bet.match !== currentMatch) return false;
     const questionUnlocked = getQuestion(bet.match)?.locked === false;
     if (!questionUnlocked) return false;
-    if (bets.get(bet.match)?.get(user.id)?.amount === bet.amount) return false;
 
     if (bets.has(bet.match)) {
         bets.get(bet.match)?.set(user.id, bet);
@@ -164,6 +166,5 @@ export async function getCurrentBetData() {
 
 async function broadcastCurrentMatchBetData() {
     const data = await getCurrentBetData();
-    console.log(data);
-    if (data) gameWsHandler.broadcast({ type: "betData", payload: data });
+    gameWsHandler.broadcast({ type: "betData", payload: data || [] });
 }
