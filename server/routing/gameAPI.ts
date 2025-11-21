@@ -18,11 +18,11 @@ gameAPIRouter.get("/leaderboard/tokens", async (req, res) => {
 });
 
 /** {@link GamblingQuestion[]} */
-gameAPIRouter.get("/getQuestions", async (req, res) => {
+gameAPIRouter.get("/bookie/getQuestions", async (req, res) => {
     res.send(getQuestions());
 });
 
-gameAPIRouter.post("/setQuestion", async (req, res) => {
+gameAPIRouter.post("/bookie/setQuestion", async (req, res) => {
     const question = GamblingQuestion.safeParse(req.body);
     if (!question.success) { res.send(400); return; }
 

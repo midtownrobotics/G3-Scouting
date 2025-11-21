@@ -19,7 +19,10 @@ function Home() {
             <Card className="mb-4 shadow-sm">
                 <Card.Body>
                     <Card.Title>Welcome back, {userData?.user.displayName ?? userData.user.username}!</Card.Title>
-                    {userData?.currentAssignment && <Card.Text>You're current assignment is: {userData?.currentAssignment?.name}. You will be on this assignment for {getFormattedAssignmentDuration(userData.currentAssignment, userData.user.schedule)}.</Card.Text>}
+                    <Card.Text>
+                        <p className="mb-0">You have <b>{userData.user.tokens}</b> BoyleBucks and <b>{userData.user.xp}</b> XP.</p>
+                        {userData?.currentAssignment && <p className="mt-1">You're current assignment is: {userData?.currentAssignment?.name}. You will be on this assignment for {getFormattedAssignmentDuration(userData.currentAssignment, userData.user.schedule)}.</p>}
+                    </Card.Text>
                 </Card.Body>
             </Card>
 

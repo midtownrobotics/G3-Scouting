@@ -58,5 +58,5 @@ function getColorFromRank(rank: number) {
 
 function formatUsername(name: string, rank: number) {
     if (rank !== 1) return <span>{name}</span>;
-    return <b><DollarSign className="spin" />&nbsp;{name}&nbsp;<DollarSign className="spin" /></b>
+    return <b style={{whiteSpace: "nowrap"}}><DollarSign className="spin" />&nbsp;{name}&nbsp;<DollarSign className="spin" /></b>
 }

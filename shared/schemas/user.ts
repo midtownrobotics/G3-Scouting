@@ -69,6 +69,6 @@ export const UserProfile = z.object({
     username: z.string(),
     displayName: z.string().nullish(),
     tokens: z.number(),
-    xp: z.number()
+    xp: z.number(),
 });
 export type UserProfile = z.infer<typeof UserProfile>;

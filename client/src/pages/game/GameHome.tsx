@@ -1,24 +1,15 @@
-import { useState } from "react";
-import { Button } from "react-bootstrap";
 import { Betting } from "./Betting";
-import { BookiePage } from "./BookiePage";
 import "./Game.css";
 import { Leaderboard } from "./Leaderboard";
 
 export function GameHome() {
-    const [bookiePage, setBookiePage] = useState(false);
-
-    if (bookiePage) return <BookiePage />;
-
     return (
         <div id="game-page" className="text-center">
             <br />
-            <h1>G<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3<sup>3</sup></sup></sup></sup></sup></sup></sup></sup></sup></sup></sup></sup></sup></sup></sup></sup></sup></sup></h1>
-            <br />
-            <Button onClick={() => setBookiePage(true)}>Open Bookie Page</Button>
-            <br />
+            <h1>BoyleBucks Exchange</h1>
             <br />
             <Betting />
+            <p className="mx-5"><small>BoyleBucks are for entertainment only and have no real-world monetary value. Click <a href="?page=info">here</a> for more details.</small></p>
             <br />
             <div className="d-flex justify-content-center">
                 <Leaderboard className="w-75" />

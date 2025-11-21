@@ -37,7 +37,7 @@ function App() {
 
             {mostRecentNotification && <Alert
                 variant="dark"
-                style={{ maxWidth: "85%", marginBottom: "-10px" }}
+                style={{ maxWidth: "85%", marginBottom: "5px" }}
                 className="text-center w-auto mx-auto mt-2 py-2 px-4"
             >{mostRecentNotification.message}</Alert>}
 

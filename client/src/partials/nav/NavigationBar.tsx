@@ -47,7 +47,7 @@ function NavigationBar() {
                         <NavDropdown
                             id="more-dropdown"
                             title={"More"}
-                            style={{ color: morePages.includes(pageKey) ? "black" : "gray" }}
+                            style={{ color: morePages.includes(pageKey) ? "black" : "white" }}
                         >
                             <NavPageLink page="form-maker" onClick={onclick} dropdown />
                             <NavPageLink page="shift-tracker" onClick={onclick} dropdown />
@@ -55,6 +55,7 @@ function NavigationBar() {
                             <NavPageLink page="pit-monitor" onClick={onclick} dropdown />
                             <NavPageLink page="battery-manager" onClick={onclick} dropdown />
                             <NavPageLink page="profiles" onClick={onclick} dropdown />
+                            <NavPageLink page="bookie" onClick={onclick} dropdown />
                         </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>

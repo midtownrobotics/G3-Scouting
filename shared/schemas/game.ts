@@ -13,7 +13,7 @@ export const GamblingQuestion = z.object({
     question: z.string(),
     responses: z.array(z.string()),
     locked: z.boolean(),
-    correctResponse: z.string().optional()
+    correctResponse: z.number().optional()
 })
 export type GamblingQuestion = z.infer<typeof GamblingQuestion>;
 
@@ -32,6 +32,12 @@ export const ResponseBetData = z.object({
     totalBet: z.number()
 })
 export type ResponseBetData = z.infer<typeof ResponseBetData>;
+
+export const LockQuestion = z.object({
+    match: z.number(),
+    locked: z.boolean()
+})
+export type LockQuestion = z.infer<typeof LockQuestion>;
 
 export const ClientToServerMessage = z.object({
     type: z.literal("placeBet"),
@@ -56,7 +62,8 @@ export const ServerToClientMessage = z.object({
     payload: z.object({
         userId: z.number(),
         responseIndex: z.number(),
-        amount: z.number()
+        amount: z.number(),
+        tokens: z.number()
     })
 })).or(z.object({
     type: z.literal("updateQuestion"),

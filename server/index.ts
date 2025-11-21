@@ -46,9 +46,9 @@ syncDatabase().then(() => {
 
 async function testCode() {
 
-    sendNotification("You won 8423 BoyleBucks in match 54!", "game", new Date("10/16/2025 9:00 PM"), 1, 1);
-    sendNotification("Lunch is in the table!", "userMessaging", new Date("10/17/2025 9:00 PM"), 99);
-    sendNotification("ALERT ALERT ALERT", "game", new Date("10/16/2025 9:00 PM"), 99);
+    // sendNotification("You won 8423 BoyleBucks in match 54!", "game", new Date("10/16/2025 9:00 PM"), 1, 1);
+    // sendNotification("Lunch is in the table!", "userMessaging", new Date("10/17/2025 9:00 PM"), 99);
+    // sendNotification("ALERT ALERT ALERT", "game", new Date("10/16/2025 9:00 PM"), 99);
 
     // const gray = await UserModel.findOne({ where: {username: "gjackson"} });
 

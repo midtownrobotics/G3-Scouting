@@ -13,6 +13,8 @@ import PitMonitor from "./pages/pit-monitor/PitMonitor";
 import BatteryManager from "./pages/pit-monitor/BatteryManager";
 import { GameHome } from "./pages/game/GameHome";
 import { Profiles } from "./pages/profiles/Profiles";
+import { BookiePage } from "./pages/game/BookiePage";
+import Info from "./pages/Info";
 
 /** Gets the JSX element for a page from its respective {@link PageKey}. */
 export const getPageFromKey = (pageKey: PageKey) => {
@@ -29,6 +31,8 @@ export const getPageFromKey = (pageKey: PageKey) => {
     if (pageKey === "battery-manager") return <BatteryManager />;
     if (pageKey === "game") return <GameHome />;
     if (pageKey === "profiles") return <Profiles />;
+    if (pageKey === "bookie") return <BookiePage />;
+    if (pageKey === "info") return <Info />;
 
     const { setPageKey } = usePage();
     setPageKey("home");

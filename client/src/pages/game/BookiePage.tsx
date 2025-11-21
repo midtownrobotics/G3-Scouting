@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { fetchAPIJSON, postAPI } from "../../API";
 import { z } from "zod";
-import { Floppy, Trash } from "react-bootstrap-icons";
+import { Check2Circle, Circle, Floppy, Lock, Plus, Trash, Unlock } from "react-bootstrap-icons";
 import { MatchData } from "@shared/schemas/data";
 
 export function BookiePage() {
@@ -15,8 +15,11 @@ export function BookiePage() {
     const [currentMatch, setCurrentMatch] = useState<number>();
 
     useEffect(() => {
-        fetchAPIJSON("/game/getQuestions", z.array(GamblingQuestion)).then(q => q && setQuestions(q));
-        fetchAPIJSON("/getCurrentMatch", MatchData).then(m => setCurrentMatch(m?.number));
+        fetchAPIJSON("/game/bookie/getQuestions", z.array(GamblingQuestion)).then(q => q && setQuestions(q));
+        fetchAPIJSON("/getCurrentMatch", MatchData).then(m => {
+            m && setMatch(m?.number);
+            setCurrentMatch(m?.number);
+        });
     }, []);
 
     useEffect(() => {
@@ -57,11 +60,26 @@ export function BookiePage() {
         });
     };
 
+    const setCorrectResponse = (index: number) => {
+        if (!question) return;
+        if (!question.locked) return alert("Question needs to be locked before an answer can be set."); 
+        if (!confirm("Once a correct answer is saved, it cannot be changed.")) return;
+        setQuestion({
+            ...question,
+            correctResponse: index,
+        });
+    };
+
     const saveQuestion = () => {
         setSaving(true);
-        postAPI("/game/setQuestion", question).then(() => {
+        postAPI("/game/bookie/setQuestion", question).then(() => {
             setTimeout(() => setSaving(false), 2000);
         });
+    }
+
+    const toggleLock = () => {
+        if (!question) return;
+        setQuestion({ ...question, locked: !question.locked });
     }
 
     return (
@@ -73,14 +91,9 @@ export function BookiePage() {
                 <div className="mb-4 text-center">
                     <h3>Questions Needing Correct Answers</h3>
                     <div className="text-center">
-                    {questions.filter(q => !q.correctResponse && q.match <= (currentMatch ?? 0)).map(q => 
-                        <>
-                            <Button className="m-1" onClick={() => setMatch(q.match)}>Match {q.match}</Button>
-                            <Button className="m-1" onClick={() => setMatch(q.match)}>Match {q.match}</Button>
-                            <Button className="m-1" onClick={() => setMatch(q.match)}>Match {q.match}</Button>
-                            <Button className="m-1" onClick={() => setMatch(q.match)}>Match {q.match}</Button>
-                        </>
-                    )}
+                        {questions.filter(q => q.correctResponse === undefined && q.match <= (currentMatch ?? 0)).map(q =>
+                            <Button variant="link" className="m-1 p-0" onClick={() => setMatch(q.match)}>Match {q.match}</Button>
+                        )}
                     </div>
                 </div>
 
@@ -99,13 +112,26 @@ export function BookiePage() {
 
                 <div className="w-100">
                     <h6>Question</h6>
-                    <Form.Control
-                        type="text"
-                        value={question?.question}
-                        onChange={(e) => updateQuestionText(e.target.value)}
-                        placeholder="Question"
-                        className="mb-3"
-                    />
+                    <div className="mb-3">
+                        <Form.Control
+                            type="text"
+                            value={question?.question}
+                            onChange={(e) => updateQuestionText(e.target.value)}
+                            placeholder="Question"
+                            className="mb-1"
+                        />
+                        <Button
+                            disabled={saving}
+                            onClick={toggleLock}
+                            variant="light"
+                            className="w-100"
+                        >
+                            {question?.locked
+                                ? <>Unlock <Unlock /></>
+                                : <>Lock <Lock /></>
+                            }
+                        </Button>
+                    </div>
 
                     <h6>Responses</h6>
                     {question?.responses.map((r, i) => (
@@ -115,7 +141,10 @@ export function BookiePage() {
                                 value={r}
                                 disabled
                             />
-                            <Button variant="danger" onClick={() => deleteResponse(i)}>
+                            <Button variant="secondary" onClick={() => setCorrectResponse(i)} className="d-flex align-items-center">
+                                {question.correctResponse == i ? <Check2Circle /> : <Circle />}
+                            </Button>
+                            <Button variant="danger" onClick={() => deleteResponse(i)} className="d-flex align-items-center">
                                 <Trash />
                             </Button>
                         </div>
@@ -129,10 +158,12 @@ export function BookiePage() {
                             onKeyDown={(e) => { if (e.key === "Enter") saveNewResponse(); }}
                             placeholder="New Response"
                         />
-                        <Button onClick={saveNewResponse}>
-                            <Floppy />
+                        <Button variant="success" onClick={saveNewResponse} className="d-flex align-items-center">
+                            <Plus />
                         </Button>
                     </div>
+
+                    <br />
 
                     <Button
                         disabled={saving}

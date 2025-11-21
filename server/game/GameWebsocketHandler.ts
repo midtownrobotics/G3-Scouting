@@ -34,7 +34,8 @@ export default class GameWebsocketHandler {
             payload: {
                 userId: user.id,
                 responseIndex: bets.get(currentMatch)?.get(user.id)?.responseIndex ?? 0,
-                amount: bets.get(currentMatch)?.get(user.id)?.amount ?? 0
+                amount: bets.get(currentMatch)?.get(user.id)?.amount ?? 0,
+                tokens: user.tokens
             }
         }, ws);
 
@@ -70,9 +71,7 @@ export default class GameWebsocketHandler {
     }
 
     broadcast(msg: ServerToClientMessage) {
-        console.log("sending")
         for (const socket of this.sockets) {
-            console.log("sent to" + socket[1].user.username)
             socket[1].ws.send(JSON.stringify(msg));
         }
     }

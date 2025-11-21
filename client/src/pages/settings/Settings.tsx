@@ -33,7 +33,7 @@ export default function Settings() {
     const [sessionClearLoading, setSessionClearLoading] = useState(false);
     const clearSessions = () => {
         setSessionClearLoading(true);
-        postAPI("/userSettings/sessionClear", {});
+        postAPI("/userSettings/sessionClear", {}).then(() => apiStatusRefresh());
     };
 
     const [displayName, setDisplayName] = useState(userData?.user.displayName);
