@@ -1,19 +1,14 @@
 import { FormResponseData } from "@shared/schemas/data";
 import { TbaMatchData } from "server/externalApis/tba/types";
-import getTokensFromAccuracy from "server/game/getTokensFromAccuracy";
-import UserModel from "server/models/users/UserModel";
 import { numberParser } from "server/utils";
 import { getValueByPath } from "../../externalApis/tba/getValueByPath";
 import FormResponseByTeamModel from "../../models/forms/FormResponseModels";
-import { keepTryingQuery } from "../../models/modelUtils";
-import AccuracyScoreModel from "../../models/validation/AccuracyScoreModel";
-import ScoutAccuracyScoreModel from "../../models/validation/ScoutAccuracyScoreModel";
 
 export default async function scoreAllianceData(
     matchTbaData: TbaMatchData,
     alliance: "red" | "blue",
     formData: FormResponseData
-): Promise<number | false> {
+) {
     const match = matchTbaData.match_number;
 
     // const currentModel = await keepTryingQuery(() => AccuracyScoreModel.findOne({ where: { match, alliance } }));
@@ -29,12 +24,11 @@ export default async function scoreAllianceData(
         alliances[alliance].includes(r.team)
     );
     const teams = new Set(matchData.map(r => r.team));
-    const users = new Set(matchData.map(r => r.userId));
+    const users = matchData.filter(r => r.userId !== undefined).map(r => ({ id: r.userId!, response: r }));
+    const userScores = new Map(users.map(u => [u.id, 0]));
 
-    if (teams.size !== 3) return false;
+    if (teams.size !== 3) return 1;
 
-    let totalAccuracy = 0;
-    let scoredQuestions = 0;
     for (const question of formData.questions) {
         if (!("validation" in question) || question.validation === null) continue;
 
@@ -43,60 +37,71 @@ export default async function scoreAllianceData(
             : undefined;
         if (realValue === undefined) continue;
 
-        let totalValue = 0;
+        const userTeams: { team: number, users: { id: number, response: typeof matchData[0] }[] }[] = [];
+
         for (const team of teams) {
-            const teamData = matchData.filter(r => r.team === team);
-            let teamValue = 0;
-            for (const response of teamData) {
-                const value = response.responses.find(r => r.question === question.id)?.response;
-                teamValue += numberParser(value) ?? 0;
-            }
-            if (teamData.length > 0) {
-                totalValue += teamValue / teamData.length;
-            }
+            const teamData = matchData.filter(r => r.team === team && r.userId);
+            userTeams.push({ team, users: teamData.map(r => ({ id: r.userId!, response: r })) });
         }
 
-        const error = Math.abs(totalValue - realValue) / realValue;
-        const toAdd = 1 - error;
+        for (const user of users) {
+            const otherTeams = userTeams.filter(t => t.team !== user.response.team);
+            let combinationError = 0;
+            let calcCount = 0;
+            for (let i = 0; i < otherTeams[0].users.length; i++) {
+                for (let j = 0; j < otherTeams[1].users.length; j++) {
+                    const allUserData = [user, otherTeams[0].users[i], otherTeams[1].users[j]];
+                    const theoreticalValue = allUserData.reduce((pv, cv) => {
+                        const response = cv.response.responses.find(r => r.question === question.id)
+                        const value = numberParser(response?.response);
+                        return value ? pv + value : pv;
+                    }, 0);
 
-        if (!isNaN(toAdd) && isFinite(toAdd)) {
-            totalAccuracy += toAdd;
-            scoredQuestions++;
+                    const threshold = 3;
+                    const error = Math.abs(theoreticalValue - realValue) / Math.max(Math.abs(realValue), threshold);
+
+                    combinationError += error;
+                    calcCount++;
+                }
+            }
+            const averageCombinationError = calcCount > 0 ? Math.round(combinationError / calcCount * 100) : 0;
+            userScores.set(user.id, userScores.get(user.id)! + averageCombinationError);
         }
     }
-    
-    const score = scoredQuestions > 0 ? Math.round(totalAccuracy / scoredQuestions * 10000) / 100 : 0;
 
-    // console.log(match, score);
+    console.log(userScores.values())
 
-    const [model, created] = await keepTryingQuery(() => AccuracyScoreModel.findOrCreate({
-        where: { match, alliance },
-        defaults: { score }
-    }));
+    // Store score in various needed tables
 
-    if (!created) {
-        model.score = score;
-        await keepTryingQuery(() => model.save());
-    }
+    // const [model, created] = await keepTryingQuery(() => AccuracyScoreModel.findOrCreate({
+    //     where: { match, alliance },
+    //     defaults: { score }
+    // }));
 
-    for (const userId of users) {
-        if (userId === undefined) continue;
+    // if (!created) {
+    //     model.score = score;
+    //     await keepTryingQuery(() => model.save());
+    // }
 
-        const user = await UserModel.findByPk(userId);
-        if (user) user.update({tokens: (user.tokens + getTokensFromAccuracy(score))});
+    // for (const userId of users) {
+    //     if (userId === undefined) continue;
 
-        await keepTryingQuery(() => ScoutAccuracyScoreModel.findOrCreate({
-            where: {
-                userId: userId,
-                accuracyScoreId: model.id
-            }
-        }));
-    };
+    //     const user = await UserModel.findByPk(userId);
+    //     if (user) user.update({ tokens: (user.tokens + getTokensFromAccuracy(score)) });
+
+    //     await keepTryingQuery(() => ScoutAccuracyScoreModel.findOrCreate({
+    //         where: {
+    //             userId: userId,
+    //             accuracyScoreId: model.id
+    //         }
+    //     }));
+    // };
 
     for (const response of matchData) {
+        if (!response.userId) continue;
+        const score = userScores.get(response.userId);
+        if (score === undefined) continue
         const responseModel = await FormResponseByTeamModel.findByPk(response.id);
         responseModel?.update({ accuracyScore: score });
     };
-
-    return score;
 }

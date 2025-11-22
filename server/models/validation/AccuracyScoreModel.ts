@@ -1,3 +1,4 @@
+
 import { Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
 import ScoutAccuracyScoreModel from "./ScoutAccuracyScoreModel";
 
