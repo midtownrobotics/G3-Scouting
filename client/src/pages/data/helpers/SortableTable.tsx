@@ -23,8 +23,8 @@ export function SortableTable<T>({
     const visibleColumns = columns.filter(col => typeof col !== "boolean");
 
     const formatCellData = (data: string, key: string): JSX.Element => {
-        if (key === "_team") return <a href={getTeamSummaryUrl(parseInt(data))} target="_blank">{data}</a>;
-        if (key === "_match") return <a href={getMatchUrl(parseInt(data))} target="_blank">{data}</a>;
+        if (key === "_team") return <a href={getTeamSummaryUrl(parseInt(data))} >{data}</a>;
+        if (key === "_match") return <a href={getMatchUrl(parseInt(data))} >{data}</a>;
         return <span>{data}</span>;
     };
 

@@ -97,7 +97,7 @@ export default function TeamSummary({ accuracy }: { accuracy: number }) {
                                 return Object.entries(counts)
                                     .sort(([a], [b]) => Number(a) - Number(b))
                                     .map(([match, times]) => (
-                                        <a key={match} href={getMatchUrl(parseInt(match), accuracy)} target="_blank">
+                                        <a key={match} href={getMatchUrl(parseInt(match), accuracy)}>
                                             {match}
                                             {times > 1 && <sup>{times}</sup>}
                                         </a>

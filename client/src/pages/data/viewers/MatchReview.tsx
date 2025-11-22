@@ -75,8 +75,8 @@ export default function MatchReview({ accuracy }: { accuracy: number }) {
                     <Card.Text>
                         <h1>Match {matchData.number} {review ? "Review" : "Preview"}</h1>
                         {matchData?.time && <h4>Played at {matchData.time.toLocaleTimeString()} on {matchData.time.toLocaleDateString()}</h4>}
-                        <h3 className="text-primary">{matchData.blue.map(t => <a className="plain-link" target="_blank" href={getTeamSummaryUrl(t, accuracy)}>{t}<sup>{review && (counts[t] ?? 0)}</sup>  </a>)}</h3>
-                        <h3 className="text-danger">{matchData.red.map(t => <a className="plain-link" target="_blank" href={getTeamSummaryUrl(t, accuracy)}>{t}<sup>{review && (counts[t] ?? 0)}</sup>  </a>)}</h3>
+                        <h3 className="text-primary">{matchData.blue.map(t => <a className="plain-link"  href={getTeamSummaryUrl(t, accuracy)}>{t}<sup>{review && (counts[t] ?? 0)}</sup>  </a>)}</h3>
+                        <h3 className="text-danger">{matchData.red.map(t => <a className="plain-link"  href={getTeamSummaryUrl(t, accuracy)}>{t}<sup>{review && (counts[t] ?? 0)}</sup>  </a>)}</h3>
                         {review && <><small>Superscript = responses per team</small><br /></>}
                     </Card.Text>
                 </Card.Body>
@@ -94,14 +94,14 @@ export default function MatchReview({ accuracy }: { accuracy: number }) {
                                     <th>Question</th>
                                     {matchData.red.filter(t => counts[t] > 0).map(t =>
                                         <th className="text-danger">
-                                            <a className="plain-link" target="_blank" href={getTeamSummaryUrl(t, accuracy)}>{t}</a>
+                                            <a className="plain-link"  href={getTeamSummaryUrl(t, accuracy)}>{t}</a>
                                         </th>
                                     )}
                                     <th className="text-danger">Red</th>
                                     <th className="text-primary">Blue</th>
                                     {matchData.blue.filter(t => counts[t] > 0).map(t =>
                                         <th className="text-primary">
-                                            <a className="plain-link" target="_blank" href={getTeamSummaryUrl(t, accuracy)}>{t}</a>
+                                            <a className="plain-link"  href={getTeamSummaryUrl(t, accuracy)}>{t}</a>
                                         </th>
                                     )}
                                 </tr>
@@ -138,7 +138,7 @@ export default function MatchReview({ accuracy }: { accuracy: number }) {
                                     <th>Question</th>
                                     {matchData.teams.filter(t => counts[t] > 0).map(t =>
                                         <th className={matchData.red.includes(t) ? "text-danger" : "text-primary"}>
-                                            <a className="plain-link" target="_blank" href={getTeamSummaryUrl(t, accuracy)}>
+                                            <a className="plain-link"  href={getTeamSummaryUrl(t, accuracy)}>
                                                 {t}
                                             </a>
                                         </th>
@@ -194,7 +194,7 @@ export default function MatchReview({ accuracy }: { accuracy: number }) {
                                         {responses.map(r => <>
                                             {r.r.response.trim() !== "" && <tr>
                                                 <td className={matchData.red.includes(r.t) ? "text-danger" : "text-primary"}>
-                                                    <a className="plain-link" target="_blank" href={getTeamSummaryUrl(r.t, accuracy)}>
+                                                    <a className="plain-link"  href={getTeamSummaryUrl(r.t, accuracy)}>
                                                         {r.t}
                                                     </a>
                                                 </td>
