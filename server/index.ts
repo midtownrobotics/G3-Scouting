@@ -15,6 +15,7 @@ import scoreAllianceData from "./data/reliability/scoreResponse";
 import { getMatchData } from "./externalApis/tba/tba";
 import Form from "@shared/forms/Form";
 import FormModel from "./models/forms/FormModel";
+import { scoreUnscoredMatches } from "./data/reliability/scoreUnscoredMatches";
 if (PRODUCTION) {
     require('module-alias/register');
 }
@@ -50,9 +51,10 @@ syncDatabase().then(() => {
 
 async function testCode() {
 
-    const form = (await FormModel.getForm("Quantitative", true))?.getResponseData();
-    const match = await getMatchData(1);
-    if (form && match) await scoreAllianceData(match, "blue", form);
+    // const form = (await FormModel.getForm("Quantitative", true));
+    // console.time("Scoring");
+    // if (form) await scoreUnscoredMatches(form);
+    // console.timeEnd("Scoring");
 
     // sendNotification("You won 8423 BoyleBucks in match 54!", "game", new Date("10/16/2025 9:00 PM"), 1, 1);
     // sendNotification("Lunch is in the table!", "userMessaging", new Date("10/17/2025 9:00 PM"), 99);

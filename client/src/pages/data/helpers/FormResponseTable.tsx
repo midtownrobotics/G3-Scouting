@@ -29,7 +29,7 @@ export default function FormResponseTable({ formResponseData }: { formResponseDa
             { label: "Team", key: "_team" },
             isMatchRelated(formResponseData) ? { label: "Match", key: "_match" } : false,
             { label: "Scout", key: "_scout" },
-            isMatchRelated(formResponseData) ? { label: "Accuracy", key: "_score" } : false,
+            isMatchRelated(formResponseData) ? { label: "%Error", key: "_score" } : false,
             ...formResponseData.questions.map(q => ({ label: q.name, key: q.id })),
             { label: "Submitted At", key: "_submittedAt" },
         ];

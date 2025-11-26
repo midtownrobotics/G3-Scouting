@@ -8,4 +8,4 @@ const getAccuracy = () => parseInt(new URLSearchParams(window.location.search).g
 
 export const isMatchRelated = (q: QuestionMetadata | FormResponseData) => q.formType !== FormType.NO_MATCH && q.formType !== FormType.SINGLE_TEAM_RESPONSE;
 
-export const defaultAccuracy = 0;
+export const defaultAccuracy = 1000;

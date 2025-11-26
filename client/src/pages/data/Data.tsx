@@ -7,6 +7,7 @@ import { makeUrlParam } from "../../utils";
 import TeamSummary from "./viewers/TeamSummary";
 import MatchReview from "./viewers/MatchReview";
 import { defaultAccuracy } from "./helpers/utils";
+import BooleanSearch from "./viewers/BooleanSearch";
 
 const VIEW_OPTIONS: { title: string; description: string; component: (a: number) => JSX.Element; }[] = [
     {
@@ -34,6 +35,11 @@ const VIEW_OPTIONS: { title: string; description: string; component: (a: number)
         description: "View all individual form submissions exactly as they were entered.",
         component: (a) => <FormRows accuracy={a} />
     },
+    {
+        title: "Boolean Search",
+        description: "It's like searching but more complicated.",
+        component: (a) => <BooleanSearch accuracy={a} />
+    },
 ];
 
 export default function Data() {
@@ -42,7 +48,6 @@ export default function Data() {
 
     const setAccuracy = (to: number) => {
         let val = to;
-        if (to > 100) val = 100;
         if (to < 0) val = 0;
         if (!isFinite(to)) val = 0;
         _setAccuracy(val);
@@ -85,9 +90,9 @@ export default function Data() {
                     <Card className="ms-3 bg-primary-subtle" style={{ width: "210px" }}>
                         <Card.Body>
                             <div className="d-flex align-items-center m-auto">
-                                <Form.Label className="ms-3 me-1 mb-1">Min accuracy:</Form.Label>
+                                <Form.Label className="ms-3 me-1 mb-1">Max error:</Form.Label>
                                 <input
-                                    style={{ width: "35px", height: "25px" }}
+                                    style={{ width: "45px", height: "25px" }}
                                     className="text-center"
                                     value={accuracy ?? defaultAccuracy}
                                     onChange={e => setAccuracy(parseInt(e.target.value))}

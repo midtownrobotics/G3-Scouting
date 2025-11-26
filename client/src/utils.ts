@@ -19,7 +19,7 @@ export function makeUrlParam(
     val: string | number | undefined,
 ) {
     useEffect(() => {
-        if (val === undefined) return;
+        if (val === undefined || val === "") return;
         const url = new URL(window.location.href);
         url.searchParams.set(name, val.toString() ?? "");
         window.history.pushState({}, "", url.toString());

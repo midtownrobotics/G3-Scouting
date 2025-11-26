@@ -57,8 +57,8 @@ export default async function scoreAllianceData(
                         return value ? pv + value : pv;
                     }, 0);
 
-                    const threshold = 3;
-                    const error = Math.abs(theoreticalValue - realValue) / Math.max(Math.abs(realValue), threshold);
+                    const rawError = Math.abs(theoreticalValue - realValue) / Math.max(Math.abs(realValue), 3);
+                    const error = Math.min(rawError, 1); // max 100% error
 
                     combinationError += error;
                     calcCount++;
@@ -68,34 +68,6 @@ export default async function scoreAllianceData(
             userScores.set(user.id, userScores.get(user.id)! + averageCombinationError);
         }
     }
-
-    console.log(userScores.values())
-
-    // Store score in various needed tables
-
-    // const [model, created] = await keepTryingQuery(() => AccuracyScoreModel.findOrCreate({
-    //     where: { match, alliance },
-    //     defaults: { score }
-    // }));
-
-    // if (!created) {
-    //     model.score = score;
-    //     await keepTryingQuery(() => model.save());
-    // }
-
-    // for (const userId of users) {
-    //     if (userId === undefined) continue;
-
-    //     const user = await UserModel.findByPk(userId);
-    //     if (user) user.update({ tokens: (user.tokens + getTokensFromAccuracy(score)) });
-
-    //     await keepTryingQuery(() => ScoutAccuracyScoreModel.findOrCreate({
-    //         where: {
-    //             userId: userId,
-    //             accuracyScoreId: model.id
-    //         }
-    //     }));
-    // };
 
     for (const response of matchData) {
         if (!response.userId) continue;
