@@ -71,7 +71,7 @@ export default class Form {
 
         return form;
     }
-    
+
     /**
      * **Removes all currently added components** and new ones.
      * @param components The array of components to add.
@@ -91,10 +91,10 @@ export default class Form {
      * @param maxError The maximum error for responses to be included in the data result.
      * @returns `null` if there are no responses. Be sure to pass `true` into FormModel.getForm(s).
      */
-    public getResponseData(maxError?: number): FormResponseData | null {
+    public getResponseData(maxError?: number, fromMatch?: number): FormResponseData | null {
         if (!this.responses) return null;
         if (this.type === FormType.NO_MATCH || this.type === FormType.SINGLE_TEAM_RESPONSE) maxError = undefined;
-        
+
         const questions = this.components.filter(c => c.metadata !== null).map(q => q.metadata!);
 
         return {
@@ -104,7 +104,13 @@ export default class Form {
             responses: (
                 maxError === undefined
                     ? this.responses
-                    : this.responses.filter(r => (r.accuracyScore || 0) <= maxError)
+                    : this.responses.filter(r =>
+                        (
+                            (r.accuracyScore || 0) <= maxError
+                        ) && (
+                            (r.match && fromMatch !== undefined) ? r.match >= fromMatch : true
+                        )
+                    )
             )
         };
     }

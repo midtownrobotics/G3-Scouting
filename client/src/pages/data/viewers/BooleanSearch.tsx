@@ -2,7 +2,7 @@ import { MultiTeamQuestionData } from "@shared/schemas/data";
 import { useState, useEffect, useRef } from "react";
 import { z } from "zod";
 import { fetchAPIJSON } from "../../../API";
-import { Button, FormControl, Container, Row, Col, Alert } from "react-bootstrap";
+import { Button, FormControl, Container, Row, Col } from "react-bootstrap";
 import { makeUrlParam } from "../../../utils";
 
 type SearchCondition = {
@@ -20,7 +20,7 @@ type SearchGroup = {
     logic: 'AND' | 'OR';
 };
 
-export default function BooleanSearch({ accuracy }: { accuracy: number }) {
+export default function BooleanSearch({ accuracy, fromMatch }: { accuracy: number, fromMatch: number }) {
     const [data, setData] = useState<MultiTeamQuestionData[]>();
     const [query, setQuery] = useState("");
     const [results, setResults] = useState<number[]>([]);
@@ -39,12 +39,12 @@ export default function BooleanSearch({ accuracy }: { accuracy: number }) {
     makeUrlParam("query", query);
 
     useEffect(() => {
-        fetchAPIJSON(`/data/getAllQuestionData/${accuracy}`, z.object({
+        fetchAPIJSON(`/data/getAllQuestionData/${accuracy}/${fromMatch}`, z.object({
             data: z.array(MultiTeamQuestionData)
         })).then(res => {
             if (res) setData(res.data);
         });
-    }, [accuracy]);
+    }, [accuracy, fromMatch]);
 
     const parseQuery = (queryString: string): SearchGroup[] | null => {
         try {
@@ -294,7 +294,7 @@ export default function BooleanSearch({ accuracy }: { accuracy: number }) {
                         onChange={(e) => executeSearch(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && executeSearch()}
                         placeholder="Enter search query..."
-                        style={{ width: "50%" }}
+                        className="w-md-50"
                     />
                     {/* <Button
                         onClick={executeSearch}
@@ -316,7 +316,7 @@ export default function BooleanSearch({ accuracy }: { accuracy: number }) {
             </div>
 
             <Row>
-                <Col lg={7}>
+                <Col lg={7} className="mb-3">
                     <h3 className="mb-3">
                         Results: {results.length} team{results.length !== 1 ? 's' : ''} ({Math.round(results.length / numberOfTeams * 100) || 0}%)
                     </h3>

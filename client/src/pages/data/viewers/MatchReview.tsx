@@ -8,7 +8,7 @@ import FormResponseTable from "../helpers/FormResponseTable";
 import MatchNumberInput from "../helpers/MatchNumberInput";
 import { getTeamSummaryUrl, isMatchRelated } from "../helpers/utils";
 
-export default function MatchReview({ accuracy }: { accuracy: number }) {
+export default function MatchReview({ accuracy, fromMatch }: { accuracy: number, fromMatch: number }) {
     const [data, setData] = useState<MultiTeamQuestionData[]>([]);
     const [matchData, setMatchData] = useState<ExtendedMatchData>();
     const [match, setMatch] = useState<number>();
@@ -19,10 +19,10 @@ export default function MatchReview({ accuracy }: { accuracy: number }) {
     const quantitative = data.filter(q => q.metadata.classification === "quantitative" && isMatchRelated(q.metadata));
 
     useEffect(() => {
-        fetchAPIJSON(`/data/getAllQuestionData/${accuracy}`, z.object({
+        fetchAPIJSON(`/data/getAllQuestionData/${accuracy}/${fromMatch}`, z.object({
             data: z.array(MultiTeamQuestionData)
         })).then(res => { if (res) setData(res.data); });
-    }, [accuracy]);
+    }, [accuracy, fromMatch]);
 
     useEffect(() => {
         fetchAPIJSON(`/data/getMatchData/${match}`, ExtendedMatchData).then(res => {
@@ -32,12 +32,12 @@ export default function MatchReview({ accuracy }: { accuracy: number }) {
 
     useEffect(() => {
         if (match === undefined) return;
-        fetchAPIJSON(`/data/getMatchRows/${match}/${accuracy}`, z.object({
+        fetchAPIJSON(`/data/getMatchRows/${match}/${accuracy}/${fromMatch}`, z.object({
             data: z.array(FormResponseData)
         })).then(res => {
             if (res) setRows(res.data);
         });
-    }, [match, accuracy]);
+    }, [match, accuracy, fromMatch]);
 
     if (!matchData) return (
         <div className="m-3">

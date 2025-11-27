@@ -9,7 +9,7 @@ import TeamNumberInput from "../helpers/TeamNumberInput";
 import FormResponseTable from "../helpers/FormResponseTable";
 import { getMatchUrl, isMatchRelated } from "../helpers/utils";
 
-export default function TeamSummary({ accuracy }: { accuracy: number }) {
+export default function TeamSummary({ accuracy, fromMatch }: { accuracy: number, fromMatch: number }) {
     const [data, setData] = useState<MultiTeamQuestionData[]>([]);
     const [fullData, setFullData] = useState<MultiTeamQuestionData[]>([]);
     const [team, setTeam] = useState<number>();
@@ -18,12 +18,12 @@ export default function TeamSummary({ accuracy }: { accuracy: number }) {
 
     useEffect(() => {
         if (team === undefined) return;
-        fetchAPIJSON(`/data/getTeamRows/${team}/${accuracy}`, z.object({
+        fetchAPIJSON(`/data/getTeamRows/${team}/${accuracy}/${fromMatch}`, z.object({
             data: z.array(FormResponseData)
         })).then(res => {
             if (res) setRows(res.data);
         });
-    }, [team, accuracy]);
+    }, [team, accuracy, fromMatch]);
 
     useEffect(() => {
         if (team === undefined) return;
@@ -31,10 +31,10 @@ export default function TeamSummary({ accuracy }: { accuracy: number }) {
     }, [team]);
 
     useEffect(() => {
-        fetchAPIJSON(`/data/getAllQuestionData/${accuracy}`, z.object({
+        fetchAPIJSON(`/data/getAllQuestionData/${accuracy}/${fromMatch}`, z.object({
             data: z.array(MultiTeamQuestionData)
         })).then(res => { if (res) setData(res.data); });
-    }, [accuracy]);
+    }, [accuracy, fromMatch]);
 
     useEffect(() => {
         fetchAPIJSON(`/data/getAllQuestionData`, z.object({

@@ -6,7 +6,7 @@ import Footer from "./partials/Footer";
 import NavigationBar from "./partials/nav/NavigationBar";
 import OfflineBar from "./partials/offline-bar/OfflineBar";
 import { useUserData } from "./userData";
-import { Alert } from "react-bootstrap";
+import { Alert, Button } from "react-bootstrap";
 
 function App() {
     const { pageKey, pageInstance } = usePage();

@@ -2,7 +2,7 @@ export default function Footer() {
     return (
         <footer className="bg-light text-center mt-auto border-top">
             <h5>Made by Gray Jackson-Noell</h5>
-            <h6 className="mb-2"><a href="/docs" target="_blank">Docs</a> | <a href="/?page=info">BoyleBucks Disclaimer</a> | <a href="https://github.com/midtownrobotics/G3-Scouting/" target="_blank">GitHub</a></h6>
+            <h6 className="mb-2"><a href="/docs" target="_blank">Docs</a> | <a href="/?page=info">Information</a> | <a href="https://github.com/midtownrobotics/G3-Scouting/" target="_blank">GitHub</a></h6>
             <h6 className="mb-1">Parts of this site are powered by:</h6>
 
             <div className="d-flex justify-content-center row-gap-1 column-gap-4 flex-wrap mb-0">

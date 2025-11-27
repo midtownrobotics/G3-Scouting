@@ -1,0 +1,11 @@
+#data-page {
+    .w-md-50 {
+        width: 100%;
+    }
+
+    @media (min-width: 768px) {
+        .w-md-50 {
+            width: 50%;
+        }
+    }
+}
