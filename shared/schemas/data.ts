@@ -1,4 +1,4 @@
-import { FormType as FormTypeEnum } from "@shared/forms/Form";
+import { FormType as FormTypeEnum } from "../forms/Form";
 import { z } from "zod";
 
 export const FormType = z.nativeEnum(FormTypeEnum);

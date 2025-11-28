@@ -23,6 +23,8 @@ export default function NewComponent({ addComponent }: { addComponent: (componen
             switch (component) {
                 case "MultipleChoice":
                     return setComponentClass(new formComponents[component]("", "", []));
+                case "Range":
+                    return setComponentClass(new formComponents[component]("", "", 0, 0, 0));
                 default:
                     return setComponentClass(new formComponents[component]("", ""));
             }

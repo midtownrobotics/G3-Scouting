@@ -1,10 +1,12 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { SortableTable } from "./SortableTable";
 import { useSortableTable } from "./useSortableTable";
 import { FormResponseData } from "@shared/schemas/data";
 import { isMatchRelated } from "./utils";
 
 export default function FormResponseTable({ formResponseData }: { formResponseData: FormResponseData; }) {
+
+    useEffect(() => console.log(formResponseData), [])
 
     const rows = useMemo(() => {
         if (!formResponseData) return [];

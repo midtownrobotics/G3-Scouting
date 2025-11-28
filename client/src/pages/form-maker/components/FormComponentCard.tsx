@@ -17,19 +17,8 @@ function FormComponentCard({
         return <CardTemplate deleteFn={deleteFn} component={component} prop={"text"} color="warning" />;
     }
 
-    if (component instanceof formComponents.MultipleChoice) {
-        return <CardTemplate deleteFn={deleteFn} component={component} prop={"name"} />;
-    }
-
-    if (component instanceof formComponents.Number) {
-        return <CardTemplate deleteFn={deleteFn} component={component} prop={"name"} />;
-    }
-
-    if (component instanceof formComponents.ShortResponse) {
-        return <CardTemplate deleteFn={deleteFn} component={component} prop={"name"} />;
-    }
-
-    return <div>Unknown component type</div>;
+    return <CardTemplate deleteFn={deleteFn} component={component} prop={"name"} />;
+    // return <div>Unknown component type</div>;
 }
 
 type Color = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'dark' | 'light' | 'white';

@@ -50,7 +50,7 @@ export function SortableTable<T>({
                         <tr key={rowKey(row)}>
                             {visibleColumns.map(col => (
                                 <td key={col.key} style={{ verticalAlign: "middle", whiteSpace: "nowrap" }}>
-                                    {formatCellData(((row as any)[col.key] ?? 0), col.key)}
+                                    {formatCellData(((row as any)[col.key] ?? ""), col.key)}
                                 </td>
                             ))}
                         </tr>

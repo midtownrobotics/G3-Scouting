@@ -23,7 +23,7 @@ export abstract class FormComponent {
     public abstract toJSON(): SerializedComponent;
 
     public static fromJSON(json: SerializedComponent, formId: string, formType: FormType): FormComponent {
-        const instance = new formComponents[json.type](...(json.creationArgs as [any, any, any]));
+        const instance = new formComponents[json.type](...(json.creationArgs as [any, any, any, any, any, any]));
         instance.setMetadata(json.id, formId, formType);
         return instance;
     }
@@ -177,12 +177,90 @@ export class Number extends FormComponent {
     }
 }
 
+export class BooleanInput extends FormComponent {
+    public metadata: QuestionMetadata | null = null;
+
+    /**
+     * Constructs a true/false boolean question.
+     * @param question The question itself.
+     * @param name The form unique name of the question.
+     */
+    constructor(public question: string, public name: string) {
+        super();
+    }
+
+    public _setMetadata(id: string, formId: string, formType: FormType): void {
+        this.metadata = {
+            type: "string",
+            classification: "quantitative",
+            id,
+            formId,
+            formType,
+            namespaceId: `${formId}-${id}`,
+            name: this.name
+        };
+    }
+
+    public toJSON(): SerializedComponent {
+        if (!this.metadata) throw new Error("Cannot serialize component without adding it to a form.");
+        return {
+            type: "BooleanInput",
+            creationArgs: [this.question, this.metadata.name],
+            id: this.id
+        };
+    }
+}
+
+export class Range extends FormComponent {
+    public metadata: QuestionMetadata | null = null;
+
+    /**
+     * Constructs a number based range question.
+     * @param question The question itself. Ex: `"How old are you?"`
+     * @param name The form unique name of the question. Ex: `"Age"`
+     */
+    constructor(
+        public question: string, 
+        public name: string, 
+        public min: number, 
+        public max: number,
+        public step: number,
+        public validation?: QuestionValidationData
+    ) {
+        super();
+    }
+
+    public _setMetadata(id: string, formId: string, formType: FormType): void {
+        this.metadata = {
+            type: "number",
+            classification: "quantitative",
+            name: this.name,
+            id,
+            formId,
+            formType,
+            namespaceId: `${formId}-${id}`,
+            validation: this.validation
+        };
+    }
+
+    public toJSON(): SerializedComponent {
+        if (!this.metadata) throw new Error("Cannot serialize component without adding it to a form.");
+        return {
+            type: "Range",
+            creationArgs: [this.question, this.metadata.name, this.min, this.max, this.step, this.validation],
+            id: this.id
+        };
+    }
+}
+
 const formComponents = {
     SectionBreak,
     Number,
     ShortResponse,
     MultipleChoice,
-    Information
+    Information,
+    BooleanInput,
+    Range
 } as const;
 
 export default formComponents;
