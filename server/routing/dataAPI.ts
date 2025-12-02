@@ -9,6 +9,7 @@ import getQuestionDataForTeam from '../data/getData/getQuestionDataForTeam';
 import { getMatchRows, getTeamRows } from '../data/getData/getSpecificRows';
 import FormModel from '../models/forms/FormModel';
 import { numberParser } from "../utils";
+import { z } from "zod";
 
 const dataApiRouter = express.Router();
 
@@ -100,6 +101,11 @@ dataApiRouter.get("/getMatchData/:match", async (req, res) => {
     const data = await getMatchData(parseInt(req.params.match));
     if (!data) { res.sendStatus(400); return; }
     res.send({ ...data });
+});
+
+dataApiRouter.post("/ranking/parallel/setPersonal", async (req, res) => {
+    const body = z.array(z.number().nullish()).safeParse(req.body);
+    if (body.success) console.log(body.data);
 });
 
 export default dataApiRouter;

@@ -19,7 +19,7 @@ async function fetchNexus(url: string) {
 export async function getEventStatus() {
     const event = await getSettingsValue("nexusEventKey");
     const fetched = await fetchNexus(`/event/${event}`);
-    console.log(fetched)
+    // console.log(fetched)
     if (!fetched) return undefined;
     const data = NexusEventStatus.safeParse(await fetched.json());
     if (data.success) return data.data;

@@ -17,11 +17,13 @@ export default function BooleanInput({
     }, [value]);
 
     return (
-        <div className="w-100 d-flex justify-content-center mt-3">
+        <div
+            className="w-100 d-flex justify-content-center mt-3"
+            onClick={() => onChange(component.getId(), String(value == "false"))}
+        >
             <Form.Check
                 label={component.question}
                 checked={value == "true"}
-                onChange={(e) => onChange(component.getId(), (e.target.value == "on").toString())}
             />
         </div>
     );

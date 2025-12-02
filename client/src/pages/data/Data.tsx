@@ -9,8 +9,10 @@ import MatchReview from "./viewers/MatchReview";
 import { defaultAccuracy } from "./helpers/utils";
 import BooleanSearch from "./viewers/BooleanSearch";
 import './Data.css';
+import TeamResponseInfo from "./viewers/TeamResponseInfo";
+import ParallelRanking from "./viewers/ParallelRanking";
 
-const VIEW_OPTIONS: { title: string; description: string; component: (a: number, m: number) => JSX.Element; }[] = [
+const VIEW_OPTIONS: { hideOptions?: boolean; title: string; description: string; component: (a: number, m: number) => JSX.Element; }[] = [
     {
         title: "Team Summary View",
         description: "Get a summary of a team's performance and compare with others.",
@@ -38,8 +40,19 @@ const VIEW_OPTIONS: { title: string; description: string; component: (a: number,
     },
     {
         title: "Boolean Search",
-        description: "It's like searching but more complicated.",
+        description: "Create a custom search query to look for teams that meet your needs.",
         component: (a, m) => <BooleanSearch accuracy={a} fromMatch={m} />
+    },
+    {
+        title: "Team Response Numbers",
+        description: "See how many responses each team has per form.",
+        component: (a, m) => <TeamResponseInfo accuracy={a} fromMatch={m} />
+    },
+    {
+        title: "Parallel Ranking",
+        description: "View consensus team rankings or add your own.",
+        component: () => <ParallelRanking />,
+        hideOptions: true
     },
 ];
 
@@ -93,7 +106,7 @@ export default function Data() {
             ) : (
                 <div>
                     <div className="d-flex">
-                        <Card className="ms-3 bg-primary-subtle" style={{ width: "200px" }}>
+                        <Card className="ms-3 bg-primary-subtle" style={{ width: "200px" }} hidden={VIEW_OPTIONS[viewer].hideOptions}>
                             <Card.Body className="mx-auto w-0">
                                 <div className="d-flex align-items-center">
                                     <Form.Label className="me-1 mb-1">Max error:</Form.Label>
@@ -107,7 +120,7 @@ export default function Data() {
                                 </div>
                             </Card.Body>
                         </Card>
-                        <Card className="ms-3 bg-primary-subtle" style={{ width: "200px" }}>
+                        <Card className="ms-3 bg-primary-subtle" style={{ width: "200px" }} hidden={VIEW_OPTIONS[viewer].hideOptions}>
                             <Card.Body className="mx-auto">
                                 <div className="d-flex align-items-center">
                                     <Form.Label className="me-1 mb-1">From match:</Form.Label>

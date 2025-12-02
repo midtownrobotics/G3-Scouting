@@ -51,7 +51,7 @@ export default function TeamSummary({ accuracy, fromMatch }: { accuracy: number,
     return (
         <div className="p-3">
             <h1>Team Data Summary</h1>
-            <TeamNumberInput onChange={setTeam} />
+            <TeamNumberInput onChange={setTeam} queryKey="team" />
             <Card className="mb-3">
                 <Card.Body>
                     <Card.Title>

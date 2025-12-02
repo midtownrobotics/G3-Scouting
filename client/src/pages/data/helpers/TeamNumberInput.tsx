@@ -9,23 +9,26 @@ type TeamNumberInputProps = {
     queryKey?: string;
 };
 
-export default function TeamNumberInput({ onChange, queryKey = "team" }: TeamNumberInputProps) {
+export default function TeamNumberInput({ onChange, queryKey }: TeamNumberInputProps) {
     const [teams, setTeams] = useState<TeamData[]>([]);
     const [val, setVal] = useState<string>("");
-    const [suggestions, setSuggestions] = useState<{data: TeamData, suggestion: string}[]>([]);
+    const [suggestions, setSuggestions] = useState<{ data: TeamData, suggestion: string }[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
 
     const saveToUrl = (v: number) => {
+        if (!queryKey) return;
         const url = new URL(window.location.href);
         url.searchParams.set(queryKey, v.toString());
         window.history.pushState({}, "", url.toString());
     }
 
     useEffect(() => {
-        const team = new URLSearchParams(window.location.search).get(queryKey);
-        if (team && !Number.isNaN(parseInt(team))) {
-            onChange(parseInt(team));
-            setVal(team);
+        if (queryKey) {
+            const team = new URLSearchParams(window.location.search).get(queryKey);
+            if (team && !Number.isNaN(parseInt(team))) {
+                onChange(parseInt(team));
+                setVal(team);
+            }
         }
 
         fetchAPIJSON("/data/getAllTeams", z.array(TeamData)).then(res => {
@@ -55,7 +58,7 @@ export default function TeamNumberInput({ onChange, queryKey = "team" }: TeamNum
         } else {
             team = teams.find(t => t.name.toLowerCase() === v.toLowerCase());
         }
-        
+
         if (team) {
             onChange(team.number);
             saveToUrl(team.number);

@@ -4,7 +4,7 @@ import Settings from "./pages/settings/Settings";
 import Admin from "./pages/admin/Admin";
 import Data from "./pages/data/Data";
 import Forms from "./pages/forms/Forms";
-import Lead from "./pages/Lead";
+import Lead from "./pages/lead/Lead";
 import { PageKey } from "@shared/types";
 import FormMaker from "./pages/form-maker/FormMaker";
 import ShiftTracker from "./pages/ShiftTracker";
