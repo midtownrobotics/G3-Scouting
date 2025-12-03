@@ -12,7 +12,6 @@ import userSettingsAPIRouter from './userSettingsAPI';
 import dataApiRouter from './dataAPI';
 import leadAPIrouter from './leadAPI';
 import pitAPIRouter from './pitAPI';
-import docsRouter from './docsRouter';
 import gameAPIRouter from './gameAPI';
 import { WebSocketServer, WebSocket } from 'ws';
 import SessionModel from 'server/models/users/SessionModel';
@@ -25,8 +24,6 @@ export const server = http.createServer(app);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
-
-app.use(docsRouter);
 
 if (PRODUCTION) app.use(express.static(path.join(__dirname + "../../../../../client/dist")));
 
