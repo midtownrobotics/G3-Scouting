@@ -1,5 +1,5 @@
 import { TokenLeaderboardEntry } from "@shared/schemas/game";
-import { useEffect, useState } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 import { fetchAPIJSON } from "../../API";
 import { z } from "zod";
 import { Button, Table } from "react-bootstrap";
@@ -28,7 +28,7 @@ export function Leaderboard(props: React.HTMLAttributes<HTMLDivElement>) {
                     </thead>
                     <tbody>
                         {leaderboardData.map((r, i) => {
-                            const bg = { backgroundColor: getColorFromRank(i + 1) };
+                            const bg: CSSProperties = { backgroundColor: getColorFromRank(i + 1), borderColor: getColorFromRank(i + 1) };
                             return (
                                 <tr key={r.userId} hidden={i >= 7 && !expanded} className={i == 0 ? "strobe-tr" : ""}>
                                     <td style={bg} className={i == 0 ? "strobe" : ""}>#{i + 1}</td>
@@ -49,9 +49,8 @@ export function Leaderboard(props: React.HTMLAttributes<HTMLDivElement>) {
 
 function getColorFromRank(rank: number) {
     switch (rank) {
-        case 1: return "#FFD700"; // bright gold
-        case 2: return "#C0C0C0"; // silver
-        case 3: return "#CD7F32"; // bronze
+        case 2: return "#9b2c3d"; // silver
+        case 3: return "#7f7f7f"; // bronze
         default: return "#F8F9FA"; // light neutral for others
     }
 }

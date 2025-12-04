@@ -10,7 +10,7 @@ import { defaultAccuracy } from "./helpers/utils";
 import BooleanSearch from "./viewers/BooleanSearch";
 import './Data.css';
 import TeamResponseInfo from "./viewers/TeamResponseInfo";
-import ParallelRanking from "./viewers/ParallelRanking";
+import PickList from "./viewers/PickList";
 
 const VIEW_OPTIONS: { hideOptions?: boolean; title: string; description: string; component: (a: number, m: number) => JSX.Element; }[] = [
     {
@@ -49,9 +49,9 @@ const VIEW_OPTIONS: { hideOptions?: boolean; title: string; description: string;
         component: (a, m) => <TeamResponseInfo accuracy={a} fromMatch={m} />
     },
     {
-        title: "Parallel Ranking",
-        description: "View consensus team rankings or add your own.",
-        component: () => <ParallelRanking />,
+        title: "Pick List",
+        description: "Order teams by pick-ability and write notes.",
+        component: () => <PickList />,
         hideOptions: true
     },
 ];

@@ -48,16 +48,21 @@ export const PORT: number = 8080;
 export const PRODUCTION: boolean = true;
 
 /** URL that the server is hosted on. Used for slack redirecting. Omit last `/` */
-export const SITE_URL: string = "https://example.grayjn.com";
+export const SITE_URL: string = "https://g3.grayjn.com";
+
+// Below are only needed for development but still required in file
 
 /** Port to host the vite server on. */
-export const DEV_VITE_PORT: number = 0; // Only needed for development
+export const DEV_VITE_PORT: number = 8081;
 
 /** The api url for development. Sets up vite proxy. */
 export const DEV_API_URL = "http://localhost:8080/api";
 
+/** The websocket url for development. Sets up vite proxy. */
+export const DEV_WS_URL = "ws://localhost:8080";
+
 /** The allowed hosts for vite. */
-export const DEV_VITE_HOSTS = ["example.grayjn.com"];
+export const DEV_VITE_HOSTS = ["g3.grayjn.com"];
 ```
 4. Compile the React Vite project and Express server
 ```bash

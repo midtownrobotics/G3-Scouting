@@ -5,7 +5,7 @@ import { postAPI } from "../../../API";
 import EditableCell from "../EditableCell";
 import { Permission } from "@shared/permissions";
 
-const defaultUser: Partial<CreateUser> = { id: -1, redAlliance: true, permission: Permission.DATA, slackLinked: false };
+const defaultUser: Partial<CreateUser> = { id: -1, redAlliance: true, permission: Permission.DATA, slackLinked: false, tokens: 0, xp: 0 };
 
 function NewUser({ reload }: { reload: () => void; }) {
     const [user, setUser] = useState<Partial<CreateUser>>(defaultUser);
