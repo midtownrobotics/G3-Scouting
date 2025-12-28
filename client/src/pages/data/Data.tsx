@@ -50,7 +50,7 @@ const VIEW_OPTIONS: { hideOptions?: boolean; title: string; description: string;
     },
     {
         title: "Pick List",
-        description: "Order teams by pick-ability and write notes.",
+        description: "Order teams by pick-ability (or un-pick-ability) and write notes.",
         component: () => <PickList />,
         hideOptions: true
     },
