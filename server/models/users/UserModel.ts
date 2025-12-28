@@ -64,20 +64,18 @@ class UserModel extends Model<User, UserCreationAttributes> {
             UserModel.count({ where: { redAlliance: false } }),
         ]);
 
-        bcrypt.hash(password, 12, async function (err, hash) {
-            if (!err) {
-                await UserModel.create({
-                    username,
-                    permission,
-                    reliable,
-                    password: hash,
-                    redAlliance: redCount < blueCount,
-                    assignedMatches: [],
-                    tokens: 0,
-                    xp: 0,
-                    displayName: username
-                });
-            }
+        const hash = await bcrypt.hash(password, 12);
+
+        await UserModel.create({
+            username,
+            permission,
+            reliable,
+            password: hash,
+            redAlliance: redCount < blueCount,
+            assignedMatches: [],
+            tokens: 0,
+            xp: 0,
+            displayName: username
         });
     }
 

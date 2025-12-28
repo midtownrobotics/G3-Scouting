@@ -1,4 +1,5 @@
-import { PieChart, RadarChart } from "@mui/x-charts";
+import { PieChart } from "@mui/x-charts";
+import { RadarChart } from "@mui/x-charts/RadarChart";
 import { FormResponseData, MiscTeamData, MultiTeamQuestionData } from "@shared/schemas/data";
 import { useEffect, useState } from "react";
 import { Card, Table } from "react-bootstrap";
@@ -15,6 +16,19 @@ export default function TeamSummary({ accuracy, fromMatch }: { accuracy: number,
     const [team, setTeam] = useState<number>();
     const [rows, setRows] = useState<FormResponseData[]>([]);
     const [stats, setStats] = useState<MiscTeamData>();
+    const [hiddenSeries, setHiddenSeries] = useState<Set<string>>(new Set());
+
+    const toggleSeries = (seriesLabel: string) => {
+        setHiddenSeries(prev => {
+            const next = new Set(prev);
+            if (next.has(seriesLabel)) {
+                next.delete(seriesLabel);
+            } else {
+                next.add(seriesLabel);
+            }
+            return next;
+        });
+    };
 
     useEffect(() => {
         if (team === undefined) return;
@@ -48,6 +62,48 @@ export default function TeamSummary({ accuracy, fromMatch }: { accuracy: number,
 
     const fillRadarChart = true;
 
+    // Define all series
+    const allRadarSeries = [
+        {
+            data: numerical.map(q =>
+                numberParser(
+                    q.teamData.find(t => t.team === team)?.questionData.average
+                ) ?? 0
+            ),
+            label: team?.toString() ?? "Team",
+            fillArea: fillRadarChart,
+            color: "red"
+        },
+        // {
+        //     data: numerical.map(q => q.stats.percentile25 ?? 0),
+        //     label: "25th",
+        //     fillArea: fillRadarChart,
+        //     color: "green"
+        // },
+        {
+            data: numerical.map(q => q.stats.percentile50 ?? 0),
+            label: "50th",
+            fillArea: fillRadarChart,
+            color: "blue"
+        },
+        {
+            data: numerical.map(q => q.stats.percentile75 ?? 0),
+            label: "75th",
+            fillArea: fillRadarChart,
+            color: "green"
+        },
+        {
+            data: numerical.map(q => q.stats.maxAverage?.average ?? 0),
+            valueFormatter: (v: number, c: any) => (`${Math.round(v * 1000) / 1000} - Team ${numerical[c.dataIndex].stats.maxAverage?.team || 0}`),
+            label: "Best",
+            fillArea: fillRadarChart,
+            color: "purple"
+        }
+    ];
+
+    // Filter visible series
+    const visibleRadarSeries = allRadarSeries.filter(s => !hiddenSeries.has(s.label));
+
     return (
         <div className="p-3">
             <h1>Team Data Summary</h1>
@@ -56,12 +112,12 @@ export default function TeamSummary({ accuracy, fromMatch }: { accuracy: number,
                 <Card.Body>
                     <Card.Title>
                         <div className="d-flex gap-2">
-                            {stats?.avatarBase64 && <img src={`data:image/png;base64,${stats.avatarBase64}`} width={40} height={40} style={{background: "gray"}} />}
+                            {stats?.avatarBase64 && <img src={`data:image/png;base64,${stats.avatarBase64}`} width={40} height={40} style={{ background: "gray" }} />}
                             <h2>{stats?.nickname}</h2>
                         </div>
                         <h4>Team #{team}</h4>
                         <br />
-                        <Table style={{width: "25%"}}>
+                        <Table style={{ width: "25%" }}>
                             <tbody>
                                 <tr>
                                     <th>EPA</th>
@@ -119,51 +175,58 @@ export default function TeamSummary({ accuracy, fromMatch }: { accuracy: number,
                         <h5>Average per match</h5>
                     </Card.Title>
                     <Card.Text>
-                        {(numerical && numerical.length > 0) && <RadarChart
-                            style={{ maxWidth: "500px", minHeight: "250px" }}
-                            // height={400}
-                            series={[
-                                {
-                                    data: numerical.map(q =>
-                                        numberParser(
-                                            q.teamData.find(t => t.team === team)?.questionData.average
-                                        ) ?? 0
-                                    ),
-                                    label: team?.toString(),
-                                    fillArea: fillRadarChart,
-                                    color: "red"
-                                },
-                                // {
-                                //     data: numerical.map(q => q.stats.percentile25 ?? 0),
-                                //     label: "25th",
-                                //     fillArea: fillRadarChart,
-                                //     color: "#050ceb"
-                                // },
-                                {
-                                    data: numerical.map(q => q.stats.percentile50 ?? 0),
-                                    label: "50th",
-                                    fillArea: fillRadarChart,
-                                    color: "#326da8"
-                                },
-                                {
-                                    data: numerical.map(q => q.stats.percentile75 ?? 0),
-                                    label: "75th",
-                                    fillArea: fillRadarChart,
-                                    color: "#3299a8",
-                                },
-                                // Shows best team
-                                // {
-                                //     data: numerical.map(q => q.stats.maxAverage?.average ?? 0),
-                                //     valueFormatter: (v, c) => (`${Math.round(v * 1000) / 1000} - Team ${numerical[c.dataIndex].stats.maxAverage?.team || 0}`),
-                                //     label: "Best",
-                                //     fillArea: fillRadarChart,
-                                //     color: "#a8a632ff"
-                                // }
-                            ]}
-                            radar={{
-                                metrics: numerical.map(q => q.metadata.name)
-                            }}
-                        />}
+                        {/* Custom Legend */}
+                        {(numerical && numerical.length > 0) && (
+                            <div style={{
+                                display: 'flex',
+                                gap: '1rem',
+                                marginBottom: '1rem',
+                                justifyContent: 'center',
+                                flexWrap: 'wrap'
+                            }}>
+                                {allRadarSeries.map(s => (
+                                    <div
+                                        key={s.label}
+                                        onClick={() => toggleSeries(s.label)}
+                                        style={{
+                                            cursor: 'pointer',
+                                            opacity: hiddenSeries.has(s.label) ? 0.4 : 1,
+                                            textDecoration: hiddenSeries.has(s.label) ? 'line-through' : 'none',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.25rem',
+                                            padding: '0.25rem 0.5rem',
+                                            borderRadius: '4px',
+                                            transition: 'opacity 0.2s, background-color 0.2s',
+                                            backgroundColor: 'transparent'
+                                        }}
+                                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f0f0f0'}
+                                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                    >
+                                        <span style={{
+                                            color: s.color,
+                                            fontSize: '1.2rem',
+                                            lineHeight: 1
+                                        }}>■</span>
+                                        <span>{s.label}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        <div className="d-flex">
+                            {(numerical && numerical.length > 0) && <RadarChart
+                                height={400}
+                                series={visibleRadarSeries}
+                                radar={{
+                                    metrics: numerical.map(q => q.metadata.name)
+                                }}
+                                slotProps={{
+                                    legend: { className: "d-none" }
+                                }}
+                            />}
+                        </div>
+
                     </Card.Text>
                 </Card.Body>
             </Card>

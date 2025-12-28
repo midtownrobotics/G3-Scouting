@@ -45,11 +45,11 @@ function NavigationBar() {
                         onClick={() => setExpanded(!expanded)}
                     />
 
-                    <h6
+                    {/* <h6
                         title="Copy link to current page."
                         onClick={copyClick}
                         className="cursor-pointer mt-3 ms-1"
-                    >{copied ? <CopyCheck /> : <CopyIcon />}</h6>
+                    >{copied ? <CopyCheck /> : <CopyIcon />}</h6> */}
 
                     <Navbar.Collapse id="main-navbar">
                         <Nav className="ms-auto">

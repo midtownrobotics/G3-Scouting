@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "react-markdown": "^10.1.0",
-    "vite-plugin-markdown": "^2.2.0",
-    "vite-plugin-md": "^0.21.5"
-  }
-}

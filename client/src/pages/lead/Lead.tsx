@@ -10,7 +10,7 @@ export default function Lead() {
     const [matchInput, setMatchInput] = useState(-1);
     const [assignments, setAssignments] = useState<CurrentAssignment[]>();
     const [spin, setSpin] = useState(false);
-    const [currentAssignmentsOpen, setCurrentAssignmentsOpen] = useState(false);
+    const [currentAssignmentsOpen, setCurrentAssignmentsOpen] = useState(true);
 
     const [msg, setMsg] = useState("");
     const [msgExpires, setMsgExpires] = useState("");

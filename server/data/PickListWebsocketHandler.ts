@@ -1,43 +1,20 @@
-import { ClientToServerMessage, ServerToClientMessage } from "@shared/schemas/game";
+import { ClientToServerMessage, PickListItem, ServerToClientMessage } from "@shared/schemas/data";
 import UserModel from "server/models/users/UserModel";
-import { getSettingsValue } from "server/other/settings";
 import { WebSocket } from "ws";
-import { bets, dropBet, getCurrentBetData, getCurrentQuestion, updateBet } from "./gambling";
 
-type GameWebsocketData = {
+type PickListWebsocketData = {
     ws: WebSocket,
     user: UserModel
 }
 
-export default class GameWebsocketHandler {
-    private sockets: Map<number, GameWebsocketData> = new Map();
+// [(PickList), (NoPickList)]
+let lists: [PickListItem[], PickListItem[]] = [[],[]];
+
+export default class PickListWebsocketHandler {
+    private sockets: Map<number, PickListWebsocketData> = new Map();
 
     async add(ws: WebSocket, user: UserModel) {
         this.sockets.set(user.id, { ws, user });
-
-        const currentMatch = (await getSettingsValue("match")).number;
-
-        const currentBetData = await getCurrentBetData();
-        if (currentBetData) this.sendTo({
-            type: "betData",
-            payload: currentBetData
-        }, ws);
-
-        const currentQuestion = await getCurrentQuestion();
-        if (currentQuestion) this.sendTo({
-            type: "updateQuestion",
-            payload: currentQuestion
-        }, ws);
-
-        this.sendTo({
-            type: "userResponse",
-            payload: {
-                userId: user.id,
-                responseIndex: bets.get(currentMatch)?.get(user.id)?.responseIndex ?? 0,
-                amount: bets.get(currentMatch)?.get(user.id)?.amount ?? 0,
-                tokens: user.tokens
-            }
-        }, ws);
 
         const interval = setInterval(() => {
             if (ws.readyState === WebSocket.OPEN) {
@@ -47,25 +24,46 @@ export default class GameWebsocketHandler {
             }
         }, 30000);
 
+        this.sendTo({
+            type: "getPickList",
+            payload: {
+                list: lists[0],
+                id: 0
+            }
+        }, ws);
+
+        this.sendTo({
+            type: "getPickList",
+            payload: {
+                list: lists[1],
+                id: 1
+            }
+        }, ws);
+
         ws.on("message", async (data) => {
             try {
                 const json = JSON.parse(data.toString());
                 const msg = ClientToServerMessage.parse(json);
 
                 switch (msg.type) {
-                    case "placeBet":
-                        updateBet(msg.payload, user);
-                        break;
-                    case "dropBet":
-                        dropBet(msg.payload.match, user);
+                    case "setPickList":
+
+                        lists[msg.payload.id] = msg.payload.list;
+
+                        this.broadcast({
+                            type: "getPickList",
+                            payload: {
+                                list: lists[msg.payload.id],
+                                id: msg.payload.id
+                            }
+                        })
+
                         break;
                 }
             } catch (err) {
                 ws.send(JSON.stringify({ type: "ERROR", message: err instanceof Error ? err.message : "Invalid" }));
             }
         });
-
-        ws.on("close", () => this.delete(user.id));
     }
 
     delete(userId: number) {

@@ -29,5 +29,5 @@
     }
   },
   "include": ["src", "../shared/"],
-  "exclude": ["../server/**/*"]
+  "exclude": ["../server/**/*"],
 }

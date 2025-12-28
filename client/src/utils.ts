@@ -2,6 +2,16 @@ import { useEffect, useState } from "react";
 import { DateString } from "@shared/types";
 import { Assignment, UserBlockAssignment } from "@shared/schemas/schedule";
 
+export function getWebsocket(handler: string) {
+    try {
+        const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+        const ws = new WebSocket(`${protocol}//${window.location.host}/ws?handler=${handler}`);
+        return ws;  
+    } catch (err) {
+        return undefined;
+    }
+}
+
 export function logState(val?: unknown) {
     useEffect(() => {
         console.log(val);

@@ -103,7 +103,7 @@ dataApiRouter.get("/getMatchData/:match", async (req, res) => {
     res.send({ ...data });
 });
 
-dataApiRouter.post("/ranking/parallel/setPersonal", async (req, res) => {
+dataApiRouter.post("/ranking/setPickList", async (req, res) => {
     const body = z.array(z.number().nullish()).safeParse(req.body);
     if (body.success) console.log(body.data);
 });

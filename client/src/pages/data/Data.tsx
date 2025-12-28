@@ -105,35 +105,39 @@ export default function Data() {
                 </>
             ) : (
                 <div>
-                    <div className="d-flex">
-                        <Card className="ms-3 bg-primary-subtle" style={{ width: "200px" }} hidden={VIEW_OPTIONS[viewer].hideOptions}>
-                            <Card.Body className="mx-auto w-0">
-                                <div className="d-flex align-items-center">
-                                    <Form.Label className="me-1 mb-1">Max error:</Form.Label>
-                                    <input
-                                        style={{ width: "45px", height: "25px" }}
-                                        className="text-center"
-                                        value={accuracy ?? defaultAccuracy}
-                                        onChange={e => setAccuracy(parseInt(e.target.value))}
-                                    />
-                                    <Form.Label className="ms-1 me-0 mb-0">%</Form.Label>
-                                </div>
-                            </Card.Body>
-                        </Card>
-                        <Card className="ms-3 bg-primary-subtle" style={{ width: "200px" }} hidden={VIEW_OPTIONS[viewer].hideOptions}>
-                            <Card.Body className="mx-auto">
-                                <div className="d-flex align-items-center">
-                                    <Form.Label className="me-1 mb-1">From match:</Form.Label>
-                                    <input
-                                        style={{ width: "45px", height: "25px" }}
-                                        className="text-center"
-                                        value={fromMatch || 0}
-                                        onChange={e => setFromMatch(parseInt(e.target.value))}
-                                    />
-                                </div>
-                            </Card.Body>
-                        </Card>
-                    </div>
+                    <Row className="w-md-50">
+                        <Col>
+                            <Card className="ms-3 bg-primary-subtle" hidden={VIEW_OPTIONS[viewer].hideOptions}>
+                                <Card.Body className="mx-auto w-0">
+                                    <div className="d-flex align-items-center">
+                                        <Form.Label className="me-1 mb-1">Max error:</Form.Label>
+                                        <input
+                                            style={{ width: "45px", height: "25px" }}
+                                            className="text-center"
+                                            value={accuracy ?? defaultAccuracy}
+                                            onChange={e => setAccuracy(parseInt(e.target.value))}
+                                        />
+                                        <Form.Label className="ms-1 me-0 mb-0">%</Form.Label>
+                                    </div>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                        <Col>
+                            <Card className="ms-3 bg-primary-subtle" hidden={VIEW_OPTIONS[viewer].hideOptions}>
+                                <Card.Body className="mx-auto">
+                                    <div className="d-flex align-items-center">
+                                        <Form.Label className="me-1 mb-1">From match:</Form.Label>
+                                        <input
+                                            style={{ width: "45px", height: "25px" }}
+                                            className="text-center"
+                                            value={fromMatch || 0}
+                                            onChange={e => setFromMatch(parseInt(e.target.value))}
+                                        />
+                                    </div>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
                     {VIEW_OPTIONS[viewer].component(accuracy ?? defaultAccuracy, fromMatch || 0)}
                 </div>
             )}

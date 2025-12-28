@@ -1,7 +1,8 @@
 import { GamblingQuestion, ResponseBetData, ServerToClientMessage } from "@shared/schemas/game";
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { Alert, Button, Card, Form, InputGroup, Spinner } from "react-bootstrap";
-import { getWebsocket, sendWsMsg } from "./utils/websocket";
+import { sendWsMsg } from "./websocket";
+import { getWebsocket } from "../../utils";
 
 export function Betting() {
     const [question, setQuestion] = useState<GamblingQuestion>();
@@ -17,7 +18,7 @@ export function Betting() {
     const [loading, setLoading] = useState<false | number>(false);
 
     useEffect(() => {
-        const ws = getWebsocket();
+        const ws = getWebsocket("game");
         websocket.current = ws;
 
         if (ws) ws.onmessage = (e) => {

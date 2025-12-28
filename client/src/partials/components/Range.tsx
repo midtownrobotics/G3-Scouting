@@ -11,7 +11,6 @@ export default function Range({
     onChange: (id: string, value: string) => void;
     value: string;
 }) {
-
     useEffect(() => {
         if (value === undefined || value === null) onChange(component.getId(), "0");
     }, [value]);
@@ -38,7 +37,7 @@ export default function Range({
                     min={component.min}
                     step={component.step}
                     value={value ?? 0}
-                    onChange={(e) => onChange(component.getId(), (parseInt(e.target.value) || 0).toString())}
+                    onChange={(e) => onChange(component.getId(), (parseFloat(e.target.value) || 0).toString())}
                 />
             </div>
             <div className="d-flex justify-content-between" style={{ marginTop: '8px' }}>
@@ -47,8 +46,7 @@ export default function Range({
                         key={tick}
                         style={{ 
                             fontSize: '0.9rem',
-                            color: parseInt(value ?? "0") === tick ? '#0d6efd' : 'black',
-                            // fontWeight: parseInt(value ?? "0") === tick ? 'bold' : 'normal'
+                            color: parseFloat(value ?? "0") === tick ? '#0d6efd' : 'black',
                             fontWeight: 'bold'
                         }}
                     >

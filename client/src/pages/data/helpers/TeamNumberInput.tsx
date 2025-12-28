@@ -5,7 +5,7 @@ import { fetchAPIJSON } from "../../../API";
 import { z } from "zod";
 
 type TeamNumberInputProps = {
-    onChange: (number: number) => void;
+    onChange: (number: number, name: string) => void;
     queryKey?: string;
 };
 
@@ -26,7 +26,7 @@ export default function TeamNumberInput({ onChange, queryKey }: TeamNumberInputP
         if (queryKey) {
             const team = new URLSearchParams(window.location.search).get(queryKey);
             if (team && !Number.isNaN(parseInt(team))) {
-                onChange(parseInt(team));
+                onChange(parseInt(team), team);
                 setVal(team);
             }
         }
@@ -60,7 +60,7 @@ export default function TeamNumberInput({ onChange, queryKey }: TeamNumberInputP
         }
 
         if (team) {
-            onChange(team.number);
+            onChange(team.number, team.name);
             saveToUrl(team.number);
         }
     };
@@ -69,12 +69,12 @@ export default function TeamNumberInput({ onChange, queryKey }: TeamNumberInputP
         setVal(team.number.toString());
         setSuggestions([]);
         setShowSuggestions(false);
-        onChange(team.number);
+        onChange(team.number, team.name);
         saveToUrl(team.number);
     };
 
     return (
-        <div className="mb-3" style={{ position: "relative", maxWidth: "300px" }}>
+        <div style={{ position: "relative", maxWidth: "300px" }}>
             <InputGroup className="mb-0">
                 <FormControl
                     placeholder="Team Name/Number"

@@ -173,3 +173,31 @@ export const SaveableInputData = z.object({
     value: z.string()
 });
 export type SaveableInputData = z.infer<typeof SaveableInputData>;
+
+export const PickListItem = z.object({
+    teamNumber: z.number(),
+    teamName: z.string(),
+    notes: z.string(),
+    epa: z.number(),
+});
+export type PickListItem = z.infer<typeof PickListItem>;
+
+export const ClientToServerMessage = z.object({
+    type: z.literal("setPickList"),
+    payload: z.object({
+        list: z.array(PickListItem),
+        id: z.number()
+    })
+});
+export type ClientToServerMessage = z.infer<typeof ClientToServerMessage>;
+
+export const ServerToClientMessage = z.object({
+    type: z.literal("ping")
+}).or(z.object({
+    type: z.literal("getPickList"),
+    payload: z.object({
+        list: z.array(PickListItem),
+        id: z.number()
+    })
+}));
+export type ServerToClientMessage = z.infer<typeof ServerToClientMessage>;
