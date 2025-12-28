@@ -1,7 +1,13 @@
 {
+  "name": "g3-scouting",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client",
+    "shared"
+  ],
   "scripts": {
-    "dev": "concurrently \"npm --prefix client run dev\" \"npm --prefix server run dev\"",
-    "install:all": "npm install --prefix client && npm install --prefix server && npm install --prefix shared && npm install"
+    "dev": "concurrently \"npm --prefix client run dev\" \"npm --prefix server run dev\""
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
