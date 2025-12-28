@@ -1,9 +1,7 @@
 {
   "scripts": {
-    "dev": "concurrently \"npm --prefix client run dev\" \"npm --prefix server run dev\""
-  },
-  "dependencies": {
-    "react-markdown": "^10.1.0"
+    "dev": "concurrently \"npm --prefix client run dev\" \"npm --prefix server run dev\"",
+    "install:all": "npm install --prefix client && npm install --prefix server && npm install --prefix shared && npm install"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
