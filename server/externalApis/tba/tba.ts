@@ -1,6 +1,6 @@
 import path from "path";
 import { z, ZodType } from "zod";
-import { getSettingsValue } from "../../settings";
+import { getSettingsValue } from "../../other/settings";
 import {
     TbaMatchData,
     TbaTeamEventData,

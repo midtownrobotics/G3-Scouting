@@ -1,0 +1,23 @@
+#data-page {
+    .w-md-50 {
+        width: 100%;
+    }
+
+    @media (min-width: 768px) {
+        .w-md-50 {
+            width: 50%;
+        }
+    }
+
+    #pickList-page {
+        .bg-color-reg td {
+            background-color: white !important;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .bg-color-hl td {
+            background-color: #bfe9fe !important;
+            /* transition: background-color 0.2s ease-in-out; */
+        }
+    }
+}

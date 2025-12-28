@@ -1,7 +1,7 @@
 main,
 footer,
 #login-page {
-    background-color: #ffffff;
+    background-color: rgb(235, 235, 235);
     padding: 15px;
 }
 
@@ -14,7 +14,17 @@ html,
 body,
 #root {
     height: 100%;
+    width: 100%;
     margin: 0;
+    overscroll-behavior: none;
+}
+
+body {
+    background-color: #ffffff;
+}
+
+:root {
+    background-color: #f8f9fa;
 }
 
 .cursor-pointer {

@@ -1,23 +1,14 @@
-import { UserInformation } from "@shared/schemas/user";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Card, Container, Spinner, Table } from "react-bootstrap";
-import { fetchAPIJSON } from "../../API";
-import { toFormattedTime } from "../scheduler/utils";
-import { compareBlocksByDate, condenseSchedule, getFormattedAssignmentDuration, makeDateFromDateString, softenColor } from "./utils";
+import { useUserData } from "../../userData";
 import { getCurrentBlockMins, getCurrentDate } from "../../utils";
+import { toFormattedTime } from "../scheduler/utils";
+import { condenseSchedule, getFormattedAssignmentDuration, getFormattedDate, makeDateFromDateString, softenColor } from "./utils";
 
 function Home() {
-    const [userData, setUserData] = useState<UserInformation>()
+    const { userData } = useUserData();
 
-    useEffect(() => {
-        fetchAPIJSON("/me", UserInformation).then(res => {
-            if (res) {
-                res.user.schedule = res.user.schedule.sort((a, b) => a.block.time - b.block.time)
-                res.user.schedule = res.user.schedule.sort((a, b) => compareBlocksByDate(a.block, b.block))
-                setUserData(res);
-            }
-        })
-    }, [])
+    const [notifications, setNotifications] = useState(5);
 
     return !userData ? (
         <Container style={{ textAlign: "center" }}>
@@ -27,10 +18,38 @@ function Home() {
         <Container className="mt-4" id="home-page">
             <Card className="mb-4 shadow-sm">
                 <Card.Body>
-                    <Card.Title>Welcome back, {userData?.user.username}!</Card.Title>
-                    {userData?.currentAssignment && <Card.Text>You're current assignment is: {userData?.currentAssignment?.name}. You will be on this assignment for {getFormattedAssignmentDuration(userData.currentAssignment, userData.user.schedule)}.</Card.Text>}
+                    <Card.Title>Welcome back, {userData?.user.displayName ?? userData.user.username}!</Card.Title>
+                    <Card.Text>
+                        <p className="mb-0">You have <b>{userData.user.tokens}</b> BoyleBucks and <b>{userData.user.xp}</b> XP.</p>
+                        {userData?.currentAssignment && <p className="mt-1">You're current assignment is: {userData?.currentAssignment?.name}. You will be on this assignment for {getFormattedAssignmentDuration(userData.currentAssignment, userData.user.schedule)}.</p>}
+                    </Card.Text>
                 </Card.Body>
             </Card>
+
+            {userData.notifications.length > 0 && <Card className="mb-4 shadow-sm">
+                <Card.Body>
+                    <Card.Title>Notifications</Card.Title>
+                    {userData.notifications.filter((_, i) => i < notifications).map(n =>
+                        <div>
+                            <i>{getFormattedDate(new Date(n.sentAt))}</i>
+                            <span> - {n.message}</span>
+                        </div>
+                    )}
+                    <span
+                        onClick={() => setNotifications(5)}
+                        className="text-decoration-underline text-primary cursor-pointer"
+                        hidden={notifications == 5}
+                    >Show Less</span>
+                    <span
+                        hidden={notifications == 5 || notifications >= userData.notifications.length}
+                    >&nbsp;|&nbsp;</span>
+                    <span
+                        onClick={() => setNotifications(notifications + 5)}
+                        className="text-decoration-underline text-primary cursor-pointer"
+                        hidden={notifications >= userData.notifications.length}
+                    >Show More</span>
+                </Card.Body>
+            </Card>}
 
             <Card className="shadow-sm">
                 <Card.Header>Your Schedule</Card.Header>

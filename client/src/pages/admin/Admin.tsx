@@ -1,49 +1,82 @@
 import "./Admin.css";
 import SaveableTextInput from "./SaveableTextInput";
 import UserTable from "./user-table/UserTable";
+import { Container, Row, Col } from "react-bootstrap";
 
 function Admin() {
-    return (
-        <div id="admin-page">
-            <h1 id="head">Admin</h1>
-            <hr />
+  return (
+    <Container id="admin-page" fluid="md" className="py-4">
+      <h1 id="head" className="text-center mb-3">Admin</h1>
+      <hr />
 
-            <div id="users">
-                <h2>Users</h2>
-                <UserTable />
-            </div>
+      <section id="users" className="my-4">
+        <h2>Users</h2>
+        <UserTable />
+      </section>
 
-            <br />
-            <hr />
+      <hr />
 
-            <div id="settings">
-                <h2>Settings</h2>
-                <table>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <SaveableTextInput get={"/admin/getSlackOathToken"} post={"/admin/setSlackOathToken"}>Slack Oath Token</SaveableTextInput>
-                            </td>
-                            <td>
-                                <SaveableTextInput get={"/admin/getTeamNumber"} post={"/admin/setTeamNumber"}>Team Number</SaveableTextInput>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <SaveableTextInput get={"/admin/getTbaToken"} post={"/admin/setTbaToken"}>TBA Token</SaveableTextInput>
-                            </td>
-                            <td>
-                                <SaveableTextInput get={"/admin/getNexusToken"} post={"/admin/setNexusToken"}>Nexus Token</SaveableTextInput>
-                            </td>
-                            <td>
-                                <SaveableTextInput get={"/admin/getEventKey"} post={"/admin/setEventKey"}>Event Key</SaveableTextInput>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    );
+      <section id="settings" className="my-4">
+        <h2>Settings</h2>
+
+        <Row className="gy-3 gx-4">
+          <Col xs={12} md={6} lg={4}>
+            <SaveableTextInput
+              get="/admin/getSlackOathToken"
+              post="/admin/setSlackOathToken"
+            >
+              Slack Oath Token
+            </SaveableTextInput>
+          </Col>
+
+          <Col xs={12} md={6} lg={4}>
+            <SaveableTextInput
+              get="/admin/getTeamNumber"
+              post="/admin/setTeamNumber"
+            >
+              Team Number
+            </SaveableTextInput>
+          </Col>
+
+          <Col xs={12} md={6} lg={4}>
+            <SaveableTextInput
+              get="/admin/getTbaToken"
+              post="/admin/setTbaToken"
+            >
+              TBA Token
+            </SaveableTextInput>
+          </Col>
+
+          <Col xs={12} md={6} lg={4}>
+            <SaveableTextInput
+              get="/admin/getNexusToken"
+              post="/admin/setNexusToken"
+            >
+              Nexus Token
+            </SaveableTextInput>
+          </Col>
+
+          <Col xs={12} md={6} lg={4}>
+            <SaveableTextInput
+              get="/admin/getEventKey"
+              post="/admin/setEventKey"
+            >
+              TBA Event Key
+            </SaveableTextInput>
+          </Col>
+
+          <Col xs={12} md={6} lg={4}>
+            <SaveableTextInput
+              get="/admin/getNexusEventKey"
+              post="/admin/setNexusEventKey"
+            >
+              Nexus Event Key
+            </SaveableTextInput>
+          </Col>
+        </Row>
+      </section>
+    </Container>
+  );
 }
 
 export default Admin;

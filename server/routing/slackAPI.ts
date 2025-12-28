@@ -1,26 +1,14 @@
-import express from 'express';
-import { z } from 'zod';
-import { AuthReq } from '../types';
-import { createLinkCode, linkWithCmd } from '../slack/slackLink';
 import { SITE_URL } from '@shared/config';
-import { getSettingsValue } from '../settings';
+import express from 'express';
+import { createLinkCode, getUserSlackData, linkWithCmd } from '../slack/slackLink';
+import { AuthReq } from '../types';
 
 const slackAPIRouter = express.Router();
 
 slackAPIRouter.get("/getSlackInfo", async (req: AuthReq, res) => {
-    const userId = req.user?.slackId;
-    if (!userId) { res.sendStatus(400); return; }
-
-    const token = await getSettingsValue("slackToken");
-
-    const slackRes = await fetch(`https://slack.com/api/users.info?user=${userId}`, {
-        headers: {
-            "Authorization": `Bearer ${token}`
-        }
-    });
-
-    const data = await slackRes.json();
-    res.send(data.user);
+    const slackData = await getUserSlackData(req.user)
+    if (!slackData) { res.sendStatus(400); return; }
+    res.send(slackData);
 });
 
 slackAPIRouter.get("/getLinkCode", async (req: AuthReq, res) => {

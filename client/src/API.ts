@@ -35,12 +35,20 @@ export async function postAPI(url: string, data: any): Promise<Response | null> 
  * Fetches API data and parses it.
  * @param url The API url. Not including `/api`.
  * @param type The Zod type to use for JSON parsing.
- * @returns Parsed data or `undefinied` if parsing failed.
+ * @returns Parsed data or `undefined` if parsing failed.
  */
 export async function fetchAPIJSON<T extends z.ZodType>(url: string, type: T): Promise<z.infer<T> | undefined> {
-    const data = await fetchAPI(url).then(async (r) => r?.json());
+    const data = await fetchAPI(url).then(async (r) => {
+        try {
+            return r?.json()
+        } catch (err) {
+            console.warn(err);
+            return undefined;
+        }
+    });
+    if (data === undefined) return undefined;
     const parsed = type.safeParse(data);
-    if (parsed.error) console.log(parsed.error);
+    if (parsed.error) console.warn(parsed.error);
     if (parsed.success) return parsed.data;
     return undefined;
 }
@@ -48,7 +56,7 @@ export async function fetchAPIJSON<T extends z.ZodType>(url: string, type: T): P
 export async function getApiStatus() {
     const result = await fetchAPI("/status")
     const text = await result?.text()
-    
+
     return {
         ok: result != null && result.status == 200 && text == "ok",
         statusCode: result?.status

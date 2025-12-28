@@ -13,8 +13,8 @@ function UserTable() {
             fetchAPIJSON("/admin/getUsers", SimpleUser.array()).then((res) => {
                 if (res) {
                     setUserRows([
-                        ...res.map((u, ui) => <UserRow key={ui} user={u} reload={reloadData} />),
-                        <NewUser key={-1} reload={reloadData} />
+                        ...res.map(u => <UserRow key={u.id} user={u} reload={reloadData} />),
+                        <NewUser key={"newUserRow"} reload={reloadData} />
                     ]);
                 }
             });
@@ -34,7 +34,7 @@ function UserTable() {
                         <th>Username</th>
                         <th>Password</th>
                         <th>Permission</th>
-                        <th>Reliable?</th>
+                        {/* <th>Reliable?</th> */}
                         <th>Red Alliance?</th>
                         <th>Slack Linked?</th>
                         <td colSpan={2} />

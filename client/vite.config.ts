@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { DEV_API_URL, DEV_VITE_HOSTS, DEV_VITE_PORT } from '../shared/config'
+import { DEV_API_URL, DEV_VITE_HOSTS, DEV_VITE_PORT, DEV_WS_URL } from '../shared/config'
 import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vite.dev/config/
@@ -52,6 +52,12 @@ export default defineConfig({
             "/api": {
                 target: DEV_API_URL,
                 changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/api/, ""),
+            },
+            "/ws": {
+                target: DEV_WS_URL,
+                changeOrigin: true,
+                ws: true,
                 rewrite: (path) => path.replace(/^\/api/, ""),
             }
         }

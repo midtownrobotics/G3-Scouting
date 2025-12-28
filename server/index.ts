@@ -1,23 +1,24 @@
 import { PORT, PRODUCTION } from "@shared/config";
-if (PRODUCTION) {
-    require('module-alias/register');
-}
-import Form, { FormType } from "@shared/forms/Form";
-import formComponents from "@shared/forms/FormComponents";
+import { Permission } from "@shared/permissions";
 import fs from "fs";
 import { parse } from "papaparse";
 import path from "path";
-import FormModel from "./models/forms/FormModel";
 import FormResponseByTeamModel from "./models/forms/FormResponseModels";
 import syncDatabase from "./models/syncDatabase";
 import UserModel from "./models/users/UserModel";
 import { server } from "./routing/router";
 import { scheduleReminders } from "./slack/shiftReminders";
-import { Settings } from "./types";
 import { LogColors } from "./utils";
-import { Permission } from "@shared/permissions";
-import { getEventStatus } from "./externalApis/nexus/nexus";
+import { sendNotification } from "./other/notifications";
 import getTokensFromAccuracy from "./game/getTokensFromAccuracy";
+import scoreAllianceData from "./data/reliability/scoreResponse";
+import { getMatchData } from "./externalApis/tba/tba";
+import Form from "@shared/forms/Form";
+import FormModel from "./models/forms/FormModel";
+import { scoreUnscoredMatches } from "./data/reliability/scoreUnscoredMatches";
+if (PRODUCTION) {
+    require('module-alias/register');
+}
 
 console.clear();
 console.log(``);
@@ -49,15 +50,30 @@ syncDatabase().then(() => {
 });
 
 async function testCode() {
+
+    // const form = (await FormModel.getForm("Quantitative", true));
+    // console.time("Scoring");
+    // if (form) await scoreUnscoredMatches(form);
+    // console.timeEnd("Scoring");
+
+    // sendNotification("You won 8423 BoyleBucks in match 54!", "game", new Date("10/16/2025 9:00 PM"), 1, 1);
+    // sendNotification("Lunch is in the table!", "userMessaging", new Date("10/17/2025 9:00 PM"), 99);
+    // sendNotification("ALERT ALERT ALERT", "game", new Date("10/16/2025 9:00 PM"), 99);
+
+    // const gray = await UserModel.findOne({ where: {username: "gjackson"} });
+
+    // gray?.update({ tokens: 90 });
+    // gray?.update({ tokens: 10000 });
+
     const users = await UserModel.findAll();
 
     // users.forEach(async u => {
     //     const matches = await FormResponseByTeamModel.findAll({ where: { formId: "Quantitative", userId: u.id }});
 
-    //     let tokens = matches.length * 20;
-    //     matches.forEach(m => tokens += getTokensFromAccuracy(m.accuracyScore));
+    //     let xp = matches.length * 20;
+    //     matches.forEach(m => xp += getTokensFromAccuracy(m.accuracyScore));
 
-    //     u.update({tokens});
+    //     u.update({xp});
     // })
 
     // const form = new Form(FormType.TEAM, "Quantitative", "A quantitative scouting form.");
@@ -123,7 +139,7 @@ async function testCode() {
     // things.forEach(t => t.destroy());
 
     // const users = await UserModel.findAll();
-    
+
     // users.forEach(u => {
     //     if (u.permission == Permission.SCOUT) {
     //         u.set("permission", Permission.DATA);

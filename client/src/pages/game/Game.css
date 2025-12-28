@@ -1,0 +1,85 @@
+#game-page {
+    .spin {
+        display: inline-block;
+        animation: spin 3s linear infinite;
+    }
+
+    .strobe {
+        animation: strobe 400ms infinite;
+        text-shadow:
+            0 0 6px rgba(255, 223, 0, 0.8),
+            0 0 12px rgba(255, 223, 0, 0.6),
+            0 0 24px rgba(255, 223, 0, 0.4),
+            0 0 40px rgba(255, 223, 0, 0.3);
+    }
+
+    .strobe-tr {
+        animation: strobe-tr 400ms infinite;
+    }
+
+    th {
+        border-color: transparent;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes strobe {
+    0% {
+        background-color: red;
+        border-color: red;
+    }
+
+    50% {
+        background-color: green;
+        border-color: green;
+    }
+
+    100% {
+        background-color: blue;
+        border-color: blue;
+    }
+}
+
+@keyframes strobe-tr {
+    0% {
+        box-shadow:
+            0 0 10px rgba(255, 0, 0, 0.7),
+            0 0 30px rgba(255, 0, 0, 0.5),
+            0 0 60px rgba(255, 0, 0, 0.3);
+    }
+
+    50% { 
+        box-shadow:
+            0 0 10px rgba(64, 255, 0, 0.7),
+            0 0 30px rgba(64, 255, 0, 0.5),
+            0 0 60px rgba(64, 255, 0, 0.3);
+    }
+
+    100% {
+        box-shadow:
+            0 0 10px rgba(0, 0, 255, 0.7),
+            0 0 30px rgba(0, 0, 255, 0.5),
+            0 0 60px rgba(0, 0, 255, 0.3);
+    }
+}
+
+/* put in your app css file loaded after bootstrap */
+.w-md-50 {
+    width: 75%;
+    /* mobile default */
+}
+
+@media (min-width: 768px) {
+    .w-md-50 {
+        width: 50%;
+    }
+}

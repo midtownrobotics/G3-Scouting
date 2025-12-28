@@ -3,13 +3,13 @@ import { InputGroup } from "react-bootstrap";
 import { Floppy, Pencil } from "react-bootstrap-icons";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { fetchAPIJSON, postAPI } from "../../API";
-import { SaveableInputData } from "@shared/schemas/user";
+import { SaveableInputData } from "@shared/schemas/data";
 
 /**
  * A labeled text input that supports editing and saving via API endpoints.
  * 
  * @param props.get The API endpoint to fetch the initial value. Must return `{ value: string }`.
- * @param post The API endpoint to save the new value. Must expect `{ value: string }`.
+ * @param props.post The API endpoint to save the new value. Must expect `{ value: string }`.
  * @param props.children The label to display above the input field.
  */
 function SaveableTextInput({ get, post, children }: { get: string, post: string, children: string }) {

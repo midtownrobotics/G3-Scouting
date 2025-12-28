@@ -1,11 +1,11 @@
 import { promises as fs } from "fs";
 import path from "path";
-import { Settings } from "./types";
+import { Settings } from "../types";
 import { PRODUCTION } from "@shared/config";
 
 const settingsPath = PRODUCTION
-    ? path.resolve(__dirname, "../../storage/settings.json")
-    : path.resolve(__dirname, "storage/settings.json");
+    ? path.resolve(__dirname, "../../../storage/settings.json")
+    : path.resolve(__dirname, "../storage/settings.json");
 
 let settingsCache: Settings | undefined;
 
@@ -15,6 +15,7 @@ const defaultSettings: Settings = {
     theBlueAlliance: "",
     nexus: "",
     eventKey: "",
+    nexusEventKey: "",
     match: {
         number: 0,
         teams: [],

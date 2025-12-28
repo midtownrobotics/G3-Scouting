@@ -71,7 +71,7 @@ export default class Form {
 
         return form;
     }
-    
+
     /**
      * **Removes all currently added components** and new ones.
      * @param components The array of components to add.
@@ -88,13 +88,13 @@ export default class Form {
     }
 
     /** Gets response data for this form, if form has associated data. 
-     * @param minAccuracy The minimum accuracy for responses to be included in the data result.
+     * @param maxError The maximum error for responses to be included in the data result.
      * @returns `null` if there are no responses. Be sure to pass `true` into FormModel.getForm(s).
      */
-    public getResponseData(minAccuracy?: number): FormResponseData | null {
+    public getResponseData(maxError?: number, fromMatch?: number): FormResponseData | null {
         if (!this.responses) return null;
-        if (this.type === FormType.NO_MATCH || this.type === FormType.SINGLE_TEAM_RESPONSE) minAccuracy = undefined;
-        
+        if (this.type === FormType.NO_MATCH || this.type === FormType.SINGLE_TEAM_RESPONSE) maxError = undefined;
+
         const questions = this.components.filter(c => c.metadata !== null).map(q => q.metadata!);
 
         return {
@@ -102,9 +102,15 @@ export default class Form {
             formType: this.type,
             questions,
             responses: (
-                minAccuracy === undefined
+                maxError === undefined
                     ? this.responses
-                    : this.responses.filter(r => (r.accuracyScore || 0) >= minAccuracy)
+                    : this.responses.filter(r =>
+                        (
+                            (r.accuracyScore || 0) <= maxError
+                        ) && (
+                            (r.match && fromMatch !== undefined) ? r.match >= fromMatch : true
+                        )
+                    )
             )
         };
     }
