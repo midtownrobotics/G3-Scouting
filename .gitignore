@@ -6,3 +6,5 @@ shared/config.ts
 data.csv
 server/migrations
 dist
+**/package-lock.json
+!package-lock.json

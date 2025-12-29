@@ -12,12 +12,15 @@
     "license": "ISC",
     "dependencies": {
         "@slack/web-api": "^7.9.3",
+        "@types/cookie": "^0.6.0",
+        "@types/ws": "^8.18.1",
         "bcrypt": "^6.0.0",
         "cookie-parser": "^1.4.7",
         "express": "^5.1.0",
         "fs": "^0.0.1-security",
         "marked": "^16.2.1",
         "module-alias": "^2.2.3",
+        "no-profanity": "^1.5.1",
         "node-cron": "^4.2.1",
         "papaparse": "^5.5.3",
         "react-bootstrap-icons": "^1.11.5",
@@ -26,6 +29,7 @@
         "sqlite3": "^5.1.7",
         "tsconfig-paths": "^4.2.0",
         "uuid": "^11.1.0",
+        "ws": "^8.18.3",
         "zod": "^3.24.3"
     },
     "devDependencies": {

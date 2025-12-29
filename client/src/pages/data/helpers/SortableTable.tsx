@@ -23,8 +23,8 @@ export function SortableTable<T>({
     const visibleColumns = columns.filter(col => typeof col !== "boolean");
 
     const formatCellData = (data: string, key: string): JSX.Element => {
-        if (key === "_team") return <a href={getTeamSummaryUrl(parseInt(data))} target="_blank">{data}</a>;
-        if (key === "_match") return <a href={getMatchUrl(parseInt(data))} target="_blank">{data}</a>;
+        if (key === "_team") return <a href={getTeamSummaryUrl(parseInt(data))} >{data}</a>;
+        if (key === "_match") return <a href={getMatchUrl(parseInt(data))} >{data}</a>;
         return <span>{data}</span>;
     };
 
@@ -50,7 +50,7 @@ export function SortableTable<T>({
                         <tr key={rowKey(row)}>
                             {visibleColumns.map(col => (
                                 <td key={col.key} style={{ verticalAlign: "middle", whiteSpace: "nowrap" }}>
-                                    {formatCellData(((row as any)[col.key] ?? 0), col.key)}
+                                    {formatCellData(((row as any)[col.key] ?? ""), col.key)}
                                 </td>
                             ))}
                         </tr>

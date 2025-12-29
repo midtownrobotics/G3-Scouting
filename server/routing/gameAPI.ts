@@ -1,5 +1,6 @@
+import { GamblingQuestion, TokenLeaderboardEntry } from '@shared/schemas/game';
 import express from 'express';
-import { TokenLeaderboardEntry } from '@shared/schemas/game';
+import { addQuestion, getQuestions } from 'server/game/gambling';
 import UserModel from 'server/models/users/UserModel';
 
 const gameAPIRouter = express.Router();
@@ -10,9 +11,23 @@ gameAPIRouter.get("/leaderboard/tokens", async (req, res) => {
     const leaderboard: TokenLeaderboardEntry[] = users.map(u => ({
         userId: u.id,
         username: u.username,
-        tokens: u.tokens
+        tokens: u.tokens,
+        displayName: u.displayName
     }));
-    res.send(leaderboard.sort((a,b) => b.tokens - a.tokens));
+    res.send(leaderboard.sort((a, b) => b.tokens - a.tokens));
+});
+
+/** {@link GamblingQuestion[]} */
+gameAPIRouter.get("/bookie/getQuestions", async (req, res) => {
+    res.send(getQuestions());
+});
+
+gameAPIRouter.post("/bookie/setQuestion", async (req, res) => {
+    const question = GamblingQuestion.safeParse(req.body);
+    if (!question.success) { res.send(400); return; }
+
+    addQuestion(question.data);
+    res.send(200);
 });
 
 export default gameAPIRouter;

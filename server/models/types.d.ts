@@ -15,6 +15,8 @@ export interface User {
     assignedMatches: number[];
     reliable: boolean;
     tokens: number;
+    xp: number;
+    displayName: string | null;
     schedule?: InferAttributes<UserBlockAssignmentModel>[]
 }
 

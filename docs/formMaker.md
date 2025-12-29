@@ -5,7 +5,7 @@
 ---
 
 This page is only available to users with the ADMIN permission.
-<br>The form creation part of this page has not been optimized for mobile, however the form management part has been.
+<br>Form creation has not been optimized for mobile.
 
 ## Management
 

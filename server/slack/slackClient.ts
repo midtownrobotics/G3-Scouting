@@ -1,5 +1,5 @@
 import { WebClient } from "@slack/web-api";
-import { getSettingsValue } from "../settings";
+import { getSettingsValue } from "../other/settings";
 
 let client: WebClient | undefined;
 let lastToken: string | undefined;

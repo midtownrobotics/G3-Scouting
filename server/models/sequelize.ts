@@ -6,16 +6,12 @@ import UserBlockAssignmentModel from './scheduling/UserBlockAssignmentModel';
 import FormModel from './forms/FormModel';
 import FormResponseByTeamModel from './forms/FormResponseModels';
 import SessionModel from './users/SessionModel';
-import AccuracyScoreModel from './validation/AccuracyScoreModel';
-import ScoutAccuracyScoreModel from './validation/ScoutAccuracyScoreModel';
 import BatteryModel from './battery/BatteryModel';
 
 export const managementDatabase = new Sequelize({
     dialect: 'sqlite',
     storage: './storage/management.db',
     models: [
-        ScoutAccuracyScoreModel,
-        AccuracyScoreModel,
         UserModel,
         AssignmentModel,
         BlockModel,

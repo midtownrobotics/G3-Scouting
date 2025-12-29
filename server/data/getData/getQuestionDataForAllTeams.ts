@@ -2,8 +2,8 @@ import { MultiTeamQuestionData, QuestionData, QuestionMetadata } from "@shared/s
 import FormModel from "../../models/forms/FormModel";
 import { aggregateResponse, AggregationEntry, computeAverage } from "./getQuestionDataUtils";
 
-export default async function getQuestionDataForAllTeams(formId: string, minAccuracy?: number): Promise<MultiTeamQuestionData[] | null> {
-    const formData = (await FormModel.getForm(formId, true))?.getResponseData(minAccuracy);
+export default async function getQuestionDataForAllTeams(formId: string, maxError?: number, fromMatch?: number): Promise<MultiTeamQuestionData[] | null> {
+    const formData = (await FormModel.getForm(formId, true))?.getResponseData(maxError, fromMatch);
     if (!formData) return null;
 
     const metadataMap = new Map<string, QuestionMetadata>();

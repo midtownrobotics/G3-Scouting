@@ -2,6 +2,16 @@ import { useEffect, useState } from "react";
 import { DateString } from "@shared/types";
 import { Assignment, UserBlockAssignment } from "@shared/schemas/schedule";
 
+export function getWebsocket(handler: string) {
+    try {
+        const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+        const ws = new WebSocket(`${protocol}//${window.location.host}/ws?handler=${handler}`);
+        return ws;  
+    } catch (err) {
+        return undefined;
+    }
+}
+
 export function logState(val?: unknown) {
     useEffect(() => {
         console.log(val);
@@ -19,9 +29,9 @@ export function makeUrlParam(
     val: string | number | undefined,
 ) {
     useEffect(() => {
-        if (val === undefined) return;
+        if (val === undefined || val === "") return;
         const url = new URL(window.location.href);
-        url.searchParams.set(name, val?.toString() ?? "");
+        url.searchParams.set(name, val.toString() ?? "");
         window.history.pushState({}, "", url.toString());
     }, [val]);
 }

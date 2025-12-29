@@ -16,6 +16,9 @@ class UserModel extends Model<User, UserCreationAttributes> {
     public username!: string;
 
     @Column({ type: DataType.TEXT, allowNull: true })
+    public displayName!: string | null;
+
+    @Column({ type: DataType.TEXT, allowNull: true })
     public slackId?: string | null;
 
     @Column({ type: DataType.TEXT, allowNull: false })
@@ -39,6 +42,9 @@ class UserModel extends Model<User, UserCreationAttributes> {
     @Column({ type: DataType.DOUBLE, allowNull: false, defaultValue: 0})
     public tokens!: number;
 
+    @Column({ type: DataType.DOUBLE, allowNull: false, defaultValue: 0})
+    public xp!: number;
+
     @HasMany(() => UserBlockAssignmentModel, { as: "schedule" })
     public schedule!: UserBlockAssignmentModel[];
 
@@ -58,18 +64,18 @@ class UserModel extends Model<User, UserCreationAttributes> {
             UserModel.count({ where: { redAlliance: false } }),
         ]);
 
-        bcrypt.hash(password, 12, async function (err, hash) {
-            if (!err) {
-                await UserModel.create({
-                    username,
-                    permission,
-                    reliable,
-                    password: hash,
-                    redAlliance: redCount < blueCount,
-                    assignedMatches: [],
-                    tokens: 0
-                });
-            }
+        const hash = await bcrypt.hash(password, 12);
+
+        await UserModel.create({
+            username,
+            permission,
+            reliable,
+            password: hash,
+            redAlliance: redCount < blueCount,
+            assignedMatches: [],
+            tokens: 0,
+            xp: 0,
+            displayName: username
         });
     }
 

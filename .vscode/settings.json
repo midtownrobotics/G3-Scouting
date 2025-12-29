@@ -2,6 +2,8 @@
     "cSpell.words": [
         "APIJSON",
         "grayjn",
+        "Noell",
         "Statbotics"
-    ]
+    ],
+    "javascript.format.semicolons": "insert"
 }

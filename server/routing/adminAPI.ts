@@ -1,17 +1,16 @@
+import { SerializedForm } from '@shared/schemas/forms';
 import { DeployPayload } from '@shared/schemas/schedule';
 import bcrypt from 'bcrypt';
 import express, { Request, Response } from 'express';
 import { z } from 'zod';
-import { CreateUser, SaveableInputData, SimpleUser } from '../../shared/schemas/user';
+import { CreateUser, SimpleUser } from '../../shared/schemas/user';
+import FormModel from '../models/forms/FormModel';
 import UserBlockAssignmentModel from '../models/scheduling/UserBlockAssignmentModel';
 import SessionModel from '../models/users/SessionModel';
 import UserModel from '../models/users/UserModel';
+import { getSettingsValue, setSettingsValue } from '../other/settings';
 import deploySchedules from '../scheduling/deploySchedules';
-import { getSettingsValue, setSettingsValue } from '../settings';
-import { SerializedForm } from '@shared/schemas/forms';
-import Form from '@shared/forms/Form';
-import FormModel from '../models/forms/FormModel';
-import { permission } from 'process';
+import { SaveableInputData } from '@shared/schemas/data';
 
 const adminAPIRouter = express.Router();
 
@@ -69,6 +68,12 @@ createValueRoute(async () => {
     return await setSettingsValue("nexus", val);
 }, "NexusToken");
 
+createValueRoute(async () => {
+    return await getSettingsValue("nexusEventKey");
+}, async (val) => {
+    return await setSettingsValue("nexusEventKey", val);
+}, "NexusEventKey");
+
 adminAPIRouter.post("/addUser", async (req: Request, res: Response) => {
     const body = CreateUser.safeParse(req.body);
     if (body.success && body.data) {
@@ -104,11 +109,14 @@ adminAPIRouter.post("/deleteUser", async (req: Request, res: Response) => {
 adminAPIRouter.get("/getUsers", async (req: Request, res: Response) => {
     const users: SimpleUser[] = (await UserModel.findAll()).map(u => ({
         username: u.username,
+        displayName: u.displayName,
         id: u.id,
         permission: u.permission,
         redAlliance: u.redAlliance,
         reliable: u.reliable,
-        slackLinked: u.slackLinked
+        slackLinked: u.slackLinked,
+        tokens: u.tokens,
+        xp: u.xp
     }));
 
     res.json(users);

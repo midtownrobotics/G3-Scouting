@@ -5,27 +5,30 @@ import { fetchAPIJSON } from "../../../API";
 import { z } from "zod";
 
 type TeamNumberInputProps = {
-    onChange: (number: number) => void;
+    onChange: (number: number, name: string) => void;
     queryKey?: string;
 };
 
-export default function TeamNumberInput({ onChange, queryKey = "team" }: TeamNumberInputProps) {
+export default function TeamNumberInput({ onChange, queryKey }: TeamNumberInputProps) {
     const [teams, setTeams] = useState<TeamData[]>([]);
     const [val, setVal] = useState<string>("");
-    const [suggestions, setSuggestions] = useState<{data: TeamData, suggestion: string}[]>([]);
+    const [suggestions, setSuggestions] = useState<{ data: TeamData, suggestion: string }[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
 
     const saveToUrl = (v: number) => {
+        if (!queryKey) return;
         const url = new URL(window.location.href);
         url.searchParams.set(queryKey, v.toString());
         window.history.pushState({}, "", url.toString());
     }
 
     useEffect(() => {
-        const team = new URLSearchParams(window.location.search).get(queryKey);
-        if (team && !Number.isNaN(parseInt(team))) {
-            onChange(parseInt(team));
-            setVal(team);
+        if (queryKey) {
+            const team = new URLSearchParams(window.location.search).get(queryKey);
+            if (team && !Number.isNaN(parseInt(team))) {
+                onChange(parseInt(team), team);
+                setVal(team);
+            }
         }
 
         fetchAPIJSON("/data/getAllTeams", z.array(TeamData)).then(res => {
@@ -55,9 +58,9 @@ export default function TeamNumberInput({ onChange, queryKey = "team" }: TeamNum
         } else {
             team = teams.find(t => t.name.toLowerCase() === v.toLowerCase());
         }
-        
+
         if (team) {
-            onChange(team.number);
+            onChange(team.number, team.name);
             saveToUrl(team.number);
         }
     };
@@ -66,12 +69,12 @@ export default function TeamNumberInput({ onChange, queryKey = "team" }: TeamNum
         setVal(team.number.toString());
         setSuggestions([]);
         setShowSuggestions(false);
-        onChange(team.number);
+        onChange(team.number, team.name);
         saveToUrl(team.number);
     };
 
     return (
-        <div className="mb-3" style={{ position: "relative", maxWidth: "300px" }}>
+        <div style={{ position: "relative", maxWidth: "300px" }}>
             <InputGroup className="mb-0">
                 <FormControl
                     placeholder="Team Name/Number"

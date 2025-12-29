@@ -4,6 +4,8 @@ import MultipleChoice from "./MultipleChoice";
 import Number from "./Number";
 import SectionBreak from "./SectionBreak";
 import ShortResponse from "./ShortResponse";
+import Range from "./Range";
+import BooleanInput from "./BooleanInput";
 
 function FormComponent({
     component,
@@ -38,6 +40,14 @@ function FormComponent({
 
     if (component instanceof formComponents.ShortResponse) {
         return <ShortResponse component={component} onChange={_onAnswerChange} value={answer} />;
+    }
+
+    if (component instanceof formComponents.Range) {
+        return <Range component={component} onChange={_onAnswerChange} value={answer} />;
+    }
+
+    if (component instanceof formComponents.BooleanInput) {
+        return <BooleanInput component={component} onChange={_onAnswerChange} value={answer} />;
     }
 
     return <div>Unknown component type</div>;
