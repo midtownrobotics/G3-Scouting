@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Card, Table } from "react-bootstrap";
 import { z } from "zod";
 import { fetchAPIJSON } from "../../../API";
-import { numberParser } from "../../../utils";
+import { numberParser } from "../../../Utils";
 import FormResponseTable from "../helpers/FormResponseTable";
 import MatchNumberInput from "../helpers/MatchNumberInput";
 import { getTeamSummaryUrl, isMatchRelated } from "../helpers/utils";

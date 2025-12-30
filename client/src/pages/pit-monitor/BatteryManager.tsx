@@ -4,7 +4,7 @@ import { Trash } from "react-bootstrap-icons";
 import { BatteryData, BatteryState } from "@shared/schemas/pit";
 import { fetchAPIJSON, postAPI } from "../../API";
 import { z } from "zod";
-import { formatDuration } from "../../utils";
+import { formatDuration } from "../../Utils";
 
 export default function BatteryManager() {
     const [batteries, setBatteries] = useState<BatteryData[]>([]);

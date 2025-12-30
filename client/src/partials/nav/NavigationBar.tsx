@@ -2,10 +2,9 @@ import { morePages } from "@shared/types";
 import { useState } from "react";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { usePage } from "../../pageManager";
-import { useFullscreenStatus } from "../../utils";
+import { useFullscreenStatus } from "../../Utils";
 import "./NavigationBar.css";
 import NavPageLink from "./NavPageLink";
-import { CopyCheck, CopyIcon } from "lucide-react";
 
 /** The site navigation bar. */
 function NavigationBar() {

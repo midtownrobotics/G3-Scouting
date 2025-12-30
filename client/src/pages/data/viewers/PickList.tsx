@@ -3,7 +3,7 @@ import { useEffect, useReducer, useRef, useState } from "react";
 import { Alert, Button, Col, Row, Table } from "react-bootstrap";
 import { ArrowDown, ArrowUp, X } from "react-bootstrap-icons";
 import TeamNumberInput from "../helpers/TeamNumberInput";
-import { getWebsocket } from "../../../utils";
+import { getWebsocket } from "../../../Utils";
 import { sendWsMsg } from "../helpers/pickListWebsocket";
 import { fetchAPIJSON } from "../../../API";
 

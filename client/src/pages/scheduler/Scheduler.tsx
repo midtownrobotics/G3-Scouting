@@ -9,6 +9,7 @@ import DaySelector from "./DaySelector";
 import "./Scheduler.css";
 import ScheduleTable from "./ScheduleTable";
 import { toFormattedTime } from "./utils";
+import { DocsLink } from "../../Utils";
 
 function Scheduler() {
     const [users, setUsers] = useState<SimpleUser[]>([]);
@@ -171,7 +172,10 @@ function Scheduler() {
 
     return (
         <div id="scheduler" className="text-center mt-3">
-            <h1 className="ms-1" style={{ textAlign: "left" }}>Scheduler</h1>
+            <div className="d-flex">
+                <h1 className="ms-1" style={{ textAlign: "left" }}>Scheduler</h1>
+                <DocsLink link="/docs/scheduling" />
+            </div>
             <DaySelector setDays={setDays} days={days} />
             <br />
             <Assignments assignments={{ setAssignments, assignments, setSelectedAssignment, selectedAssignment }} />

@@ -1,0 +1,17 @@
+#docs-page {
+    background-color: #f8f9fa;
+    min-height: 100%;
+
+    .link-icon {
+        visibility: hidden;
+    }
+
+    .linked-header {
+        margin-left: -30px !important;
+    }
+
+    .linked-header:hover .link-icon {
+        margin-left: 10px !important;
+        visibility: visible;
+    }
+}

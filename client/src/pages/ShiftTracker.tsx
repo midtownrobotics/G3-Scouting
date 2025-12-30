@@ -6,7 +6,7 @@ import { fetchAPIJSON } from "../API";
 import { toFormattedTime } from "./scheduler/utils";
 import { getCurrentBlockId } from "@shared/utils";
 import { softenColor } from "./home/utils";
-import { getAssignmentDuration, getCurrentBlockMins } from "../utils";
+import { getAssignmentDuration, getCurrentBlockMins } from "../Utils";
 
 function getMinutesSinceMidnight() {
     const now = new Date();
