@@ -1,13 +1,13 @@
-import { CurrentAssignment } from "@shared/schemas/data";
+import { CurrentAssignment, NextMatch } from "@shared/schemas/data";
 import { AssignmentType } from "@shared/schemas/schedule";
 import { getAllMatches } from "../externalApis/tba/tba";
 import UserModel from "../models/users/UserModel";
 import { getSettingsValue, setSettingsValue } from "../other/settings";
 import { scoreAllForms } from "./reliability/scoreUnscoredMatches";
-import { Alliance } from "@shared/forms/FormUtils";
+import { Alliance } from "@shared/utils";
 
 export default async function assignForMatch(nextMatch: number) {
-    const match = (await getAllMatches())?.find(m => m.match_number === nextMatch);
+    const match = (await getAllMatches())?.find(m => m.match_number === nextMatch && m.comp_level == "qm");
     if (!match) return;
     const redTeams = match.alliances.red.team_keys.map(t => parseInt(t.slice(3)));
     const blueTeams = match.alliances.blue.team_keys.map(t => parseInt(t.slice(3)));
@@ -20,19 +20,21 @@ export default async function assignForMatch(nextMatch: number) {
         const allianceTeams = alliance === Alliance.RED ? redTeams : blueTeams;
 
         for (const user of users) {
-            if ((await user.getCurrentAssignment())?.type !== AssignmentType.ASSIGNED) continue;
+            const currentAssignment = await user.getCurrentAssignment();
+            if (currentAssignment?.type !== AssignmentType.ASSIGNED) continue;
             const i = assigned.length;
-            const userAlliance = user.redAlliance ? Alliance.RED : Alliance.BLUE;
+            const userAlliance = await user.getCurrentAlliance();
             if (userAlliance !== alliance) continue;
             const team = allianceTeams[i % 3];
 
-            const newAssignment = {
+            const newAssignment: CurrentAssignment = {
                 number: nextMatch,
                 team,
                 teams: allianceTeams,
                 finished: false,
                 username: user.username,
-                userId: user.id
+                userId: user.id,
+                alliance: alliance,
             };
 
             await user.update({

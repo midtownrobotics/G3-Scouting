@@ -4,7 +4,7 @@ import { Settings } from "../types";
 import { PRODUCTION } from "@shared/config";
 
 const settingsPath = PRODUCTION
-    ? path.resolve(__dirname, "../../../storage/settings.json")
+    ? path.resolve(__dirname, "../storage/settings.json")
     : path.resolve(__dirname, "../storage/settings.json");
 
 let settingsCache: Settings | undefined;

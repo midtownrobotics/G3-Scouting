@@ -2,6 +2,7 @@ import { UserInformation } from "@shared/schemas/user";
 import { Assignment, Block, UserBlockAssignment } from "@shared/schemas/schedule";
 import { DateString } from "@shared/types";
 import { getAssignmentDuration } from "../../utils";
+import { Alliance } from "@shared/utils";
 
 export function softenColor(hex?: string): string {
     if (hex === undefined) return ("hsl(0, 0.00%, 100.00%)")
@@ -62,6 +63,7 @@ type CondensedRow = {
     endTime: number;
     date: DateString;
     blockIds: number[];
+    alliance: Alliance | undefined;
 };
 
 export function condenseSchedule(userData: UserInformation): CondensedRow[] {
@@ -70,7 +72,7 @@ export function condenseSchedule(userData: UserInformation): CondensedRow[] {
     const result: CondensedRow[] = [];
     if (schedule.length === 0) return result;
 
-    let current = schedule[0];
+    const current = schedule[0];
 
     let group: CondensedRow = {
         assignmentName: current.assignment.name,
@@ -79,6 +81,7 @@ export function condenseSchedule(userData: UserInformation): CondensedRow[] {
         endTime: current.block.time,
         date: current.block.date,
         blockIds: [current.block.id],
+        alliance: current.scoutingAlliance,
     };
 
     for (let i = 1; i < schedule.length; i++) {
@@ -88,8 +91,9 @@ export function condenseSchedule(userData: UserInformation): CondensedRow[] {
         const isSameAssignment = curr.assignment.id === prev.assignment.id;
         const isSameDate = curr.block.date === prev.block.date;
         const isConsecutiveTime = curr.block.time === prev.block.time + 30;
+        const isSameAlliance = curr.scoutingAlliance === prev.scoutingAlliance;
 
-        if (isSameAssignment && isSameDate && isConsecutiveTime) {
+        if (isSameAssignment && isSameDate && isConsecutiveTime && isSameAlliance) {
             group.endTime = curr.block.time;
             group.blockIds.push(curr.block.id);
         } else {
@@ -101,6 +105,7 @@ export function condenseSchedule(userData: UserInformation): CondensedRow[] {
                 endTime: curr.block.time,
                 date: curr.block.date,
                 blockIds: [curr.block.id],
+                alliance: curr.scoutingAlliance,
             };
         }
     }

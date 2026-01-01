@@ -1,4 +1,5 @@
 import { DateString } from "@shared/types";
+import { Alliance } from "@shared/utils";
 import { z } from "zod";
 
 export enum AssignmentType {
@@ -41,7 +42,8 @@ export type DeployPayload = z.infer<typeof DeployPayload>
 
 export const UserBlockAssignment = z.object({
     block: Block,
-    assignment: Assignment
+    assignment: Assignment,
+    scoutingAlliance: z.nativeEnum(Alliance).optional().nullish(),
 });
 export type UserBlockAssignment = z.infer<typeof UserBlockAssignment>
 
