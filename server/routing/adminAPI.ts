@@ -160,6 +160,7 @@ adminAPIRouter.post("/deploySchedule", async (req: Request, res: Response) => {
 
     if (body.success && body.data) {
         res.sendStatus(await deploySchedules(body.data) ? 200 : 500);
+        // await assignDynamicAlliances();
         return;
     }
     res.sendStatus(400);

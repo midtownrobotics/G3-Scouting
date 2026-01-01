@@ -1,3 +1,4 @@
+import { Alliance } from "@shared/utils";
 import { FormType as FormTypeEnum } from "../forms/Form";
 import { z } from "zod";
 
@@ -115,7 +116,8 @@ export const NextMatch = z.object({
     number: z.number(),
     team: z.number(),
     teams: z.array(z.number()),
-    finished: z.boolean()
+    finished: z.boolean(),
+    alliance: z.nativeEnum(Alliance)
 });
 export type NextMatch = z.infer<typeof NextMatch>;
 

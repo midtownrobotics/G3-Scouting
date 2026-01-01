@@ -2,7 +2,7 @@ import Form, { FormType } from "@shared/forms/Form";
 import { Form as BSForm } from "react-bootstrap";
 import FormComponent from "./components/FormComponent";
 import SpecialInput from "./components/SpecialInput";
-import { Alliance } from "@shared/forms/FormUtils";
+import { Alliance } from "@shared/utils";
 
 function isAlliance(val: string): val is keyof typeof Alliance {
     return val in Alliance;

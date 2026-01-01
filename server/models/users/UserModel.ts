@@ -6,6 +6,7 @@ import UserBlockAssignmentModel from "../scheduling/UserBlockAssignmentModel";
 import { User, UserCreationAttributes } from "../types";
 import { NextMatch } from "@shared/schemas/data";
 import { Permission } from "@shared/permissions";
+import { Alliance } from "@shared/utils"
 
 @Table({ tableName: "users", defaultScope: { include: [{ model: UserBlockAssignmentModel, as: "schedule" }] } })
 class UserModel extends Model<User, UserCreationAttributes> {
@@ -83,12 +84,24 @@ class UserModel extends Model<User, UserCreationAttributes> {
         return this.getAssignment(getCurrentBlockId());
     }
 
+    public getCurrentAlliance() {
+        return this.getAlliance(getCurrentBlockId());
+    }
+
     public async getAssignment(blockId: number): Promise<Assignment | undefined> {
         const fromMemory = this.schedule.find(a => a.blockId === blockId)?.assignment;
         if (fromMemory) return fromMemory.toJSON();
 
         const record = await UserBlockAssignmentModel.findOne({ where: { userId: this.id, blockId } });
         return record?.assignment?.toJSON();
+    }
+
+    public async getAlliance(blockId: number) : Promise<Alliance | undefined> {
+        const fromMemory = this.schedule.find(a => a.blockId === blockId)?.scoutingAlliance;
+        if (fromMemory) return fromMemory;
+
+        const record = await UserBlockAssignmentModel.findOne({ where: {userId: this.id, blockId}});
+        return record?.scoutingAlliance;
     }
 }
 

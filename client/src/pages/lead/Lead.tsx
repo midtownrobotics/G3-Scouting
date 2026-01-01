@@ -156,6 +156,7 @@ export default function Lead() {
                                         <th colSpan={1}>User</th>
                                         <th>Team</th>
                                         <th>Submitted</th>
+                                        <th>Alliance</th>
                                     </tr>
                                 </thead>
                                 <tbody className="w-100">
@@ -166,6 +167,7 @@ export default function Lead() {
                                             <td className="user-select-none text-center">
                                                 <input type={"checkbox"} checked={a.finished} readOnly />
                                             </td>
+                                            <td>{a.alliance}</td>
                                         </tr>
                                     )}
                                 </tbody>
