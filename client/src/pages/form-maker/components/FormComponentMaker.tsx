@@ -1,4 +1,4 @@
-import formComponents, { BooleanInput, FormComponent as FormComponentClass, Information, MultipleChoice, Number, Range, SectionBreak, ShortResponse } from "@shared/forms/FormComponents";
+import formComponents, { BooleanInput, FormComponent as FormComponentClass, Information, MultipleChoice, Number, Range, RobotRanking, SectionBreak, ShortResponse } from "@shared/forms/FormComponents";
 import { useEffect, useState } from "react";
 import { FormControl } from "react-bootstrap";
 
@@ -35,6 +35,10 @@ function FormComponentMaker({ component, setCanSubmit, forceUpdate }: MakerProps
     
     if (component instanceof formComponents.BooleanInput) {
         return <BooleanInputMaker component={component} setCanSubmit={setCanSubmit} forceUpdate={forceUpdate} />
+    }
+
+    if (component instanceof formComponents.RobotRanking) {
+        return <RobotRankingMaker component={component} setCanSubmit={setCanSubmit} forceUpdate={forceUpdate} />
     }
 
     return <div>Unknown component type</div>;
@@ -279,6 +283,38 @@ function RangeMaker({ component, setCanSubmit, forceUpdate }: MakerProps<Range>)
 }
 
 function ShortResponseMaker({ component, setCanSubmit, forceUpdate }: MakerProps<ShortResponse>) {
+    const [name, setName] = useState("");
+    const [question, setQuestion] = useState("");
+
+    useEffect(() => { component.question = question; }, [question]);
+    useEffect(() => { component.name = name; }, [name]);
+
+    useEffect(() => {
+        forceUpdate();
+        setCanSubmit(question !== "" && name !== "");
+    }, [question, name]);
+
+    return (
+        <div>
+            <FormControl
+                className="mx-auto text-center my-2"
+                style={{ maxWidth: "300px" }}
+                placeholder="Question"
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+            />
+            <FormControl
+                className="mx-auto text-center my-2"
+                style={{ maxWidth: "300px" }}
+                placeholder="Datapoint Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+            />
+        </div>
+    );
+}
+
+function RobotRankingMaker({ component, setCanSubmit, forceUpdate }: MakerProps<RobotRanking>) {
     const [name, setName] = useState("");
     const [question, setQuestion] = useState("");
 

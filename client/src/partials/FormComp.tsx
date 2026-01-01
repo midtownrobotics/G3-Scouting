@@ -78,6 +78,7 @@ export default function FormComp({
                                 component={c}
                                 onAnswerChange={handleAnswerChange}
                                 answer={answers.get(t + "##" + c.getId())}
+                                teams={teams}
                             />
                         </div>
                     ))}

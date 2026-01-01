@@ -6,17 +6,20 @@ import SectionBreak from "./SectionBreak";
 import ShortResponse from "./ShortResponse";
 import Range from "./Range";
 import BooleanInput from "./BooleanInput";
+import RobotRanking from "./RobotRanking";
 
 function FormComponent({
     component,
     onAnswerChange,
     answer,
-    team
+    team,
+    teams,
 }: {
     component: FormComponentClass,
     onAnswerChange: (id: string, value: string) => void,
     answer: any,
     team?: number,
+    teams?: number[]
 }) {
     const _onAnswerChange = (id: string, val: string) => {
         onAnswerChange(team ? team + "##" + id : id, val);
@@ -48,6 +51,10 @@ function FormComponent({
 
     if (component instanceof formComponents.BooleanInput) {
         return <BooleanInput component={component} onChange={_onAnswerChange} value={answer} />;
+    }
+
+    if (component instanceof formComponents.RobotRanking && teams) {
+        return <RobotRanking component={component} onChange={_onAnswerChange} teams={teams} />;
     }
 
     return <div>Unknown component type</div>;
