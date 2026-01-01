@@ -32,7 +32,8 @@ export default async function assignForMatch(nextMatch: number) {
                 teams: allianceTeams,
                 finished: false,
                 username: user.username,
-                userId: user.id
+                userId: user.id,
+                displayName: user.displayName
             };
 
             await user.update({

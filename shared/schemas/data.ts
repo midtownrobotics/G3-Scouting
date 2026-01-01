@@ -123,6 +123,7 @@ export type NextMatch = z.infer<typeof NextMatch>;
 export const CurrentAssignment = NextMatch.and(z.object({
     username: z.string(),
     userId: z.number(),
+    displayName: z.string().nullish(),
 }));
 export type CurrentAssignment = z.infer<typeof CurrentAssignment>;
 

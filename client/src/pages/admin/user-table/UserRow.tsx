@@ -52,6 +52,7 @@ function UserRow({ user, reload }: { user: SimpleUser, reload: () => void }) {
         <tr>
             <td>{user.id}</td>
             <EditableCell isEditing={editing} onchange={(v) => setUserProp(v, "username")}>{editedUser.username}</EditableCell>
+            <EditableCell isEditing={editing} onchange={(v) => setUserProp(v, "displayName")}>{editedUser.displayName ?? ""}</EditableCell>
             <EditableCell isEditing={editing} onchange={(v) => setPassword(String(v))}>{password}</EditableCell>
             {/* <EditableCell isEditing={editing} onchange={(v) => setUserProp(v, "permission")}>{editedUser.permission}</EditableCell> */}
             <EditablePermissionCell isEditing={editing} onChange={v => setUserProp(v, "permission")}>{editedUser.permission}</EditablePermissionCell>
