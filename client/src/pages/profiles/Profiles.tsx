@@ -23,7 +23,7 @@ export function Profiles() {
         url.searchParams.set("search", searchContent);
         window.history.pushState({}, "", url.toString());
     }, [searchContent])
-x
+
     const searchFilter = (profiles: UserProfile[]) => {
         profiles = profiles.filter(p => searchContent ? (p.username.toLowerCase().includes((searchContent).toLowerCase()) || p.displayName?.toLowerCase().includes(searchContent.toLowerCase()) || (searchContent.includes("id-") && ("id-" + p.id.toString()) == searchContent)) : true);
         profiles = profiles.sort((p1, p2) => p2.xp - p1.xp);
