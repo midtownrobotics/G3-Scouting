@@ -53,4 +53,5 @@ type UserBlockAssignmentModelCreationAttributes = {
     userId: number;
     blockId: number;
     assignmentId: number;
+    scoutingAlliance: Alliance | null;
 }

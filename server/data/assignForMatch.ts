@@ -1,4 +1,4 @@
-import { CurrentAssignment } from "@shared/schemas/data";
+import { CurrentAssignment, NextMatch } from "@shared/schemas/data";
 import { AssignmentType } from "@shared/schemas/schedule";
 import { getAllMatches } from "../externalApis/tba/tba";
 import UserModel from "../models/users/UserModel";
@@ -20,19 +20,21 @@ export default async function assignForMatch(nextMatch: number) {
         const allianceTeams = alliance === Alliance.RED ? redTeams : blueTeams;
 
         for (const user of users) {
-            if ((await user.getCurrentAssignment())?.type !== AssignmentType.ASSIGNED) continue;
+            const currentAssignment = await user.getCurrentAssignment();
+            if (currentAssignment?.type !== AssignmentType.ASSIGNED) continue;
             const i = assigned.length;
-            const userAlliance = user.redAlliance ? Alliance.RED : Alliance.BLUE;
+            const userAlliance = await user.getCurrentAlliance();
             if (userAlliance !== alliance) continue;
             const team = allianceTeams[i % 3];
 
-            const newAssignment = {
+            const newAssignment: CurrentAssignment = {
                 number: nextMatch,
                 team,
                 teams: allianceTeams,
                 finished: false,
                 username: user.username,
-                userId: user.id
+                userId: user.id,
+                alliance: alliance,
             };
 
             await user.update({
