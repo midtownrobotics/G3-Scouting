@@ -80,31 +80,42 @@ export default async function deploySchedules(
       byBlock.get(blockId)!.push(assignment);
     }
 
+    const prevAlliance = new Map<number, Alliance>();
+
     for (const [, blockAssignments] of byBlock) {
       let numBlueAssignments: number = 0;
       let numRedAssignments: number = 0;
 
+
       for (const assignment of blockAssignments) {
+        function assignBlue() {
+          assignment.scoutingAlliance = Alliance.BLUE;
+          numBlueAssignments++;
+          prevAlliance.set(assignment.userId, Alliance.BLUE);
+        }
+
+        function assignRed() {
+          assignment.scoutingAlliance = Alliance.RED;
+          numRedAssignments++;
+          prevAlliance.set(assignment.userId, Alliance.RED)
+        }
+
         if (assignment.assignment.type != AssignmentType.ASSIGNED) {
           continue;
         }
         if (numBlueAssignments < numRedAssignments) {
-          assignment.scoutingAlliance = Alliance.BLUE;
-          numBlueAssignments++;
+          assignBlue();
           continue;
         }
         if (numBlueAssignments > numRedAssignments) {
-          assignment.scoutingAlliance = Alliance.RED;
-          numRedAssignments++;
+          assignRed();
           continue;
         }
-        if ((assignment.userId + assignment.id) % 2 === 0) {
-          assignment.scoutingAlliance = Alliance.BLUE;
-          numBlueAssignments++;
+        if (prevAlliance.get(assignment.userId) == Alliance.BLUE && numBlueAssignments === numRedAssignments) {
+          assignBlue();
           continue;
         }
-        assignment.scoutingAlliance = Alliance.RED;
-        numRedAssignments++;
+        assignRed();
       }
 
       await Promise.all(

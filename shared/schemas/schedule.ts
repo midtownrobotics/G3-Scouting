@@ -43,7 +43,7 @@ export type DeployPayload = z.infer<typeof DeployPayload>
 export const UserBlockAssignment = z.object({
     block: Block,
     assignment: Assignment,
-    scoutingAlliance: z.nativeEnum(Alliance),
+    scoutingAlliance: z.nativeEnum(Alliance).optional().nullish(),
 });
 export type UserBlockAssignment = z.infer<typeof UserBlockAssignment>
 
