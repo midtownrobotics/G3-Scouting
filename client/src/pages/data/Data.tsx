@@ -3,7 +3,7 @@ import { Card, Col, Form, Row } from "react-bootstrap";
 import AveragedRows from "./viewers/AveragedRows";
 import FormRows from "./viewers/FormRows";
 import TeamRows from "./viewers/TeamRows";
-import { makeUrlParam } from "../../Utils";
+import { makeUrlParam } from "../../utils";
 import TeamSummary from "./viewers/TeamSummary";
 import MatchReview from "./viewers/MatchReview";
 import { defaultAccuracy } from "./helpers/utils";

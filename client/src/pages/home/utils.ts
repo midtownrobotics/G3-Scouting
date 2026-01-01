@@ -1,7 +1,7 @@
 import { UserInformation } from "@shared/schemas/user";
 import { Assignment, Block, UserBlockAssignment } from "@shared/schemas/schedule";
 import { DateString } from "@shared/types";
-import { getAssignmentDuration } from "../../Utils";
+import { getAssignmentDuration } from "../../utils";
 
 export function softenColor(hex?: string): string {
     if (hex === undefined) return ("hsl(0, 0.00%, 100.00%)")

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Card, Table } from "react-bootstrap";
 import { z } from "zod";
 import { fetchAPIJSON } from "../../../API";
-import { numberParser } from "../../../Utils";
+import { numberParser } from "../../../utils";
 import TeamNumberInput from "../helpers/TeamNumberInput";
 import FormResponseTable from "../helpers/FormResponseTable";
 import { getMatchUrl, isMatchRelated } from "../helpers/utils";

@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { z } from "zod";
 import { fetchAPIJSON } from "../../../API";
 import { Button, FormControl, Container, Row, Col } from "react-bootstrap";
-import { makeUrlParam } from "../../../Utils";
+import { makeUrlParam } from "../../../utils";
 
 type SearchCondition = {
     namespaceId: string;

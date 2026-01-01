@@ -4,7 +4,7 @@ import { Clock, Maximize2, Minimize2, Users, Wrench } from "lucide-react";
 import React, { useEffect, useReducer, useState } from "react";
 import { Button, Card, Col, Container, Row, Table } from "react-bootstrap";
 import { fetchAPIJSON } from "../../API";
-import { formatDuration, getAssignmentDuration } from "../../Utils";
+import { formatDuration, getAssignmentDuration } from "../../utils";
 import { Asterisk, BatteryFull } from "react-bootstrap-icons";
 import Countdown from "./Countdown";
 

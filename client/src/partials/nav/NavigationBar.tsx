@@ -2,7 +2,7 @@ import { morePages } from "@shared/types";
 import { useState } from "react";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { usePage } from "../../pageManager";
-import { useFullscreenStatus } from "../../Utils";
+import { useFullscreenStatus } from "../../utils";
 import "./NavigationBar.css";
 import NavPageLink from "./NavPageLink";
 

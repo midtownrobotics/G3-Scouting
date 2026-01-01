@@ -13,7 +13,7 @@ import { sendNotification } from "./other/notifications";
 import getTokensFromAccuracy from "./game/getTokensFromAccuracy";
 import scoreAllianceData from "./data/reliability/scoreResponse";
 import { getMatchData } from "./externalApis/tba/tba";
-import Form from "@shared/forms/Form";
+import Form, { FormType } from "@shared/forms/Form";
 import FormModel from "./models/forms/FormModel";
 import { scoreUnscoredMatches } from "./data/reliability/scoreUnscoredMatches";
 if (PRODUCTION) {

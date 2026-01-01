@@ -5,7 +5,7 @@ import { BoxArrowRight, Key, Slack, Trash } from "react-bootstrap-icons";
 import { fetchAPIJSON, postAPI } from "../../API";
 import { useUserData } from "../../userData";
 import SlackLink from "./SlackLink";
-import { DocsLink } from "../../Utils";
+import { DocsLink } from "../../utils";
 
 export default function Settings() {
     const [newPassword, setNewPassword] = useState("");

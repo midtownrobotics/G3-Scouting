@@ -2,7 +2,7 @@ import { GamblingQuestion, ResponseBetData, ServerToClientMessage } from "@share
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { Alert, Button, Card, Form, InputGroup, Spinner } from "react-bootstrap";
 import { sendWsMsg } from "./websocket";
-import { getWebsocket } from "../../Utils";
+import { getWebsocket } from "../../utils";
 
 export function Betting() {
     const [question, setQuestion] = useState<GamblingQuestion>();

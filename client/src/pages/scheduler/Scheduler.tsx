@@ -9,7 +9,7 @@ import DaySelector from "./DaySelector";
 import "./Scheduler.css";
 import ScheduleTable from "./ScheduleTable";
 import { toFormattedTime } from "./utils";
-import { DocsLink } from "../../Utils";
+import { DocsLink } from "../../utils";
 
 function Scheduler() {
     const [users, setUsers] = useState<SimpleUser[]>([]);

@@ -2,7 +2,7 @@ import "./Admin.css";
 import SaveableTextInput from "./SaveableTextInput";
 import UserTable from "./user-table/UserTable";
 import { Container, Row, Col } from "react-bootstrap";
-import { DocsLink } from "../../Utils";
+import { DocsLink } from "../../utils";
 
 function Admin() {
   return (

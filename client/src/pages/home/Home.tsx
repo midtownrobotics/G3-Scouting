@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Card, Container, Spinner, Table } from "react-bootstrap";
 import { useUserData } from "../../userData";
-import { getCurrentBlockMins, getCurrentDate } from "../../Utils";
+import { getCurrentBlockMins, getCurrentDate } from "../../utils";
 import { toFormattedTime } from "../scheduler/utils";
 import { condenseSchedule, getFormattedAssignmentDuration, getFormattedDate, makeDateFromDateString, softenColor } from "./utils";
 
