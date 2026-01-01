@@ -29,7 +29,9 @@ Data page docs are coming soon...
 
 ## Setup
 
-This setup assumes you have [Git CLI](https://git-scm.com/install/) as well as Node and NPM which can be installed using the [Node Version Manager (NVM)](https://www.nvmnode.com/guide/download.html).
+This setup assumes you have [Git CLI](https://git-scm.com/install/) as well as Node and NPM which can be installed using the [Node Version Manager (NVM)](https://www.nvmnode.com/guide/download.html). 
+
+See the [NVM usage docs](https://www.nvmnode.com/guide/usage.html#windows-nvm-windows-1) for how to use NVM to install Node and NPM. Note that this project has been extensively developed using Node v22.19.0 and v24.12.0, though the LTS and latest versions will likely work.
 
 1. Clone the repo
 ```bash
