@@ -1,3 +1,4 @@
+import { Permission } from "@shared/permissions";
 import { useEffect, useState } from "react";
 
 function EditableCell({ isEditing, children, onchange, checkbox, submit }: { checkbox?: boolean, isEditing?: boolean, children?: string | number | boolean, onchange: (val: string | boolean) => void, submit?: () => void; }) {
@@ -40,3 +41,19 @@ function EditableCell({ isEditing, children, onchange, checkbox, submit }: { che
 }
 
 export default EditableCell;
+
+export function EditablePermissionCell({ isEditing, children, onChange }: {isEditing?: boolean, children?: string, onChange: (val: string) => void }) {
+    return (
+        <td>
+            <select 
+                disabled={!isEditing}
+                value={children}
+                onChange={e => onChange(e.target.value)}
+            >
+                {Object.values(Permission).map(v => 
+                    <option value={v}>{v}</option>
+                )}
+            </select>
+        </td>
+    )
+}

@@ -7,7 +7,9 @@
     "shared"
   ],
   "scripts": {
-    "dev": "concurrently \"npm --prefix client run dev\" \"npm --prefix server run dev\""
+    "dev": "concurrently \"npm --prefix client run dev\" \"npm --prefix server run dev\"",
+    "build": "npm --prefix client run build && npm --prefix server run build",
+    "prod": "npm --prefix server run prod"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"

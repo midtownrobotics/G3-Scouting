@@ -2,7 +2,7 @@ import { CreateUser } from "@shared/schemas/user";
 import { useState } from "react";
 import { PlusCircle } from "react-bootstrap-icons";
 import { postAPI } from "../../../API";
-import EditableCell from "../EditableCell";
+import EditableCell, { EditablePermissionCell } from "../EditableCell";
 import { Permission } from "@shared/permissions";
 
 const defaultUser: Partial<CreateUser> = { id: -1, redAlliance: true, permission: Permission.DATA, slackLinked: false, tokens: 0, xp: 0 };
@@ -42,7 +42,8 @@ function NewUser({ reload }: { reload: () => void; }) {
             <td />
             <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "username")}>{user.username}</EditableCell>
             <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "password")}>{user.password}</EditableCell>
-            <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "permission")}>DATA</EditableCell>
+            {/* <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "permission")}>DATA</EditableCell> */}
+            <EditablePermissionCell isEditing={editing} onChange={v => setUserProp(v, "permission")}></EditablePermissionCell>
             {/* <EditableCell submit={saveUser} isEditing={editing} onchange={(v) => setUserProp(v, "reliable")} checkbox>{user?.reliable ?? false}</EditableCell> */}
             <td />
             <td />

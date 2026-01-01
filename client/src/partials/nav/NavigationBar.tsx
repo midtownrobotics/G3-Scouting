@@ -5,7 +5,6 @@ import { usePage } from "../../pageManager";
 import { useFullscreenStatus } from "../../utils";
 import "./NavigationBar.css";
 import NavPageLink from "./NavPageLink";
-import { CopyCheck, CopyIcon } from "lucide-react";
 
 /** The site navigation bar. */
 function NavigationBar() {

@@ -2,6 +2,7 @@ import "./Admin.css";
 import SaveableTextInput from "./SaveableTextInput";
 import UserTable from "./user-table/UserTable";
 import { Container, Row, Col } from "react-bootstrap";
+import { DocsLink } from "../../utils";
 
 function Admin() {
   return (
@@ -10,14 +11,21 @@ function Admin() {
       <hr />
 
       <section id="users" className="my-4">
-        <h2>Users</h2>
+        <div className="d-flex justify-content-center gap-2">
+          <h2 className="my-0">Users</h2>
+          <DocsLink link="/docs/admin.md#users" />
+        </div>
         <UserTable />
       </section>
 
       <hr />
 
       <section id="settings" className="my-4">
-        <h2>Settings</h2>
+        
+        <div className="d-flex justify-content-center gap-2">
+          <h2 className="my-0">Settings</h2>
+          <DocsLink link="/docs/admin.md#settings" />
+        </div>
 
         <Row className="gy-3 gx-4">
           <Col xs={12} md={6} lg={4}>

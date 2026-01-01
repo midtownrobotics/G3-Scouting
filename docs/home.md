@@ -29,15 +29,17 @@ Data page docs are coming soon...
 
 ## Setup
 
+This setup assumes you have [Git CLI](https://git-scm.com/install/) as well as Node and NPM which can be installed using the [Node Version Manager (NVM)](https://www.nvmnode.com/guide/download.html). 
+
+See the [NVM usage docs](https://www.nvmnode.com/guide/usage.html#windows-nvm-windows-1) for how to use NVM to install Node and NPM. Note that this project has been extensively developed using Node v22.19.0 and v24.12.0, though the LTS and latest versions will likely work.
+
 1. Clone the repo
 ```bash
 git clone https://github.com/midtownrobotics/G3-Scouting.git
 ```
-2. Install node modules for all three node projects (shared, server, client)
+2. Install all dependencies
 ```bash
-npm --prefix ./shared install
-npm --prefix ./server install
-npm --prefix ./client install
+npm install
 ```
 3. Setup config in ./shared/config.ts. You will have to create the file in this location.
 ```typescript
@@ -66,11 +68,10 @@ export const DEV_VITE_HOSTS = ["g3.grayjn.com"];
 ```
 4. Compile the React Vite project and Express server
 ```bash
-npm --prefix ./client run build
-npm --prefix ./server run build
+npm run build
 ```
 5. Run the backend server
 ```bash
-npm --prefix ./server run prod
+npm run prod
 ```
 6. Your server should be up and running! The default username is `admin` and the password is `password`. Check out the other docs to setup and use the software.

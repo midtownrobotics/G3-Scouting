@@ -131,7 +131,8 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
                 team={team}
                 teams={teams}
                 alliance={alliance}
-                setTeam={setTeam}//{form.current.openSubmission ? setTeam : undefined}
+                // setTeam={setTeam}
+                setTeam={form.current.openSubmission ? setTeam : undefined}
                 setAlliance={form.current.openSubmission ? setAlliance : undefined}
             />
 

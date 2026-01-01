@@ -6,7 +6,7 @@ import NavigationBar from "./partials/nav/NavigationBar";
 import OfflineBar from "./partials/offline-bar/OfflineBar";
 import { useUserData } from "./userData";
 import { Alert } from "react-bootstrap";
-import Docs from "./Docs";
+import Docs from "./docs/Docs";
 
 function App() {
     const { pageKey, pageInstance } = usePage();

@@ -65,6 +65,7 @@ export function PageProvider({ children }: { children: React.ReactNode; }) {
     }, []);
 
     const setPageKey = (key: PageKey) => {
+        if (window.location.pathname.includes("/docs/")) return;
         setPageKeyState(prev => {
             if (prev === key) {
                 // Same page, force refresh

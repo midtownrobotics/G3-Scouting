@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { DateString } from "@shared/types";
 import { Assignment, UserBlockAssignment } from "@shared/schemas/schedule";
+import { InfoCircle } from "react-bootstrap-icons";
 
 export function getWebsocket(handler: string) {
     try {
         const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
         const ws = new WebSocket(`${protocol}//${window.location.host}/ws?handler=${handler}`);
-        return ws;  
+        return ws;
     } catch (err) {
         return undefined;
     }
@@ -119,6 +120,21 @@ export function numberParser(val: string | number | undefined | null, decimal?: 
     if (Number.isNaN(val)) return undefined;
     if (decimal === undefined) return val;
 
-    decimal = 10**decimal;
-    return Math.round(val*decimal)/decimal;
+    decimal = 10 ** decimal;
+    return Math.round(val * decimal) / decimal;
+}
+
+export function DocsLink({ link }: { link: string }) {
+    return (
+        <div
+            style={{
+                // transform: "translateX: (-20px)"
+            }}
+            className="align-items-center justify-content-center d-flex"
+        >
+            <a className="plain-link fs-6" href={link} target="_blank">
+                <InfoCircle />
+            </a>
+        </div>
+    );
 }

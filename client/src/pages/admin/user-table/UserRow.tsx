@@ -1,7 +1,7 @@
 import { CreateUser, SimpleUser } from "@shared/schemas/user"
 import { useState } from "react"
 import { Floppy, Pencil, Trash } from "react-bootstrap-icons"
-import EditableCell from "../EditableCell"
+import EditableCell, { EditablePermissionCell } from "../EditableCell"
 import { postAPI } from "../../../API"
 
 function UserRow({ user, reload }: { user: SimpleUser, reload: () => void }) {
@@ -53,7 +53,8 @@ function UserRow({ user, reload }: { user: SimpleUser, reload: () => void }) {
             <td>{user.id}</td>
             <EditableCell isEditing={editing} onchange={(v) => setUserProp(v, "username")}>{editedUser.username}</EditableCell>
             <EditableCell isEditing={editing} onchange={(v) => setPassword(String(v))}>{password}</EditableCell>
-            <EditableCell isEditing={editing} onchange={(v) => setUserProp(v, "permission")}>{editedUser.permission}</EditableCell>
+            {/* <EditableCell isEditing={editing} onchange={(v) => setUserProp(v, "permission")}>{editedUser.permission}</EditableCell> */}
+            <EditablePermissionCell isEditing={editing} onChange={v => setUserProp(v, "permission")}>{editedUser.permission}</EditablePermissionCell>
             {/* <EditableCell isEditing={editing} onchange={(v) => setUserProp(v, "reliable")} checkbox>{editedUser.reliable}</EditableCell> */}
             <EditableCell isEditing={editing} onchange={(v) => setUserProp(v, "redAlliance")} checkbox>{editedUser.redAlliance}</EditableCell>
             <td>

@@ -5,6 +5,7 @@ import { BoxArrowRight, Key, Slack, Trash } from "react-bootstrap-icons";
 import { fetchAPIJSON, postAPI } from "../../API";
 import { useUserData } from "../../userData";
 import SlackLink from "./SlackLink";
+import { DocsLink } from "../../utils";
 
 export default function Settings() {
     const [newPassword, setNewPassword] = useState("");
@@ -47,7 +48,10 @@ export default function Settings() {
 
     return (
         <Container className="mt-3" style={{ maxWidth: "600px" }}>
-            <h2 className="mb-4 text-center">Account Settings</h2>
+            <div className="d-flex justify-content-center mb-4 gap-2">
+                <h2 className="text-center mb-0">Account Settings</h2>
+                <DocsLink link="/docs/settings.md" />
+            </div>
 
             {linkAttempt && (userData?.user.slackLinked === true ?
                 <Alert variant="info">Slack account linked successfully!</Alert> :
