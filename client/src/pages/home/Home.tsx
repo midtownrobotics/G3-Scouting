@@ -4,6 +4,7 @@ import { useUserData } from "../../userData";
 import { getCurrentBlockMins, getCurrentDate } from "../../utils";
 import { toFormattedTime } from "../scheduler/utils";
 import { condenseSchedule, getFormattedAssignmentDuration, getFormattedDate, makeDateFromDateString, softenColor } from "./utils";
+import { Alliance } from "@shared/utils";
 
 function Home() {
     const { userData } = useUserData();
@@ -60,6 +61,7 @@ function Home() {
                                 <th>Assignment</th>
                                 <th>Start Time</th>
                                 <th>End Time</th>
+                                <th>Alliance</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -97,6 +99,9 @@ function Home() {
                                                     </td>
                                                     <td style={{ backgroundColor: softenColor(item.assignmentColor) }}>
                                                         {toFormattedTime(item.endTime + 30)}
+                                                    </td>
+                                                    <td style={{backgroundColor: softenColor(item.alliance == Alliance.RED ? "#ff0000" : "#0000ff")}}>
+                                                        {item.alliance}
                                                     </td>
                                                 </tr>
                                             </React.Fragment>

@@ -16,6 +16,9 @@ import { getMatchData } from "./externalApis/tba/tba";
 import Form from "@shared/forms/Form";
 import FormModel from "./models/forms/FormModel";
 import { scoreUnscoredMatches } from "./data/reliability/scoreUnscoredMatches";
+import formComponents from "@shared/forms/FormComponents";
+import { FormType } from "@shared/forms/Form";
+
 if (PRODUCTION) {
     require('module-alias/register');
 }

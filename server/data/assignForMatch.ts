@@ -7,7 +7,7 @@ import { scoreAllForms } from "./reliability/scoreUnscoredMatches";
 import { Alliance } from "@shared/utils";
 
 export default async function assignForMatch(nextMatch: number) {
-    const match = (await getAllMatches())?.find(m => m.match_number === nextMatch);
+    const match = (await getAllMatches())?.find(m => m.match_number === nextMatch && m.comp_level == "qm");
     if (!match) return;
     const redTeams = match.alliances.red.team_keys.map(t => parseInt(t.slice(3)));
     const blueTeams = match.alliances.blue.team_keys.map(t => parseInt(t.slice(3)));
