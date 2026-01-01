@@ -172,7 +172,7 @@ function Scheduler() {
 
     return (
         <div id="scheduler" className="text-center mt-3">
-            <div className="d-flex">
+            <div className="d-flex gap-2">
                 <h1 className="ms-1" style={{ textAlign: "left" }}>Scheduler</h1>
                 <DocsLink link="/docs/scheduling" />
             </div>
