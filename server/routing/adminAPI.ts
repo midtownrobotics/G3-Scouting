@@ -11,6 +11,7 @@ import UserModel from '../models/users/UserModel';
 import { getSettingsValue, setSettingsValue } from '../other/settings';
 import deploySchedules from '../scheduling/deploySchedules';
 import { SaveableInputData } from '@shared/schemas/data';
+import assignDynamicAlliances from 'server/scheduling/assignDynamicAlliances';
 
 const adminAPIRouter = express.Router();
 
@@ -160,6 +161,7 @@ adminAPIRouter.post("/deploySchedule", async (req: Request, res: Response) => {
 
     if (body.success && body.data) {
         res.sendStatus(await deploySchedules(body.data) ? 200 : 500);
+        // await assignDynamicAlliances();
         return;
     }
     res.sendStatus(400);

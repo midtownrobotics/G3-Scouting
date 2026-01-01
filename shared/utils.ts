@@ -7,3 +7,9 @@ export function getCurrentBlockId(offset?: number) {
     const time = Date.now() + ((offset ?? 0) * msPer30Min);
     return Math.floor(time / msPer30Min) * msPer30Min;
 }
+
+
+export enum Alliance {
+    RED = "RED",
+    BLUE = "BLUE"
+}

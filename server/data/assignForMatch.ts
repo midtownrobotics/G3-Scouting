@@ -4,7 +4,7 @@ import { getAllMatches } from "../externalApis/tba/tba";
 import UserModel from "../models/users/UserModel";
 import { getSettingsValue, setSettingsValue } from "../other/settings";
 import { scoreAllForms } from "./reliability/scoreUnscoredMatches";
-import { Alliance } from "@shared/forms/FormUtils";
+import { Alliance } from "@shared/utils";
 
 export default async function assignForMatch(nextMatch: number) {
     const match = (await getAllMatches())?.find(m => m.match_number === nextMatch);

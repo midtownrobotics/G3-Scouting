@@ -3,6 +3,7 @@ import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize
 import UserModel from "../users/UserModel";
 import AssignmentModel from "./AssignmentModel";
 import BlockModel from "./BlockModel";
+import { Alliance } from "@shared/utils";
 
 @Table({ 
     tableName: "user_block_assignments", 
@@ -40,6 +41,10 @@ class UserBlockAssignmentModel extends Model<
 
     @BelongsTo(() => AssignmentModel, { as: "assignment" })
     declare assignment: AssignmentModel;
+
+    @Column({ type: DataType.ENUM(...Object.values(Alliance))})
+    declare scoutingAlliance: Alliance;
+
 }
 
 export default UserBlockAssignmentModel;

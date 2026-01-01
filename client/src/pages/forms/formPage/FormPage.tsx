@@ -6,7 +6,7 @@ import { fetchAPIJSON, postAPI } from "../../../API";
 import FormComp from "../../../partials/FormComp";
 import { useUserData } from "../../../userData";
 import './FormPage.css';
-import { Alliance } from "@shared/forms/FormUtils";
+import { Alliance } from "@shared/utils";
 import { AssignmentType } from "@shared/schemas/schedule";
 
 function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
@@ -30,7 +30,7 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
         if (nextMatch?.team !== undefined) {
             setTeam(nextMatch.team);
         }
-    }, [nextMatch])
+    }, [nextMatch, knownMatch])
 
     const [team, setTeam] = useState(nextMatch?.team);
     const [teams, setTeams] = useState(nextMatch?.teams);
