@@ -11,7 +11,6 @@ import UserModel from '../models/users/UserModel';
 import { getSettingsValue, setSettingsValue } from '../other/settings';
 import deploySchedules from '../scheduling/deploySchedules';
 import { SaveableInputData } from '@shared/schemas/data';
-import assignDynamicAlliances from 'server/scheduling/assignDynamicAlliances';
 
 const adminAPIRouter = express.Router();
 

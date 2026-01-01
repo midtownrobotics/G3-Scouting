@@ -107,10 +107,14 @@ export default async function deploySchedules(
         numRedAssignments++;
       }
 
-      await UserBlockAssignmentModel.bulkCreate(blockAssignments, {
-        updateOnDuplicate: ["scoutingAlliance"],
-        transaction,
-      });
+      await Promise.all(
+        blockAssignments.map((a) =>
+          UserBlockAssignmentModel.update(
+            { scoutingAlliance: a.scoutingAlliance },
+            { where: { id: a.id }, transaction }
+          )
+        )
+      );
     }
 
     await transaction.commit();
