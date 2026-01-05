@@ -38,7 +38,7 @@ export default class FormResponseByTeamModel extends Model<InferAttributes<FormR
         if (!form) return;
 
         if (form.deployed && !form.openSubmission) {
-            user.update({tokens: user.tokens + 30});
+            user.update({tokens: user.tokens + 10});
         }
 
         if (r.type === FormType.ALLIANCE) {

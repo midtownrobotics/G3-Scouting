@@ -3,6 +3,8 @@ import { TbaMatchData } from "server/externalApis/tba/types";
 import { numberParser } from "server/utils";
 import { getValueByPath } from "../../externalApis/tba/getValueByPath";
 import FormResponseByTeamModel from "../../models/forms/FormResponseModels";
+import UserModel from "server/models/users/UserModel";
+import getTokensFromAccuracy from "server/game/getTokensFromAccuracy";
 
 export default async function scoreAllianceData(
     matchTbaData: TbaMatchData,
@@ -58,7 +60,7 @@ export default async function scoreAllianceData(
                     }, 0);
 
                     const rawError = Math.abs(theoreticalValue - realValue) / Math.max(Math.abs(realValue), 3);
-                    const error = Math.min(rawError, 1); // max 100% error
+                    const error = Math.min(rawError, 1);
 
                     combinationError += error;
                     calcCount++;
@@ -72,8 +74,11 @@ export default async function scoreAllianceData(
     for (const response of matchData) {
         if (!response.userId) continue;
         const score = userScores.get(response.userId);
-        if (score === undefined) continue
+        if (score === undefined) continue;
         const responseModel = await FormResponseByTeamModel.findByPk(response.id);
         responseModel?.update({ accuracyScore: score });
+        const user = await UserModel.findByPk(response.userId);
+        if (!user) continue;
+        user.update({ tokens: user.tokens + getTokensFromAccuracy(score) })
     };
 }
