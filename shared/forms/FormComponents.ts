@@ -253,6 +253,42 @@ export class Range extends FormComponent {
     }
 }
 
+export class RobotRanking extends FormComponent {
+    public metadata: QuestionMetadata | null = null;
+
+    /**
+     * Constructs a robot ranking question.
+     * This component can only be used on {@link FormType.ALLIANCE} forms.
+     * @param question The ranking criteria. Ex: `"Rank by Defense"`
+     * @param name The form unique name of the question. Ex: `"DefenseRanking"`
+     */
+    constructor(public question: string, public name: string) {
+        super();
+    }
+
+    public _setMetadata(id: string, formId: string, formType: FormType): void {
+        if (formType !== FormType.ALLIANCE)
+        this.metadata = {
+            type: "number",
+            classification: "quantitative",
+            name: this.name,
+            id,
+            formId,
+            formType,
+            namespaceId: `${formId}-${id}`,
+        };
+    }
+
+    public toJSON(): SerializedComponent {
+        if (!this.metadata) throw new Error("Cannot serialize component without adding it to a form.");
+        return {
+            type: "RobotRanking",
+            creationArgs: [this.question, this.metadata.name],
+            id: this.id
+        };
+    }
+}
+
 const formComponents = {
     SectionBreak,
     Number,
@@ -260,7 +296,8 @@ const formComponents = {
     MultipleChoice,
     Information,
     BooleanInput,
-    Range
+    Range,
+    RobotRanking
 } as const;
 
 export default formComponents;

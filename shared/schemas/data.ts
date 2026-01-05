@@ -124,7 +124,8 @@ export type NextMatch = z.infer<typeof NextMatch>;
 /** Info about scout's current assignments. */
 export const CurrentAssignment = NextMatch.and(z.object({
     username: z.string(),
-    userId: z.number()
+    userId: z.number(),
+    displayName: z.string().nullish(),
 }));
 export type CurrentAssignment = z.infer<typeof CurrentAssignment>;
 
