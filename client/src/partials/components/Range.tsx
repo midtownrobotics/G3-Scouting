@@ -30,7 +30,10 @@ export default function Range({
     return (
         <Form.Group className="my-3 w-75 mx-auto">
             <Form.Label>{component.question}</Form.Label>
-            <div className="d-flex justify-content-center align-items-center gap-2">
+            <div 
+            className="d-flex justify-content-center align-items-center gap-2 px-2 rounded border"
+            style={{ backgroundColor: "#ffffffff" }}
+            >
                 <Form.Range
                     className="text-center"
                     max={component.max}

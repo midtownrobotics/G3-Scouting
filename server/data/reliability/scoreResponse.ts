@@ -32,7 +32,7 @@ export default async function scoreAllianceData(
     if (teams.size !== 3) return 1;
 
     for (const question of formData.questions) {
-        if (!("validation" in question) || question.validation === null) continue;
+        if (!("validation" in question) || !question.validation || !question.validation.path) continue;
 
         const realValue = question.validation.type === "tba"
             ? getValueByPath(matchTbaData, question.validation.path, alliance)
