@@ -32,6 +32,7 @@ function UserTable() {
                     <tr>
                         <th>ID</th>
                         <th>Username</th>
+                        <th>Nickname</th>
                         <th>Password</th>
                         <th>Permission</th>
                         {/* <th>Reliable?</th> */}

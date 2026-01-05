@@ -153,7 +153,7 @@ export default function Lead() {
                             >
                                 <thead className="w-100">
                                     <tr>
-                                        <th>User</th>
+                                        <th colSpan={1}>User</th>
                                         <th>Team</th>
                                         <th>Submitted</th>
                                         <th>Alliance</th>
@@ -162,7 +162,7 @@ export default function Lead() {
                                 <tbody className="w-100">
                                     {assignments?.map(a =>
                                         <tr key={a.username}>
-                                            <td>{a.username}</td>
+                                            <td>{a.displayName || a.username}</td>
                                             <td>{a.team}</td>
                                             <td className="user-select-none text-center">
                                                 <input type={"checkbox"} checked={a.finished} readOnly />

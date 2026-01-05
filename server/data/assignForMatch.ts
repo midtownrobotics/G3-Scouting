@@ -34,6 +34,7 @@ export default async function assignForMatch(nextMatch: number) {
                 finished: false,
                 username: user.username,
                 userId: user.id,
+                displayName: user.displayName,
                 alliance: alliance,
             };
 
