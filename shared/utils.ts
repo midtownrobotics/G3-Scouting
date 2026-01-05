@@ -13,3 +13,12 @@ export enum Alliance {
     RED = "RED",
     BLUE = "BLUE"
 }
+
+export enum Rarity {
+    COMMON = "COMMON",
+    UNCOMMON = "UNCOMMON",
+    RARE = "RARE",
+    EPIC = "EPIC",
+    EINSTEIN = "EINSTEIN",
+    BOYLED = "BOYLED"
+}

@@ -1,3 +1,4 @@
+import { Rarity } from '@shared/utils';
 import { z } from 'zod';
 
 export const TokenLeaderboardEntry = z.object({
@@ -70,5 +71,43 @@ export const ServerToClientMessage = z.object({
     payload: GamblingQuestion
 })).or(z.object({
     type: z.literal("ping")
-}));;
+}));
 export type ServerToClientMessage = z.infer<typeof ServerToClientMessage>;
+
+export const Item = z.object({
+    id: z.number(),
+    name: z.string(),
+    rarity: z.nativeEnum(Rarity),
+})
+
+export type Item = z.infer<typeof Item>;
+
+export const InventoryItem = z.object({
+    itemId: z.number(),
+    equipped: z.boolean().default(false)
+})
+export type InventoryItem = z.infer<typeof InventoryItem>;
+
+export const UserInventory = z.object({
+    userId: z.number(),
+    items: z.array(InventoryItem),
+})
+export type UserInventory = z.infer<typeof UserInventory>;
+
+export const Lootbox = z.object({
+    id: z.number(),
+    name: z.string(),
+    description: z.string().optional(),
+    rarityChances: z.record(
+        z.nativeEnum(Rarity),
+        z.number().min(0).max(1)
+    ),
+}).refine(
+    lb => 
+        Math.abs(
+            Object.values(lb.rarityChances).reduce((a, b) => a + b, 0) - 1
+        ) < 1e-6,
+        { message: "Lootbox rarity chances must sum to 1"}
+);
+
+export type Lootbox = z.infer<typeof Lootbox>;

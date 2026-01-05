@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { Assignment, UserBlockAssignment } from './schedule';
 import { Permission } from '../permissions';
 import { NextMatch } from './data';
+import { InventoryItem } from './game';
 
 export const SimpleUser = z.object({
     username: z.string(),
@@ -44,7 +45,8 @@ export type Notification = z.infer<typeof Notification>;
 export const UserInformation = z.object({
     user: SimpleUser.and(z.object({
         schedule: z.array(UserBlockAssignment),
-        nextMatch: NextMatch.nullish()
+        nextMatch: NextMatch.nullish(),
+        inventory: z.array(InventoryItem).optional()
     })),
     currentAssignment: Assignment.optional(),
     notifications: z.array(Notification)
