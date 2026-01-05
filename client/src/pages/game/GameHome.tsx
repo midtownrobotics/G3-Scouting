@@ -1,6 +1,7 @@
 import { Betting } from "./Betting";
 import "./Game.css";
 import { Leaderboard } from "./Leaderboard";
+import LootBoxes from "./lootboxes/LootBoxes";
 
 export function GameHome() {
     return (
@@ -13,6 +14,9 @@ export function GameHome() {
             <br />
             <div className="d-flex justify-content-center">
                 <Leaderboard className="w-75" />
+            </div>
+            <div className="d-flex justify-content-center">
+                <LootBoxes />
             </div>
         </div>
     )
