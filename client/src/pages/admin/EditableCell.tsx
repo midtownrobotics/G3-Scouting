@@ -1,7 +1,7 @@
 import { Permission } from "@shared/permissions";
 import { useEffect, useState } from "react";
 
-function EditableCell({ isEditing, children, onchange, checkbox, submit }: { checkbox?: boolean, isEditing?: boolean, children?: string | number | boolean, onchange: (val: string | boolean) => void, submit?: () => void; }) {
+function EditableCell({ isEditing, children, onchange, checkbox, submit }: { checkbox?: boolean, isEditing?: boolean, children?: string | number | boolean | null, onchange: (val: string | boolean) => void, submit?: () => void; }) {
     const [editable, setEditable] = useState(true);
 
     useEffect(() => {
