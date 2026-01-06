@@ -174,7 +174,7 @@ function NumberMaker({ component, setCanSubmit, forceUpdate }: MakerProps<Number
     useEffect(() => { component.name = name; }, [name]);
     useEffect(() => {
         if (validation === "") component.validation = undefined;
-        component.validation = { type: "tba", path: validation };
+        else component.validation = { type: "tba", path: validation };
     }, [validation]);
 
     useEffect(() => {
@@ -224,7 +224,7 @@ function RangeMaker({ component, setCanSubmit, forceUpdate }: MakerProps<Range>)
     useEffect(() => { component.step = parseFloat(step); }, [step]);
     useEffect(() => {
         if (validation === "") component.validation = undefined;
-        component.validation = { type: "tba", path: validation };
+        else component.validation = { type: "tba", path: validation };
     }, [validation]);
 
     useEffect(() => {
