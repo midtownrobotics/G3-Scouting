@@ -85,7 +85,7 @@ function Home() {
                                             <React.Fragment key={item.blockIds.join("-")}>
                                                 {(index === 0 || item.date !== schedule[index - 1]?.date) && (
                                                     <tr key={`date-${item.date}`}>
-                                                        <td colSpan={3} style={{ textAlign: "center" }}>
+                                                        <td colSpan={4} style={{ textAlign: "center" }}>
                                                             {makeDateFromDateString(item.date).toLocaleDateString()}
                                                         </td>
                                                     </tr>
@@ -100,9 +100,12 @@ function Home() {
                                                     <td style={{ backgroundColor: softenColor(item.assignmentColor) }}>
                                                         {toFormattedTime(item.endTime + 30)}
                                                     </td>
-                                                    <td style={{backgroundColor: softenColor(item.alliance == Alliance.RED ? "#ff0000" : "#0000ff")}}>
-                                                        {item.alliance}
-                                                    </td>
+                                                    {item.alliance == undefined ?
+                                                        <td style={{ backgroundColor: softenColor(item.assignmentColor) }}>--</td> :
+                                                        <td style={{ backgroundColor: softenColor(item.alliance == Alliance.RED ? "#ff0000" : "#0000ff") }}>
+                                                            {item.alliance}
+                                                        </td>
+                                                    }
                                                 </tr>
                                             </React.Fragment>
                                         );

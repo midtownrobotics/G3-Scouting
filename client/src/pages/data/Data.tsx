@@ -11,6 +11,7 @@ import BooleanSearch from "./viewers/BooleanSearch";
 import './Data.css';
 import TeamResponseInfo from "./viewers/TeamResponseInfo";
 import PickList from "./viewers/PickList";
+import DataStats from "./viewers/DataStats";
 
 const VIEW_OPTIONS: { hideOptions?: boolean; title: string; description: string; component: (a: number, m: number) => JSX.Element; }[] = [
     {
@@ -54,6 +55,11 @@ const VIEW_OPTIONS: { hideOptions?: boolean; title: string; description: string;
         component: () => <PickList />,
         hideOptions: true
     },
+    {
+        title: "Data Stats",
+        description: "See % coverage, averages error, and under-scouted teams.",
+        component: () => <DataStats />
+    }
 ];
 
 export default function Data() {

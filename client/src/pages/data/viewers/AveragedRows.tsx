@@ -46,7 +46,6 @@ export default function AveragedRows({ accuracy, fromMatch }: { accuracy: number
         return (
             <div className="p-3">
                 <h1>Team Averages</h1>
-                <br />
                 <FormIdInput onChange={setFormId} />
             </div>
         );
@@ -55,7 +54,6 @@ export default function AveragedRows({ accuracy, fromMatch }: { accuracy: number
     return (
         <div className="p-3">
             <h1>Team Averages</h1>
-            <br />
             <FormIdInput onChange={setFormId} />
             <br />
             <SortableTable

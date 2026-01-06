@@ -10,6 +10,7 @@ import { getMatchRows, getTeamRows } from '../data/getData/getSpecificRows';
 import FormModel from '../models/forms/FormModel';
 import { numberParser } from "../utils";
 import { z } from "zod";
+import getDataStats from "server/data/getData/getDataStats";
 
 const dataApiRouter = express.Router();
 
@@ -103,9 +104,14 @@ dataApiRouter.get("/getMatchData/:match", async (req, res) => {
     res.send({ ...data });
 });
 
-dataApiRouter.post("/ranking/setPickList", async (req, res) => {
-    const body = z.array(z.number().nullish()).safeParse(req.body);
-    if (body.success) console.log(body.data);
+/** 
+ * Gets statistics about match coverage and accuracy per team.
+ * Returns team coverage percentages, total coverage, and average error.
+ */
+dataApiRouter.get("/getDataStats/:formId", async (req, res) => {
+    const data = await getDataStats(req.params.formId);
+    if (!data) { res.sendStatus(400); return; }
+    res.send(data);
 });
 
 export default dataApiRouter;

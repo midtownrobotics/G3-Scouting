@@ -49,6 +49,7 @@ export type QuestionValidationData = z.infer<typeof QuestionValidationData>;
 
 /** Metadata for form questions. */
 export const QuestionMetadata = z.union([
+    // Without validation
     z.object({
         name: z.string(),
         id: z.string(),
@@ -58,6 +59,7 @@ export const QuestionMetadata = z.union([
         type: z.enum(["string", "number"]),
         classification: z.enum(["qualitative", "quantitative"])
     }),
+    // With validation
     z.object({
         name: z.string(),
         id: z.string(),
@@ -204,3 +206,15 @@ export const ServerToClientMessage = z.object({
     })
 }));
 export type ServerToClientMessage = z.infer<typeof ServerToClientMessage>;
+
+export const DataStatsResponse = z.object({
+    teamCoverage: z.array(z.object({
+        team: z.string(),
+        matchesScouted: z.number(),
+        totalMatches: z.number(),
+        percentage: z.number()
+    })),
+    totalCoverage: z.number(),
+    averageError: z.number()
+});
+export type DataStatsResponse = z.infer<typeof DataStatsResponse>;

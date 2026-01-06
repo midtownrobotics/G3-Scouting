@@ -49,6 +49,7 @@ export function EditablePermissionCell({ isEditing, children, onChange }: {isEdi
                 disabled={!isEditing}
                 value={children}
                 onChange={e => onChange(e.target.value)}
+                defaultValue={Permission.DATA}
             >
                 {Object.values(Permission).map(v => 
                     <option value={v}>{v}</option>
