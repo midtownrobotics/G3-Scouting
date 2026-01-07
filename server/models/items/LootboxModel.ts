@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table } from "sequelize-typescript";
+import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table, Unique } from "sequelize-typescript";
 
 @Table({ tableName: "lootboxes", timestamps: false})
 export default class LootboxModel extends Model {
@@ -10,6 +10,7 @@ export default class LootboxModel extends Model {
     @Column(DataType.INTEGER)
     declare cost: number;
 
+    @Unique
     @Column(DataType.STRING)
     declare name: string;
 

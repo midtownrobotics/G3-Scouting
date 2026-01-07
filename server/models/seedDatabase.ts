@@ -1,7 +1,6 @@
 import { Rarity } from "@shared/utils";
 import { managementDatabase } from "./sequelize";
 import ItemModel from "./items/ItemModel";
-import syncDatabase from "./syncDatabase";
 import LootboxModel from "./items/LootboxModel";
 
 async function seedItems() {
@@ -74,10 +73,7 @@ async function seedItems() {
   ];
 
   for (const item of items) {
-    await ItemModel.findOrCreate({
-      where: { name: item.name },
-      defaults: item,
-    });
+    await ItemModel.upsert(item)
   }
 
   console.log("Items seeded!");
@@ -143,7 +139,7 @@ async function seedLootBoxes() {
       rarityChances: {
         [Rarity.COMMON]: 0.01,
         [Rarity.UNCOMMON]: 0.16,
-        [Rarity.RARE]: 0.31,
+        [Rarity.RARE]: 0.30,
         [Rarity.EPIC]: 0.28,
         [Rarity.EINSTEIN]: 0.18,
         [Rarity.BOYLED]: 0.07,
@@ -152,10 +148,7 @@ async function seedLootBoxes() {
   ];
 
   for (const lootBox of lootBoxes) {
-    await LootboxModel.findOrCreate({
-      where: {name: lootBox.name},
-      defaults: lootBox
-    });
+    await LootboxModel.upsert(lootBox);
   }
 
   console.log("Lootboxes seeded!")

@@ -98,17 +98,16 @@ export const Lootbox = z.object({
     id: z.number(),
     name: z.string(),
     cost: z.number(),
-    description: z.string().optional(),
+    description: z.string().optional().nullable(),
     rarityChances: z.record(
         z.nativeEnum(Rarity),
         z.number().min(0).max(1)
     ),
 }).refine(
-    lb => 
-        Math.abs(
-            Object.values(lb.rarityChances).reduce((a, b) => a + b, 0) - 1
-        ) < 1e-6,
-        { message: "Lootbox rarity chances must sum to 1"}
+    lb => {
+        const sum = Math.abs(Object.values(lb.rarityChances).reduce((a, b) => a + b, 0));
+        return Math.abs(sum - 1) < 1e-5},
+        { message: `Lootbox rarity chances must sum to 1`}
 );
 
 export type Lootbox = z.infer<typeof Lootbox>;

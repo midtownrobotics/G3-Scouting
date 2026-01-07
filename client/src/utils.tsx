@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { DateString } from "@shared/types";
 import { Assignment, UserBlockAssignment } from "@shared/schemas/schedule";
 import { InfoCircle } from "react-bootstrap-icons";
+import z from "zod";
 
 export function getWebsocket(handler: string) {
     try {
@@ -137,4 +138,12 @@ export function DocsLink({ link }: { link: string }) {
             </a>
         </div>
     );
+}
+
+export async function fetchZod<T> (url: string, schema: z.ZodSchema<T>): Promise<T> {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(res.statusText);
+
+    const json = await res.json();
+    return schema.parse(json);
 }
