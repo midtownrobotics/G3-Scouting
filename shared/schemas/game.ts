@@ -97,6 +97,7 @@ export type UserInventory = z.infer<typeof UserInventory>;
 export const Lootbox = z.object({
     id: z.number(),
     name: z.string(),
+    cost: z.number(),
     description: z.string().optional(),
     rarityChances: z.record(
         z.nativeEnum(Rarity),

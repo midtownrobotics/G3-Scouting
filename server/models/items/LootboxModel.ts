@@ -7,6 +7,9 @@ export default class LootboxModel extends Model {
     @Column(DataType.INTEGER)
     declare id: number;
 
+    @Column(DataType.INTEGER)
+    declare cost: number;
+
     @Column(DataType.STRING)
     declare name: string;
 

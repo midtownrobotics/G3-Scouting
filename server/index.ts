@@ -17,6 +17,8 @@ import Form, { FormType } from "@shared/forms/Form";
 import FormModel from "./models/forms/FormModel";
 import { scoreUnscoredMatches } from "./data/reliability/scoreUnscoredMatches";
 import formComponents from "@shared/forms/FormComponents";
+import seedItems from "./models/seedDatabase";
+import seedDatabase from "./models/seedDatabase";
 
 if (PRODUCTION) {
     require('module-alias/register');
@@ -32,7 +34,7 @@ console.log(``);
 console.log(`Started — ${LogColors.TX.Blue}${new Date().toLocaleString()}${LogColors.TX.White}`);
 console.log(``);
 
-syncDatabase().then(() => {
+seedDatabase().then(syncDatabase).then(() => {
     server.listen(PORT, async () => {
         scheduleReminders();
 
