@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import LootBoxCard from "./LootBoxCard";
 import { Lootbox } from "@shared/schemas/game";
 import { fetchZod } from "../../../utils";
-import { Container } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 
 
 export default function LootBoxes() {
@@ -21,11 +21,13 @@ export default function LootBoxes() {
     return (
         <div>
             <h3>Lootboxes</h3>
-            <Container>
-                {lootBoxes?.map(lb => (
-                    <LootBoxCard name={lb.name} cost={lb.cost}/>
+            <Row className="gy-3 gx-0">
+                {lootBoxes.map(lb => (
+                    <Col key={lb.id} xs={6} sm={3} md={4} lg={3}>
+                        <LootBoxCard lootBoxId={lb.id} name={lb.name} cost={lb.cost} />
+                    </Col>
                 ))}
-            </Container>
+            </Row>
         </div>        
     );
 }

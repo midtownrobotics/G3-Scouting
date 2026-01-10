@@ -1,9 +1,11 @@
-import { GamblingQuestion, Lootbox, TokenLeaderboardEntry } from '@shared/schemas/game';
+import { GamblingQuestion, Item, Lootbox, TokenLeaderboardEntry } from '@shared/schemas/game';
 import express from 'express';
 import { ListNested } from 'react-bootstrap-icons';
 import { addQuestion, getQuestions } from 'server/game/gambling';
+import { openLootBox } from 'server/game/lootboxes';
 import LootboxModel from 'server/models/items/LootboxModel';
 import UserModel from 'server/models/users/UserModel';
+import { AuthReq } from 'server/types';
 
 const gameAPIRouter = express.Router();
 
@@ -35,13 +37,15 @@ gameAPIRouter.post("/bookie/setQuestion", async (req, res) => {
 gameAPIRouter.get("/lootboxes/getLootBoxData", async (req, res) => {
     const lootBoxes = await LootboxModel.findAll();
 
-    const payload: Lootbox[] = lootBoxes.map(lb => {
-        const sum = Math.abs(Object.values(lb.rarityChances).reduce((a, b) => a + b, 0));
-        console.log(`${lb.name}: ${sum}`);
-        return Lootbox.parse(lb.toJSON())}
-    );
+    const payload: Lootbox[] = lootBoxes.map(lb => Lootbox.parse(lb.toJSON()));
 
     res.json(payload);
+});
+
+gameAPIRouter.get("/lootboxes/openLootbox/:lootboxId", async (req: AuthReq, res) => {
+    const item = await openLootBox(req.user, Number(req.params.lootboxId));
+
+    res.json(Item.parse(item.toJSON()));
 });
 
 export default gameAPIRouter;
