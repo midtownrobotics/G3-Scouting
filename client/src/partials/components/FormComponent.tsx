@@ -7,6 +7,7 @@ import ShortResponse from "./ShortResponse";
 import Range from "./Range";
 import BooleanInput from "./BooleanInput";
 import RobotRanking from "./RobotRanking";
+import Timer from "./Timer";
 
 function FormComponent({
     component,
@@ -55,6 +56,10 @@ function FormComponent({
 
     if (component instanceof formComponents.RobotRanking && teams) {
         return <RobotRanking component={component} onChange={_onAnswerChange} teams={teams} />;
+    }
+
+    if (component instanceof formComponents.Timer) {
+        return <Timer component={component} onChange={_onAnswerChange} value={answer} />;
     }
 
     return <div>Unknown component type</div>;

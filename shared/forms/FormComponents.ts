@@ -289,6 +289,35 @@ export class RobotRanking extends FormComponent {
     }
 }
 
+export class Timer extends FormComponent {
+    public metadata: QuestionMetadata | null = null;
+
+    constructor(public question: string, public name: string) {
+        super();
+    }
+
+    public _setMetadata(id: string, formId: string, formType: FormType): void {
+        this.metadata = {
+            type: "number",
+            classification: "quantitative",
+            name: this.name,
+            id,
+            formId,
+            formType,
+            namespaceId: `${formId}-${id}`,
+        };
+    }
+
+    public toJSON(): SerializedComponent {
+        if (!this.metadata) throw new Error("Cannot serialize component without adding it to a form.");
+        return {
+            type: "Timer",
+            creationArgs: [this.question, this.metadata.name],
+            id: this.id
+        };
+    }
+}
+
 const formComponents = {
     SectionBreak,
     Number,
@@ -297,7 +326,8 @@ const formComponents = {
     Information,
     BooleanInput,
     Range,
-    RobotRanking
+    RobotRanking,
+    Timer
 } as const;
 
 export default formComponents;

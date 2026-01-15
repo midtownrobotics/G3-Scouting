@@ -1,4 +1,4 @@
-import formComponents, { BooleanInput, FormComponent as FormComponentClass, Information, MultipleChoice, Number, Range, RobotRanking, SectionBreak, ShortResponse } from "@shared/forms/FormComponents";
+import formComponents, { BooleanInput, FormComponent as FormComponentClass, Information, MultipleChoice, Number, Range, RobotRanking, SectionBreak, ShortResponse, Timer } from "@shared/forms/FormComponents";
 import { useEffect, useState } from "react";
 import { FormControl } from "react-bootstrap";
 
@@ -39,6 +39,10 @@ function FormComponentMaker({ component, setCanSubmit, forceUpdate }: MakerProps
 
     if (component instanceof formComponents.RobotRanking) {
         return <RobotRankingMaker component={component} setCanSubmit={setCanSubmit} forceUpdate={forceUpdate} />
+    }
+
+    if (component instanceof formComponents.Timer) {
+        return <TimerMaker component={component} setCanSubmit={setCanSubmit} forceUpdate={forceUpdate} />
     }
 
     return <div>Unknown component type</div>;
@@ -204,6 +208,40 @@ function NumberMaker({ component, setCanSubmit, forceUpdate }: MakerProps<Number
                 placeholder="[TBA Validation Path]"
                 value={validation}
                 onChange={(e) => setValidation(e.target.value)}
+            />
+        </div>
+    );
+}
+
+
+function TimerMaker({ component, setCanSubmit, forceUpdate }: MakerProps<Timer>) {
+    const [name, setName] = useState("");
+    const [question, setQuestion] = useState("");
+
+    useEffect(() => { component.question = question; }, [question]);
+    useEffect(() => { component.name = name; }, [name]);
+
+
+    useEffect(() => {
+        forceUpdate();
+        setCanSubmit(question !== "" && name !== "");
+    }, [question, name]);
+
+    return (
+        <div>
+            <FormControl
+                className="mx-auto text-center my-2"
+                style={{ maxWidth: "300px" }}
+                placeholder="Question"
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+            />
+            <FormControl
+                className="mx-auto text-center my-2"
+                style={{ maxWidth: "300px" }}
+                placeholder="Datapoint Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
             />
         </div>
     );
