@@ -14,18 +14,23 @@ export default function Timer({
     value: string;
 }) {
 
+    const [locked, setLocked] = useState(false);
+
     const pauseAndUpdate = () => {
         onChange(component.getId(), `${totalSeconds}.${milliseconds}`);
         pause();
     }
 
+    const lock = () => {
+        setLocked(true);
+        reset();
+        pause();
+        onChange(component.getId(), "");
+    }
+
     const {
         totalSeconds,
         milliseconds,
-        seconds,
-        minutes,
-        hours,
-        days,
         isRunning,
         start,
         pause,
@@ -38,16 +43,24 @@ export default function Timer({
             <div className="d-flex justify-content-center align-items-center gap-2">
                 <div
                     className="text-center fw-bold fs-4"
-                    style={{ minWidth: "120px" }}
+                    style={{ minWidth: "120px", backgroundColor: "white", borderRadius: "5px" }}
                 >
-                    {totalSeconds}.{milliseconds}s
+                    {locked && "0.0s"} {!locked && `${totalSeconds}.${milliseconds}s`}
                 </div>
                 <Button
                     variant={isRunning ? "danger" : "success"}
-                    style={{ width: "100px" }}
+                    style={{ width: "60px" }}
                     onClick={() => isRunning ? pauseAndUpdate() : start()}
+                    disabled={locked}
                 >
                     {isRunning ? <Pause /> : <Play />}
+                </Button>
+                <Button
+                    variant="danger"
+                    onClick={lock}
+                    disabled={locked}
+                >
+                    Nullify Data
                 </Button>
             </div>
         </Form.Group>
