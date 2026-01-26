@@ -1,13 +1,12 @@
 import { Timer as TimerComponent } from "@shared/forms/FormComponents";
 import { Pause, Play } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useStopwatch } from 'react-timer-hook';
 
 export default function Timer({
     component,
     onChange,
-    value,
 }: {
     component: TimerComponent;
     onChange: (id: string, value: string) => void;

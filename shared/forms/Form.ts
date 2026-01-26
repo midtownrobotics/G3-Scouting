@@ -1,3 +1,4 @@
+import z from "zod";
 import { FormResponse, FormResponseData } from "../schemas/data";
 import { SerializedForm } from "../schemas/forms";
 import { FormComponent } from "./FormComponents";
@@ -7,8 +8,11 @@ export enum FormType {
     TEAM = "TEAM",
     ALLIANCE = "ALLIANCE",
     NO_MATCH = "NO_MATCH",
-    SINGLE_TEAM_RESPONSE = "SINGLE_TEAM_RESPONSE"
+    SINGLE_TEAM_RESPONSE = "SINGLE_TEAM_RESPONSE",
+    WHOLE_MATCH = "WHOLE_MATCH"
 }
+
+export const ZodFormType = z.nativeEnum(FormType);
 
 export default class Form {
     public readonly name: string;

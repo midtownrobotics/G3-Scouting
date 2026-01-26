@@ -1,6 +1,6 @@
 import { closestCenter, DndContext, DragMoveEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import Form from "@shared/forms/Form";
+import Form, { FormType } from "@shared/forms/Form";
 import { FormComponent as FormComponentClass } from "@shared/forms/FormComponents";
 import { useReducer, useRef, useState } from "react";
 import { Alert, Button, Card, Col, FormControl, InputGroup, Row } from "react-bootstrap";
@@ -234,7 +234,7 @@ export default function FormMaker() {
                         form={form.current}
                         match={5}
                         team={1648}
-                        teams={[999, 1648, 123]}
+                        teams={form.current.type === FormType.WHOLE_MATCH ? [2974, 1648, 254, 1771, 2025, 1678] : [2974, 1648, 254]}
                         dragging={dragging}
                     />
 

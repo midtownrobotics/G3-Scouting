@@ -182,6 +182,7 @@ export default function SelectForm({
                         <BSForm.Select onChange={(e) => setNewFormType(e.target.value)}>
                             <option value="TEAM">Team Based</option>
                             <option value="ALLIANCE">Alliance Based</option>
+                            <option value="WHOLE_MATCH">Whole Match</option>
                             <option value="NO_MATCH">Team Data (no match)</option>
                             <option value="SINGLE_TEAM_RESPONSE">Single response per team (pit scouting)</option>
                         </BSForm.Select>

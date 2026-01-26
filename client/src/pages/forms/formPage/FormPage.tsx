@@ -1,5 +1,5 @@
 import Form, { FormType } from "@shared/forms/Form";
-import { MatchData, QuestionResponse, SubmittedResponse } from "@shared/schemas/data";
+import { MatchData, QuestionResponse, SubmittedResponse, SubmittedResponseType } from "@shared/schemas/data";
 import React, { useEffect, useState } from "react";
 import { Button, Spinner } from "react-bootstrap";
 import { fetchAPIJSON, postAPI } from "../../../API";
@@ -21,12 +21,15 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
     const [knownMatch, setKnownMatch] = useState<number>();
 
     useEffect(() => {
-        if (nextMatch?.number === knownMatch) return;
-        setKnownMatch(nextMatch?.number);
+        if (nextMatch?.number === knownMatch && knownMatch !== undefined) return;
+        if (nextMatch?.number) setKnownMatch(nextMatch?.number);
 
         fetchAPIJSON("/getCurrentMatch", MatchData).then(res => {
-            if (res) setMatchData(res);
+            if (!res) return;
+            setMatchData(res);
+            if (form.current?.type === FormType.WHOLE_MATCH && teams !== res.teams) setTeams(res.teams);
         })
+
         if (nextMatch?.team !== undefined) {
             setTeam(nextMatch.team);
         }
@@ -36,6 +39,7 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
     const [teams, setTeams] = useState(nextMatch?.teams);
     const [alliance, _setAlliance] = useState(userData?.user.redAlliance ? Alliance.RED : Alliance.BLUE);
     const setAlliance = (a: Alliance) => {
+        if (form.current?.type !== FormType.ALLIANCE) return;
         _setAlliance(a)
         setTeams(a === Alliance.RED ? matchData?.red : matchData?.blue)
     }
@@ -55,7 +59,7 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
 
         let res: Response | null;
 
-        if (form.current.type === FormType.ALLIANCE) {
+        if (form.current.type === FormType.ALLIANCE || form.current.type === FormType.WHOLE_MATCH) {
             const teamsMap = new Map<string, QuestionResponse[]>();
             for (const a of answers) {
                 const [team, id] = a[0].split("##");
@@ -66,7 +70,7 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
             }
 
             res = await postAPI("/forms/submitForm", {
-                type: FormType.ALLIANCE,
+                type: SubmittedResponseType.MULTI_TEAM_FORMS,
                 formId: form.current.id,
                 teams: Array.from(teamsMap).map(t => parseInt(t[0])),
                 responses: Array.from(teamsMap).map(r => ({
@@ -78,7 +82,7 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
             } as SubmittedResponse);
         } else {
             res = await postAPI("/forms/submitForm", {
-                type: FormType.TEAM,
+                type: SubmittedResponseType.SINGLE_TEAM_FORMS,
                 formId: form.current.id,
                 response: {
                     responses: Array.from(answers).map(([question, response]) => ({ question, response })),

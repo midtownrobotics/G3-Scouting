@@ -53,19 +53,23 @@ export default function FormComp({
         </BSForm>
     );
 
-    if (form.type === FormType.ALLIANCE) return (
+    if (form.type === FormType.ALLIANCE || form.type === FormType.WHOLE_MATCH) return (
         <BSForm>
             <hr />
             <SpecialInput value={match}>Match Number</SpecialInput>
-            <BSForm.Select 
-                value={alliance} 
-                onChange={e => _setAlliance(e.target.value)}
-                className="w-100 mx-auto text-center"
-                style={{ maxWidth: "150px" }}
-            >
-                <option value={Alliance.BLUE}>Blue</option>
-                <option value={Alliance.RED}>Red</option>
-            </BSForm.Select>
+
+            {form.type === FormType.ALLIANCE &&
+                <BSForm.Select
+                    value={alliance}
+                    onChange={e => _setAlliance(e.target.value)}
+                    className="w-100 mx-auto text-center"
+                    style={{ maxWidth: "150px" }}
+                >
+                    <option value={Alliance.BLUE}>Blue</option>
+                    <option value={Alliance.RED}>Red</option>
+                </BSForm.Select>
+            }
+
             {teams?.map(t => (
                 <div>
                     <hr />

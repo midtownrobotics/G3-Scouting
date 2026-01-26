@@ -1,4 +1,4 @@
-import { FormResponse, QuestionResponse, SubmittedResponse } from "@shared/schemas/data";
+import { FormResponse, QuestionResponse, SubmittedResponse, SubmittedResponseType } from "@shared/schemas/data";
 import { CreationOptional, InferAttributes, InferCreationAttributes } from "sequelize";
 import { Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
 import FormModel from "./FormModel";
@@ -41,7 +41,7 @@ export default class FormResponseByTeamModel extends Model<InferAttributes<FormR
             user.update({tokens: user.tokens + 10});
         }
 
-        if (r.type === FormType.ALLIANCE) {
+        if (r.type === SubmittedResponseType.MULTI_TEAM_FORMS) {
             for (const response of r.responses) {
                 FormResponseByTeamModel.createResponse(response, user.id);
             }
