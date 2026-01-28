@@ -60,7 +60,7 @@ export const QuestionMetadata = z.union([
         formType: ZodFormType,
         namespaceId: z.string(),
         type: z.enum(["string", "number"]),
-        classification: z.enum(["qualitative", "quantitative"])
+        classification: z.enum(["qualitative", "quantitative", "comparative"])
     }),
     // With validation
     z.object({

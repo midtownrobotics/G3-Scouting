@@ -3,6 +3,8 @@ import { Card, Form as BSForm, Button } from "react-bootstrap";
 import FormComponentMaker from "./FormComponentMaker";
 import { useReducer, useState } from "react";
 import FormComponent from "../../../partials/components/FormComponent";
+import Comparative from "../../../partials/components/Comparative";
+import { FormType } from "@shared/forms/Form";
 
 export default function NewComponent({ addComponent }: { addComponent: (component: FormComponentClass) => boolean; }) {
     const [component, _setComponent] = useState("SectionBreak");
@@ -80,7 +82,10 @@ export default function NewComponent({ addComponent }: { addComponent: (componen
 
                 <Card className="mt-2" style={{ backgroundColor: "rgb(197, 197, 197)" }}>
                     <Card.Body>
-                        <FormComponent component={componentClass} onAnswerChange={() => undefined} answer={undefined} />
+                        {componentClass instanceof formComponents.Comparative
+                            ? <Comparative component={componentClass} onChange={() => undefined} answers={new Map()} teams={componentClass.metadata?.formType === FormType.ALLIANCE ? [2974, 1648, 254] : [2974, 1648, 254, 1771, 2025, 1678]} />
+                            : <FormComponent component={componentClass} onAnswerChange={() => undefined} answer={undefined} />
+                        }
                     </Card.Body>
                 </Card>
             </Card.Body>

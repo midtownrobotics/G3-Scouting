@@ -3,6 +3,9 @@ import { Form as BSForm } from "react-bootstrap";
 import FormComponent from "./components/FormComponent";
 import SpecialInput from "./components/SpecialInput";
 import { Alliance } from "@shared/utils";
+import { Comparative } from "@shared/forms/FormComponents";
+import ComparativeElement from "./components/Comparative";
+import TeamSelector from "./components/TeamSelector";
 
 function isAlliance(val: string): val is keyof typeof Alliance {
     return val in Alliance;
@@ -35,6 +38,8 @@ export default function FormComp({
         if (setAlliance === undefined) return;
         if (isAlliance(val)) setAlliance(Alliance[val]);
     };
+
+    const comparativeComponents = form.getComponents().filter(c => c instanceof Comparative);
 
     if (form.type === FormType.TEAM) return (
         <BSForm>
@@ -70,7 +75,7 @@ export default function FormComp({
                 </BSForm.Select>
             }
 
-            {teams?.map(t => (
+            {form.getComponents().length !== comparativeComponents.length && teams?.map(t => (
                 <div>
                     <hr />
                     <h2>Team #{t}</h2>
@@ -82,12 +87,67 @@ export default function FormComp({
                                 component={c}
                                 onAnswerChange={handleAnswerChange}
                                 answer={answers.get(t + "##" + c.getId())}
-                                teams={teams}
                             />
                         </div>
                     ))}
                 </div>
             ))}
+
+            {teams && comparativeComponents.map(c =>
+                <div className={dragging === c.getId() ? "bg-primary-subtle p-4" : ""}>
+                    <hr />
+                    <ComparativeElement
+                        key={c.getId()}
+                        component={c}
+                        onChange={handleAnswerChange}
+                        answers={answers}
+                        teams={teams}
+                    />
+                </div>
+            )}
+        </BSForm>
+    );
+
+    if (form.type === FormType.COMPARATIVE) return (
+        <BSForm>
+            <hr />
+            <SpecialInput value={match}>Match Number</SpecialInput>
+            
+            {teams && setTeam
+                ? <TeamSelector teams={teams} onChange={setTeam} />
+                : <span>Loading...</span>
+            }
+
+            {form.getComponents().length !== comparativeComponents.length &&
+                <div>
+                    <hr />
+                    <h2>Team #{team}</h2>
+                    {form.getComponents().map(c => (
+                        <div className={dragging === c.getId() ? "bg-primary-subtle p-4" : ""}>
+                            <FormComponent
+                                key={team + "##" + c.getId()}
+                                team={team}
+                                component={c}
+                                onAnswerChange={handleAnswerChange}
+                                answer={answers.get(team + "##" + c.getId())}
+                            />
+                        </div>
+                    ))}
+                </div>
+            }
+
+            {teams && comparativeComponents.map(c =>
+                <div className={dragging === c.getId() ? "bg-primary-subtle p-4" : ""}>
+                    <hr />
+                    <ComparativeElement
+                        key={c.getId()}
+                        component={c}
+                        onChange={handleAnswerChange}
+                        answers={answers}
+                        teams={teams}
+                    />
+                </div>
+            )}
         </BSForm>
     );
 

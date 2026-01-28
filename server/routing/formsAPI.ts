@@ -25,6 +25,9 @@ formAPIRouter.get("/getForm/:formId", async (req, res) => {
 formAPIRouter.post("/submitForm", async (req: AuthReq, res) => {
     const body = SubmittedResponse.safeParse(req.body);
 
+    console.log(req.body);
+    // console.log(body.error);
+
     if (req.user && body.success && body.data) {
         const { formId } = body.data;
         const form = await FormModel.getForm(formId);

@@ -21,8 +21,12 @@ export default function SlackLink() {
 
     const openSlack = () => {
         if (btnDisabled) return;
+        setBtnDisabled(true);
         window.location.href = "slack://open";
-        window.open("https://slack.com/workspace-signin");
+        setTimeout(() => {
+            window.open("https://slack.com/workspace-signin");
+            setBtnDisabled(false);
+        }, 2000);
     };
 
     const copyCommand = () => {

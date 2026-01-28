@@ -183,6 +183,7 @@ export default function SelectForm({
                             <option value="TEAM">Team Based</option>
                             <option value="ALLIANCE">Alliance Based</option>
                             <option value="WHOLE_MATCH">Whole Match</option>
+                            <option value="COMPARATIVE">Single team + compare all teams</option>
                             <option value="NO_MATCH">Team Data (no match)</option>
                             <option value="SINGLE_TEAM_RESPONSE">Single response per team (pit scouting)</option>
                         </BSForm.Select>

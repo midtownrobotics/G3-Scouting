@@ -6,15 +6,14 @@ import SectionBreak from "./SectionBreak";
 import ShortResponse from "./ShortResponse";
 import Range from "./Range";
 import BooleanInput from "./BooleanInput";
-import RobotRanking from "./RobotRanking";
 import Timer from "./Timer";
+import LongResponse from "./LongResponse";
 
 function FormComponent({
     component,
     onAnswerChange,
     answer,
     team,
-    teams,
 }: {
     component: FormComponentClass,
     onAnswerChange: (id: string, value: string) => void,
@@ -23,7 +22,8 @@ function FormComponent({
     teams?: number[]
 }) {
     const _onAnswerChange = (id: string, val: string) => {
-        onAnswerChange(team ? team + "##" + id : id, val);
+        if (!team) return;
+        onAnswerChange(team + "##" + id, val);
     };
 
     if (component instanceof formComponents.SectionBreak) {
@@ -46,6 +46,10 @@ function FormComponent({
         return <ShortResponse component={component} onChange={_onAnswerChange} value={answer} />;
     }
 
+    if (component instanceof formComponents.LongResponse) {
+        return <LongResponse component={component} onChange={_onAnswerChange} value={answer} />;
+    }
+
     if (component instanceof formComponents.Range) {
         return <Range component={component} onChange={_onAnswerChange} value={answer} />;
     }
@@ -54,13 +58,11 @@ function FormComponent({
         return <BooleanInput component={component} onChange={_onAnswerChange} value={answer} />;
     }
 
-    if (component instanceof formComponents.RobotRanking && teams) {
-        return <RobotRanking component={component} onChange={_onAnswerChange} teams={teams} />;
-    }
-
     if (component instanceof formComponents.Timer) {
         return <Timer component={component} onChange={_onAnswerChange} value={answer} />;
     }
+
+    if (component instanceof formComponents.Comparative) return <></>;
 
     return <div>Unknown component type</div>;
 }

@@ -29,7 +29,10 @@ export default class FormModel extends Model<SerializedForm> {
     @Column(DataType.JSON)
     components!: SerializedComponent[];
 
-    @HasMany(() => FormResponseByTeamModel)
+    @HasMany(() => FormResponseByTeamModel, {
+        foreignKey: "formId",
+        onDelete: "SET NULL",
+    })
     responses!: FormResponseByTeamModel[];
 
     @CreatedAt

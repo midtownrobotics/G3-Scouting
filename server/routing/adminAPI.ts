@@ -219,7 +219,14 @@ adminAPIRouter.post("/deleteForm", async (req: Request, res: Response) => {
     const body = z.object({ form: z.string() }).safeParse(req.body);
     if (!body.success || !body.data) { res.sendStatus(400); return; }
 
-    await FormModel.destroy({ where: { id: body.data.form } });
+    try {
+        await FormModel.destroy({ where: { id: body.data.form } });
+    } catch (err: any) {
+        console.error("Sequelize error:", err);
+        console.error("Original error:", err?.original);
+        console.error("SQLite message:", err?.original?.message);
+    }
+
     res.sendStatus(200);
 });
 

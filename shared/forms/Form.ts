@@ -9,7 +9,8 @@ export enum FormType {
     ALLIANCE = "ALLIANCE",
     NO_MATCH = "NO_MATCH",
     SINGLE_TEAM_RESPONSE = "SINGLE_TEAM_RESPONSE",
-    WHOLE_MATCH = "WHOLE_MATCH"
+    WHOLE_MATCH = "WHOLE_MATCH",
+    COMPARATIVE = "COMPARATIVE"
 }
 
 export const ZodFormType = z.nativeEnum(FormType);

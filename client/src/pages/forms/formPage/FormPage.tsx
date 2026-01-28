@@ -27,7 +27,19 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
         fetchAPIJSON("/getCurrentMatch", MatchData).then(res => {
             if (!res) return;
             setMatchData(res);
-            if (form.current?.type === FormType.WHOLE_MATCH && teams !== res.teams) setTeams(res.teams);
+            if (
+                (
+                    form.current?.type === FormType.WHOLE_MATCH ||
+                    form.current?.type === FormType.COMPARATIVE
+                ) && 
+                teams !== res.teams
+            ) setTeams(res.teams);
+            if (
+                form.current?.openSubmission &&
+                form.current?.type === FormType.ALLIANCE &&
+                teams !== res.blue &&
+                teams !== res.red
+            ) setTeams(res.blue);
         })
 
         if (nextMatch?.team !== undefined) {
@@ -37,7 +49,7 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
 
     const [team, setTeam] = useState(nextMatch?.team);
     const [teams, setTeams] = useState(nextMatch?.teams);
-    const [alliance, _setAlliance] = useState(userData?.user.redAlliance ? Alliance.RED : Alliance.BLUE);
+    const [alliance, _setAlliance] = useState(nextMatch?.alliance);
     const setAlliance = (a: Alliance) => {
         if (form.current?.type !== FormType.ALLIANCE) return;
         _setAlliance(a)
@@ -59,7 +71,11 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
 
         let res: Response | null;
 
-        if (form.current.type === FormType.ALLIANCE || form.current.type === FormType.WHOLE_MATCH) {
+        if (
+            form.current.type === FormType.ALLIANCE || 
+            form.current.type === FormType.WHOLE_MATCH ||
+            form.current.type === FormType.COMPARATIVE
+        ) {
             const teamsMap = new Map<string, QuestionResponse[]>();
             for (const a of answers) {
                 const [team, id] = a[0].split("##");
