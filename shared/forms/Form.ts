@@ -96,7 +96,7 @@ export default class Form {
      * @param maxError The maximum error for responses to be included in the data result.
      * @returns `null` if there are no responses. Be sure to pass `true` into FormModel.getForm(s).
      */
-    public getResponseData(maxError?: number, fromMatch?: number): FormResponseData | null {
+    public getResponseData(maxError?: number, fromMatch?: number, toMatch?: number): FormResponseData | null {
         if (!this.responses) return null;
         if (this.type === FormType.NO_MATCH || this.type === FormType.SINGLE_TEAM_RESPONSE) maxError = undefined;
 
@@ -114,6 +114,8 @@ export default class Form {
                             (r.accuracyScore || 0) <= maxError
                         ) && (
                             (r.match && fromMatch !== undefined) ? r.match >= fromMatch : true
+                        ) && (
+                            (r.match && toMatch !== undefined) ? r.match <= toMatch : true
                         )
                     )
             )

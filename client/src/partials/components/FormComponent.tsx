@@ -8,22 +8,28 @@ import Range from "./Range";
 import BooleanInput from "./BooleanInput";
 import Timer from "./Timer";
 import LongResponse from "./LongResponse";
+import { SubmittedResponseType } from "@shared/schemas/data";
 
 function FormComponent({
     component,
     onAnswerChange,
     answer,
     team,
+    responseType
 }: {
     component: FormComponentClass,
     onAnswerChange: (id: string, value: string) => void,
     answer: any,
     team?: number,
-    teams?: number[]
+    teams?: number[],
+    responseType: SubmittedResponseType
 }) {
+    const multiTeamForm = responseType === SubmittedResponseType.MULTI_TEAM_FORMS;
+
     const _onAnswerChange = (id: string, val: string) => {
-        if (!team) return;
-        onAnswerChange(team + "##" + id, val);
+        if (!team && multiTeamForm) return;
+        if (multiTeamForm) onAnswerChange(team + "##" + id, val);
+        else onAnswerChange(id, val);
     };
 
     if (component instanceof formComponents.SectionBreak) {

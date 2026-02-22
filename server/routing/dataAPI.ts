@@ -28,8 +28,8 @@ dataApiRouter.get("/getAllTeams", async (req, res) => {
  * Gets the form response data for one form. 
  * {@link FormResponseData[]} 
  */
-dataApiRouter.get("/getFormData/:formId{/:maxError}{/:fromMatch}", async (req, res) => {
-    const data = (await FormModel.getForm(req.params.formId, true))?.getResponseData(numberParser(req.params.maxError), numberParser(req.params.fromMatch));
+dataApiRouter.get("/getFormData/:formId{/:maxError}{/:fromMatch}{/:toMatch}", async (req, res) => {
+    const data = (await FormModel.getForm(req.params.formId, true))?.getResponseData(numberParser(req.params.maxError), numberParser(req.params.fromMatch), numberParser(req.params.toMatch));
     if (!data) { res.sendStatus(400); return; }
     res.send({ ...data });
 });
@@ -38,8 +38,8 @@ dataApiRouter.get("/getFormData/:formId{/:maxError}{/:fromMatch}", async (req, r
  * Gets the form response data for all forms where responses are about a certain team. 
  * {@link FormResponseData[]} 
  */
-dataApiRouter.get("/getTeamRows/:teamNumber{/:maxError}{/:fromMatch}", async (req, res) => {
-    const data = await getTeamRows(parseInt(req.params.teamNumber), numberParser(req.params.maxError), numberParser(req.params.fromMatch));
+dataApiRouter.get("/getTeamRows/:teamNumber{/:maxError}{/:fromMatch}{/:toMatch}", async (req, res) => {
+    const data = await getTeamRows(parseInt(req.params.teamNumber), numberParser(req.params.maxError), numberParser(req.params.fromMatch), numberParser(req.params.toMatch));
     if (!data) { res.sendStatus(400); return; }
     res.send({ data });
 });
@@ -48,8 +48,8 @@ dataApiRouter.get("/getTeamRows/:teamNumber{/:maxError}{/:fromMatch}", async (re
  * Gets the form response data for all forms where responses are about a certain match. 
  * {@link FormResponseData[]} 
  */
-dataApiRouter.get("/getMatchRows/:teamNumber{/:maxError}{/:fromMatch}", async (req, res) => {
-    const data = await getMatchRows(parseInt(req.params.teamNumber), numberParser(req.params.maxError), numberParser(req.params.fromMatch));
+dataApiRouter.get("/getMatchRows/:teamNumber{/:maxError}{/:fromMatch}{/:toMatch}", async (req, res) => {
+    const data = await getMatchRows(parseInt(req.params.teamNumber), numberParser(req.params.maxError), numberParser(req.params.fromMatch), numberParser(req.params.toMatch));
     if (!data) { res.sendStatus(400); return; }
     res.send({ data });
 });
@@ -58,8 +58,8 @@ dataApiRouter.get("/getMatchRows/:teamNumber{/:maxError}{/:fromMatch}", async (r
  * Gets data about each question as it pertains to a certain team.
  * {@link QuestionData[]} 
  */
-dataApiRouter.get("/getTeamData/:teamNumber{/:maxError}{/:fromMatch}", async (req, res) => {
-    const data = await getQuestionDataForTeam(parseInt(req.params.teamNumber), numberParser(req.params.maxError), numberParser(req.params.fromMatch));
+dataApiRouter.get("/getTeamData/:teamNumber{/:maxError}{/:fromMatch}{/:toMatch}", async (req, res) => {
+    const data = await getQuestionDataForTeam(parseInt(req.params.teamNumber), numberParser(req.params.maxError), numberParser(req.params.fromMatch), numberParser(req.params.toMatch));
     if (!data) { res.sendStatus(400); return; }
     res.send({ data });
 });
@@ -68,8 +68,8 @@ dataApiRouter.get("/getTeamData/:teamNumber{/:maxError}{/:fromMatch}", async (re
  * Gets the question data as it pertains to each team, and overall, for a single form.
  * {@link MultiTeamQuestionData[]} 
  */
-dataApiRouter.get("/getQuestionData/:formId{/:maxError}{/:fromMatch}", async (req, res) => {
-    const data = await getQuestionDataForAllTeams(req.params.formId, numberParser(req.params.maxError), numberParser(req.params.fromMatch));
+dataApiRouter.get("/getQuestionData/:formId{/:maxError}{/:fromMatch}{/:toMatch}", async (req, res) => {
+    const data = await getQuestionDataForAllTeams(req.params.formId, numberParser(req.params.maxError), numberParser(req.params.fromMatch), numberParser(req.params.toMatch));
     if (!data) { res.sendStatus(400); return; }
     res.send({ data });
 });
@@ -78,8 +78,8 @@ dataApiRouter.get("/getQuestionData/:formId{/:maxError}{/:fromMatch}", async (re
  * Gets the question data as it pertains to each team, and overall, for all forms.
  * {@link MultiTeamQuestionData[]} 
  */
-dataApiRouter.get("/getAllQuestionData{/:maxError}{/:fromMatch}", async (req, res) => {
-    const data = await getAllQuestionData(numberParser(req.params.maxError), numberParser(req.params.fromMatch));
+dataApiRouter.get("/getAllQuestionData{/:maxError}{/:fromMatch}{/:toMatch}", async (req, res) => {
+    const data = await getAllQuestionData(numberParser(req.params.maxError), numberParser(req.params.fromMatch), numberParser(req.params.toMatch));
     if (!data) { res.sendStatus(400); return; }
     res.send({ data });
 });

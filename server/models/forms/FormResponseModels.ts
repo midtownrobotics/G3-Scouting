@@ -15,7 +15,11 @@ export default class FormResponseByTeamModel extends Model<InferAttributes<FormR
     userId!: number;
 
     @ForeignKey(() => FormModel)
-    @Column({ type: DataType.STRING, allowNull: true })
+    @Column({ 
+        type: DataType.STRING, 
+        allowNull: true ,
+        onDelete: 'SET NULL',
+    })
     formId!: string;
 
     @Column({ type: DataType.INTEGER })

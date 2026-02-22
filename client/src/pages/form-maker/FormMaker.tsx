@@ -10,6 +10,7 @@ import FormComp from "../../partials/FormComp";
 import NewComponent from "./components/NewComponent";
 import SelectForm from "./SelectForm";
 import SortableItem from "./SortableItem";
+import VirtualDataRecorderPage from "./VirtualDataRecorderPage";
 
 export default function FormMaker() {
     const form = useRef<Form | undefined>(undefined);
@@ -20,9 +21,13 @@ export default function FormMaker() {
         setFormDescription(form.current?.description ?? "");
     };
 
+    // VDR = Virtual Data Recorder
+    const [vdrOpen, setVdrOpen] = useState(false);
+
     const [newComponentsTop, setNewComponentsTop] = useState<boolean>(false);
     const [newFormName, setNewFormName] = useState("");
     const [formDescription, _setFormDescription] = useState(form.current?.description);
+
     const [saving, setSaving] = useState(false);
     const [savingMsg, setSavingMsg] = useState<string>();
     const [savingErr, setSavingErr] = useState(false);
@@ -36,8 +41,12 @@ export default function FormMaker() {
         })
     );
 
+    if (vdrOpen) {
+        return <VirtualDataRecorderPage />
+    }
+
     if (form.current === undefined) {
-        return <SelectForm form={form} forceUpdate={forceUpdate} setItems={setItems} />;
+        return <SelectForm form={form} forceUpdate={forceUpdate} setItems={setItems} openVdr={() => setVdrOpen(true)} />;
     }
 
     function setFormDescription(description: string) {

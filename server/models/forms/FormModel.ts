@@ -31,7 +31,7 @@ export default class FormModel extends Model<SerializedForm> {
 
     @HasMany(() => FormResponseByTeamModel, {
         foreignKey: "formId",
-        onDelete: "SET NULL",
+        onDelete: "SET NULL"
     })
     responses!: FormResponseByTeamModel[];
 

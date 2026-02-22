@@ -3,9 +3,10 @@ import { Form as BSForm } from "react-bootstrap";
 import FormComponent from "./components/FormComponent";
 import SpecialInput from "./components/SpecialInput";
 import { Alliance } from "@shared/utils";
-import { Comparative } from "@shared/forms/FormComponents";
+import formComponents, { Comparative } from "@shared/forms/FormComponents";
 import ComparativeElement from "./components/Comparative";
 import TeamSelector from "./components/TeamSelector";
+import { SubmittedResponseType } from "@shared/schemas/data";
 
 function isAlliance(val: string): val is keyof typeof Alliance {
     return val in Alliance;
@@ -52,6 +53,7 @@ export default function FormComp({
                         component={c}
                         onAnswerChange={handleAnswerChange}
                         answer={answers.get(c.getId())}
+                        responseType={SubmittedResponseType.SINGLE_TEAM_FORMS}
                     />
                 </div>
             ))}
@@ -87,6 +89,7 @@ export default function FormComp({
                                 component={c}
                                 onAnswerChange={handleAnswerChange}
                                 answer={answers.get(t + "##" + c.getId())}
+                                responseType={SubmittedResponseType.MULTI_TEAM_FORMS}
                             />
                         </div>
                     ))}
@@ -112,42 +115,37 @@ export default function FormComp({
         <BSForm>
             <hr />
             <SpecialInput value={match}>Match Number</SpecialInput>
-            
+
             {teams && setTeam
                 ? <TeamSelector teams={teams} onChange={setTeam} />
                 : <span>Loading...</span>
             }
 
-            {form.getComponents().length !== comparativeComponents.length &&
-                <div>
-                    <hr />
-                    <h2>Team #{team}</h2>
-                    {form.getComponents().map(c => (
-                        <div className={dragging === c.getId() ? "bg-primary-subtle p-4" : ""}>
-                            <FormComponent
+            <div>
+                <hr />
+                <h2>Team #{team}</h2>
+                {teams && form.getComponents().map(c => (
+                    <div className={dragging === c.getId() ? "bg-primary-subtle p-4" : ""}>
+                        {c instanceof formComponents.Comparative
+                            ? <ComparativeElement
+                                key={c.getId()}
+                                component={c}
+                                onChange={handleAnswerChange}
+                                answers={answers}
+                                teams={teams}
+                            />
+                            : <FormComponent
                                 key={team + "##" + c.getId()}
                                 team={team}
                                 component={c}
                                 onAnswerChange={handleAnswerChange}
                                 answer={answers.get(team + "##" + c.getId())}
+                                responseType={SubmittedResponseType.MULTI_TEAM_FORMS}
                             />
-                        </div>
-                    ))}
-                </div>
-            }
-
-            {teams && comparativeComponents.map(c =>
-                <div className={dragging === c.getId() ? "bg-primary-subtle p-4" : ""}>
-                    <hr />
-                    <ComparativeElement
-                        key={c.getId()}
-                        component={c}
-                        onChange={handleAnswerChange}
-                        answers={answers}
-                        teams={teams}
-                    />
-                </div>
-            )}
+                        }
+                    </div>
+                ))}
+            </div>
         </BSForm>
     );
 
@@ -162,6 +160,7 @@ export default function FormComp({
                         component={c}
                         onAnswerChange={handleAnswerChange}
                         answer={answers.get(c.getId())}
+                        responseType={SubmittedResponseType.SINGLE_TEAM_FORMS}
                     />
                 </div>
             ))}

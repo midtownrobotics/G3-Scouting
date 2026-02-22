@@ -1,13 +1,11 @@
-import { TbaMatchData } from "./types";
-
 export function getValueByPath(
-    obj: TbaMatchData,
+    obj: any,
     path: string,
-    alliance: "red" | "blue"
+    alliance?: "red" | "blue"
 ): number | undefined {
     const parts = path
         .split('.')
-        .map(p => (p === '{$A}' ? alliance : p));
+        .map(p => (p === '{$A}' ? (alliance ? alliance : "") : p));
 
     let current: any = obj;
     for (let i = 0; i < parts.length; i++) {
@@ -15,5 +13,7 @@ export function getValueByPath(
         current = current[parts[i]];
     }
 
-    return parseFloat(current);
+    const floatVal = parseFloat(current);
+    if (current === undefined || Number.isNaN(floatVal)) return;
+    return floatVal;
 }

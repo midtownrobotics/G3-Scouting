@@ -7,6 +7,7 @@ import FormModel from './forms/FormModel';
 import FormResponseByTeamModel from './forms/FormResponseModels';
 import SessionModel from './users/SessionModel';
 import BatteryModel from './battery/BatteryModel';
+import VirtualDataEquationModel from './forms/VirtualDataEquationModels';
 
 export const managementDatabase = new Sequelize({
     dialect: 'sqlite',
@@ -20,6 +21,7 @@ export const managementDatabase = new Sequelize({
         FormResponseByTeamModel,
         SessionModel,
         BatteryModel,
+        VirtualDataEquationModel
     ],
     logging: false
 });

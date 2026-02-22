@@ -13,41 +13,41 @@ import TeamResponseInfo from "./viewers/TeamResponseInfo";
 import PickList from "./viewers/PickList";
 import DataStats from "./viewers/DataStats";
 
-const VIEW_OPTIONS: { hideOptions?: boolean; title: string; description: string; component: (a: number, m: number) => JSX.Element; }[] = [
+const VIEW_OPTIONS: { hideOptions?: boolean; title: string; description: string; component: (a: number, fm: number, tm: number) => JSX.Element; }[] = [
     {
         title: "Team Summary View",
         description: "Get a summary of a team's performance and compare with others.",
-        component: (a, m) => <TeamSummary accuracy={a} fromMatch={m} />
+        component: (a, b, c) => <TeamSummary accuracy={a} fromMatch={b} toMatch={c} />
     },
     {
         title: "Match Review/Preview",
         description: "See estimated and previous scores for matches.",
-        component: (a, m) => <MatchReview accuracy={a} fromMatch={m} />
+        component: (a) => <MatchReview accuracy={a} />
     },
     {
         title: "Raw Team Data",
         description: "View all raw scouting data for a single team, across all forms.",
-        component: (a, m) => <TeamRows accuracy={a} fromMatch={m} />
+        component: (a, b, c) => <TeamRows accuracy={a} fromMatch={b} toMatch={c} />
     },
     {
         title: "Team Averages",
         description: "See averaged stats for each team across all their matches.",
-        component: (a, m) => <AveragedRows accuracy={a} fromMatch={m} />
+        component: (a, b, c) => <AveragedRows accuracy={a} fromMatch={b} toMatch={c} />
     },
     {
         title: "Raw Form Data",
         description: "View all individual form submissions exactly as they were entered.",
-        component: (a, m) => <FormRows accuracy={a} fromMatch={m} />
+        component: (a, b, c) => <FormRows accuracy={a} fromMatch={b} toMatch={c} />
     },
     {
         title: "Boolean Search",
         description: "Create a custom search query to look for teams that meet your needs.",
-        component: (a, m) => <BooleanSearch accuracy={a} fromMatch={m} />
+        component: (a, b, c) => <BooleanSearch accuracy={a} fromMatch={b} toMatch={c} />
     },
     {
         title: "Team Response Numbers",
         description: "See how many responses each team has per form.",
-        component: (a, m) => <TeamResponseInfo accuracy={a} fromMatch={m} />
+        component: (a, b, c) => <TeamResponseInfo accuracy={a} fromMatch={b} toMatch={c} />
     },
     {
         title: "Pick List",
@@ -66,6 +66,7 @@ export default function Data() {
     const [viewer, setViewer] = useState<number>();
     const [accuracy, _setAccuracy] = useState<number>();
     const [fromMatch, setFromMatch] = useState<number>();
+    const [toMatch, setToMatch] = useState<number>();
 
     const setAccuracy = (to: number) => {
         let val = to;
@@ -79,13 +80,16 @@ export default function Data() {
         if (id !== null && id !== undefined && !Number.isNaN(parseInt(id))) setViewer(parseInt(id));
         const acc = new URLSearchParams(window.location.search).get("accuracy");
         if (acc !== null && acc !== undefined && !Number.isNaN(parseInt(acc))) setAccuracy(parseInt(acc));
-        const match = new URLSearchParams(window.location.search).get("match");
-        if (match !== null && acc !== undefined) setFromMatch(parseInt(match));
+        const fromMatch = new URLSearchParams(window.location.search).get("fromMatch");
+        if (fromMatch !== null && fromMatch !== undefined) setFromMatch(parseInt(fromMatch));
+        const toMatch = new URLSearchParams(window.location.search).get("toMatch");
+        if (toMatch !== null && toMatch !== undefined) setFromMatch(parseInt(toMatch));
     }, []);
 
     makeUrlParam("viewer", viewer);
     makeUrlParam("accuracy", accuracy);
-    makeUrlParam("match", fromMatch);
+    makeUrlParam("fromMatch", fromMatch);
+    makeUrlParam("toMatch", toMatch);
 
     return (
         <div className="container mt-4" id="data-page">
@@ -111,7 +115,7 @@ export default function Data() {
                 </>
             ) : (
                 <div>
-                    <Row className="w-md-50">
+                    <Row className="w-md-75">
                         <Col>
                             <Card className="ms-3 bg-primary-subtle" hidden={VIEW_OPTIONS[viewer].hideOptions}>
                                 <Card.Body className="mx-auto w-0">
@@ -143,8 +147,23 @@ export default function Data() {
                                 </Card.Body>
                             </Card>
                         </Col>
+                        <Col>
+                            <Card className="ms-3 bg-primary-subtle" hidden={VIEW_OPTIONS[viewer].hideOptions}>
+                                <Card.Body className="mx-auto">
+                                    <div className="d-flex align-items-center">
+                                        <Form.Label className="me-1 mb-1">To match:</Form.Label>
+                                        <input
+                                            style={{ width: "45px", height: "25px" }}
+                                            className="text-center"
+                                            value={toMatch || 0}
+                                            onChange={e => setToMatch(parseInt(e.target.value))}
+                                        />
+                                    </div>
+                                </Card.Body>
+                            </Card>
+                        </Col>
                     </Row>
-                    {VIEW_OPTIONS[viewer].component(accuracy ?? defaultAccuracy, fromMatch || 0)}
+                    {VIEW_OPTIONS[viewer].component(accuracy ?? defaultAccuracy, fromMatch || 0, toMatch || 0)}
                 </div>
             )}
         </div>

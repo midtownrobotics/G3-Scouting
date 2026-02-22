@@ -5,19 +5,19 @@ import { fetchAPIJSON } from "../../../API";
 import { SortableTable } from "../helpers/SortableTable";
 import { useSortableTable } from "../helpers/useSortableTable";
 
-export default function TeamResponseInfo({ accuracy, fromMatch }: { accuracy: number, fromMatch: number }) {
+export default function TeamResponseInfo({ accuracy, fromMatch, toMatch }: { accuracy: number, fromMatch: number, toMatch: number }) {
     const [data, setData] = useState<MultiTeamQuestionData[]>();
     const [teams, setTeams] = useState<TeamData[]>();
 
     useEffect(() => {
-        fetchAPIJSON(`/data/getAllQuestionData/${accuracy}/${fromMatch}`, z.object({ data: z.array(MultiTeamQuestionData) })).then(res => {
+        fetchAPIJSON(`/data/getAllQuestionData/${accuracy}/${fromMatch}/${toMatch}`, z.object({ data: z.array(MultiTeamQuestionData) })).then(res => {
             if (res) setData(res.data);
         });
 
         fetchAPIJSON("/data/getAllTeams", z.array(TeamData)).then(res => {
             if (res) setTeams(res);
         });
-    }, [accuracy, fromMatch]);
+    }, [accuracy, fromMatch, toMatch]);
 
     const { rows, columns } = useMemo(() => {
         if (!data || !teams) return { rows: [], columns: [] };

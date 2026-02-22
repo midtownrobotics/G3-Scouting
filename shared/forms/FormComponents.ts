@@ -142,14 +142,6 @@ export class ShortResponse extends FormComponent {
     }
 }
 
-const jigglePhysics = true;
-if (jigglePhysics) {
-    jiggle();
-}
-function jiggle() {
-    console.log("jiggled");
-};
-
 export class LongResponse extends FormComponent {
     public metadata: QuestionMetadata | null = null;
 
