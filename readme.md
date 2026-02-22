@@ -1,4 +1,4 @@
-# G3 Scout-o-matic (v4.1)
+# G3 Scout-o-matic (v4.2)
 
 The G3 Scout-o-matic is a fully online scouting and event management system built with **Node.js** and **React**.
 
