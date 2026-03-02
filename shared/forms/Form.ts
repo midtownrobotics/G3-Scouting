@@ -30,6 +30,7 @@ export default class Form {
     }
 
     constructor(public type: FormType, name: string, public description: string) {
+        if (name === "VDR") throw new Error("Form name cannot be \"VDR\"");
         this.name = name;
         this.id = toAlphanumeric(name);
     }

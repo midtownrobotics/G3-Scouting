@@ -18,10 +18,11 @@ import FormModel from "./models/forms/FormModel";
 import { scoreUnscoredMatches } from "./data/reliability/scoreUnscoredMatches";
 import formComponents from "@shared/forms/FormComponents";
 import fetchData from "./data/virtualDataRecorder/fetchData";
-import { DataType, EquationComponentType, Operator } from "@shared/schemas/virtualDataRecorder";
+import { DataType, Equation, EquationComponentType, Operator } from "@shared/schemas/virtualDataRecorder";
 import { getTeamData } from "./externalApis/statbotics/statbotics";
 import doOperation from "./data/virtualDataRecorder/doOperation";
 import { evaluateEquation } from "./data/virtualDataRecorder/evaluateEquation";
+import VirtualDataEquationModel from "./models/forms/VirtualDataEquationModels";
 
 if (PRODUCTION) {
     require('module-alias/register');
@@ -72,7 +73,7 @@ async function testCode() {
     // gray?.update({ tokens: 90 });
     // gray?.update({ tokens: 10000 });
 
-    const users = await UserModel.findAll();
+    // const users = await UserModel.findAll();
 
     // users.forEach(async u => {
     //     const matches = await FormResponseByTeamModel.findAll({ where: { formId: "Quantitative", userId: u.id }});
@@ -154,26 +155,26 @@ async function testCode() {
     //     }
     // });
 
-    console.log(
-        await evaluateEquation([
-            {
-                componentType: EquationComponentType.DATA,
-                data: {
-                    type: DataType.SOM_TEAM_AVG,
-                    path: "BPS_Form-FuelFired-1"
-                }
-            },
-            {
-                componentType: EquationComponentType.OPERATOR,
-                operator: Operator.DIVIDE
-            },
-            {
-                componentType: EquationComponentType.DATA,
-                data: {
-                    type: DataType.SOM_TEAM_AVG,
-                    path: "BPS_Form-LoadTime-0"
-                }
+    const equation: Equation = [
+        {
+            componentType: EquationComponentType.DATA,
+            data: {
+                type: DataType.SOM_TEAM_AVG,
+                path: "BPS_Form-FuelFired-1"
             }
-        ], 6340)
-    );
+        },
+        {
+            componentType: EquationComponentType.OPERATOR,
+            operator: Operator.DIVIDE
+        },
+        {
+            componentType: EquationComponentType.DATA,
+            data: {
+                type: DataType.SOM_TEAM_AVG,
+                path: "BPS_Form-LoadTime-0"
+            }
+        }
+    ];
+
+    VirtualDataEquationModel.addEquation("BPS", equation);
 }

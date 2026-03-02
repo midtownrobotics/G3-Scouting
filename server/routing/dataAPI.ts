@@ -11,6 +11,7 @@ import FormModel from '../models/forms/FormModel';
 import { numberParser } from "../utils";
 import { z } from "zod";
 import getDataStats from "server/data/getData/getDataStats";
+import FormResponseByTeamModel from "server/models/forms/FormResponseModels";
 
 const dataApiRouter = express.Router();
 
@@ -110,6 +111,12 @@ dataApiRouter.get("/getMatchData/:match", async (req, res) => {
  */
 dataApiRouter.get("/getDataStats/:formId", async (req, res) => {
     const data = await getDataStats(req.params.formId);
+    if (!data) { res.sendStatus(400); return; }
+    res.send(data);
+});
+
+dataApiRouter.get("/getVirtualData{/:fromMatch}{/:toMatch}", async (req, res) => {
+    const data = await FormResponseByTeamModel.getVirtualData(numberParser(req.params.fromMatch), numberParser(req.params.toMatch));
     if (!data) { res.sendStatus(400); return; }
     res.send(data);
 });

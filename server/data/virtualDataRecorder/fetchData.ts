@@ -1,8 +1,9 @@
 import { Data, DataType } from "@shared/schemas/virtualDataRecorder";
 import getQuestionDataForTeam from "../getData/getQuestionDataForTeam";
-import { getMatchData as getStatboticsMatchData, getTeamData as getStatboticsTeamData } from "server/externalApis/statbotics/statbotics";
-import { getMatchData as getTbaMatchData, getTeamData as getTbaTeamData } from "server/externalApis/tba/tba";
+import * as statbotics from "server/externalApis/statbotics/statbotics";
+import * as tba from "server/externalApis/tba/tba";
 import { getValueByPath } from "server/externalApis/getValueByPath";
+import { SbMatchData } from "server/externalApis/statbotics/types";
 
 /**
  * Fetches data for use in the virtual data recording system.
@@ -57,25 +58,25 @@ async function fetchSomMatchTeamAvgData(namespaceId: string, team: number) {
 }
 
 async function fetchStatboticsMatchData(path: string, match: number) {
-    const sbData = await getStatboticsMatchData(match);
+    const sbData = await statbotics.getMatchData(match);
     if (!sbData) return;
     return getValueByPath(sbData, path);
 }
 
 async function fetchStatboticsTeamData(path: string, team: number) {
-    const sbData = await getStatboticsTeamData(team);
+    const sbData = await statbotics.getTeamData(team);
     if (!sbData) return;
     return getValueByPath(sbData, path);
 }
 
 async function fetchTbaMatchData(path: string, team: number) {
-    const tbaData = await getTbaMatchData(team);
+    const tbaData = await tba.getMatchData(team);
     if (!tbaData) return;
     return getValueByPath(tbaData, path);
 }
 
 async function fetchTbaTeamData(path: string, team: number) {
-    const tbaData = await getTbaTeamData(team);
+    const tbaData = await tba.getTeamData(team);
     if (!tbaData) return;
     return getValueByPath(tbaData, path);
 }

@@ -83,7 +83,7 @@ export default function Data() {
         const fromMatch = new URLSearchParams(window.location.search).get("fromMatch");
         if (fromMatch !== null && fromMatch !== undefined) setFromMatch(parseInt(fromMatch));
         const toMatch = new URLSearchParams(window.location.search).get("toMatch");
-        if (toMatch !== null && toMatch !== undefined) setFromMatch(parseInt(toMatch));
+        if (toMatch !== null && toMatch !== undefined) setToMatch(parseInt(toMatch));
     }, []);
 
     makeUrlParam("viewer", viewer);
@@ -155,7 +155,7 @@ export default function Data() {
                                         <input
                                             style={{ width: "45px", height: "25px" }}
                                             className="text-center"
-                                            value={toMatch || 0}
+                                            value={toMatch || 100}
                                             onChange={e => setToMatch(parseInt(e.target.value))}
                                         />
                                     </div>

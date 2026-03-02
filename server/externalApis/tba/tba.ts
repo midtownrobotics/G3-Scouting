@@ -53,6 +53,7 @@ async function fetchAndParse<T>(
     }
 }
 
+const matchDataCache = new Map<number, TbaMatchData>();
 /**
  * Gets match data from TBA for the current event and a specified match.
  * @param match The match number.
@@ -61,8 +62,16 @@ async function fetchAndParse<T>(
 export async function getMatchData(
     match: number
 ): Promise<TbaMatchData | undefined> {
+    if (matchDataCache.has(match)) return matchDataCache.get(match);
     const event = await getSettingsValue("eventKey");
-    return fetchAndParse(`/match/${event}_qm${match}`, TbaMatchData);
+    const data = await fetchAndParse(`/match/${event}_qm${match}`, TbaMatchData);
+    if (data && hasMatchHappened(data)) matchDataCache.set(match, data);
+    return data;
+}
+
+export function hasMatchHappened(matchData: TbaMatchData) {
+    if (matchData.actual_time === undefined || matchData.actual_time === null) return false;
+    return true;
 }
 
 /**
