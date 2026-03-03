@@ -5,7 +5,7 @@ import FormModel from "./FormModel";
 import UserModel from "../users/UserModel";
 import { FormType } from "@shared/forms/Form";
 import VirtualDataEquationModel from "./VirtualDataEquationModels";
-import { equationNeedsCalculateOtf } from "server/data/virtualDataRecorder/equationHelpers";
+import { equationNeedsCalculateOtf } from "server/data/virtualDataRecorder/vdrUtils";
 import { evaluateEquation } from "server/data/virtualDataRecorder/evaluateEquation";
 
 @Table({ tableName: "form_responses_by_team" })

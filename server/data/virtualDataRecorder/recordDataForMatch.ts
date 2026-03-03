@@ -2,7 +2,7 @@ import VirtualDataEquationModel from "server/models/forms/VirtualDataEquationMod
 import { evaluateEquation } from "./evaluateEquation";
 import FormResponseByTeamModel from "server/models/forms/FormResponseModels";
 import getMatchData from "../getData/getMatchData";
-import { equationNeedsCalculateOtf } from "./equationHelpers";
+import { equationNeedsCalculateOtf } from "./vdrUtils";
 import * as statbotics from "server/externalApis/statbotics/statbotics";
 
 type err = "noStatboticsData" | "noTbaData";

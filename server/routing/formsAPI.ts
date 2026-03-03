@@ -10,17 +10,7 @@ import { FormType } from '@shared/forms/Form';
 const formAPIRouter = express.Router();
 
 formAPIRouter.get("/getForms", async (req, res) => {
-    const vdrForm: SerializedForm = {
-        type: FormType.TEAM,
-        id: 'VDR',
-        name: 'VDR',
-        description: '',
-        deployed: true,
-        openSubmission: false,
-        maxComponentId: 0,
-        components: []
-    };
-    res.send([...await FormModel.getSerializedForms(), vdrForm]);
+    res.send(await FormModel.getSerializedForms());
 });
 
 formAPIRouter.get("/getForm/:formId", async (req, res) => {

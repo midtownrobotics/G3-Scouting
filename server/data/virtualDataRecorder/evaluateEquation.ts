@@ -1,6 +1,9 @@
 import { Equation, EquationComponent, EquationComponentType, Operator } from "@shared/schemas/virtualDataRecorder";
 import fetchData from "./fetchData";
 import doOperation from "./doOperation";
+import { getEquationEvaluationExpiry, getEquationEvaluationId } from "./vdrUtils";
+
+const equationCache = new Map<string, { exp: number, value: number }>();
 
 /**
  * Evaluates an equation by fetching data and performing operations.
@@ -15,6 +18,9 @@ export async function evaluateEquation(
     team?: number,
     match?: number
 ): Promise<number | undefined> {
+    const cacheValue = equationCache.get(getEquationEvaluationId(equation, match, team))
+    if (cacheValue && cacheValue.exp > Date.now()) return cacheValue.value;
+
     let accumulator: number = 0;
     let currentOperator: Operator | null = null;
 
@@ -60,6 +66,8 @@ export async function evaluateEquation(
             }
         }
     }
+
+    equationCache.set(getEquationEvaluationId(equation, match, team), { exp: getEquationEvaluationExpiry(equation), value: accumulator });
 
     return accumulator;
 }

@@ -29,8 +29,8 @@ export default class Form {
         return this.components.some(c => c.needsValidation);
     }
 
-    constructor(public type: FormType, name: string, public description: string) {
-        if (name === "VDR") throw new Error("Form name cannot be \"VDR\"");
+    constructor(public type: FormType, name: string, public description: string, vdrErrorOverride?: boolean) {
+        if (name === "VDR" && !vdrErrorOverride) throw new Error("Form name cannot be \"VDR\"");
         this.name = name;
         this.id = toAlphanumeric(name);
     }
@@ -62,11 +62,12 @@ export default class Form {
         return this.components;
     }
 
-    public static fromJSON(json: SerializedForm): Form {
+    public static fromJSON(json: SerializedForm, vdrErrorOverride?: boolean): Form {
         const form = new Form(
             json.type,
             json.name,
-            json.description
+            json.description,
+            vdrErrorOverride
         );
 
         form.responses = json.responses;

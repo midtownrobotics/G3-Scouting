@@ -2,6 +2,7 @@ import Form, { FormType } from "@shared/forms/Form";
 import { SerializedComponent, SerializedForm } from "@shared/schemas/forms";
 import { Column, CreatedAt, DataType, HasMany, Model, Table, UpdatedAt } from "sequelize-typescript";
 import FormResponseByTeamModel from "./FormResponseModels";
+import { getVdrForm, getVdrFormSerialized } from "server/data/virtualDataRecorder/vdrUtils";
 
 @Table({ tableName: "forms" })
 export default class FormModel extends Model<SerializedForm> {
@@ -54,20 +55,22 @@ export default class FormModel extends Model<SerializedForm> {
 
     public static async getForms(includeResponses?: boolean) {
         const models = await FormModel.findAll(includeResponses ? { include: { model: FormResponseByTeamModel, as: "responses" } } : undefined);
-        return models.map(m => m.toForm());
+        return [...models.map(m => m.toForm()), await getVdrForm()];
     }
 
     public static async getForm(id: string, includeResponses?: boolean) {
+        if (id === "VDR") return getVdrForm(includeResponses);
         const model = await FormModel.findByPk(id, includeResponses ? { include: { model: FormResponseByTeamModel, as: "responses" } } : undefined);
         return model?.toForm();
     }
 
     public static async getSerializedForms(includeResponses?: boolean): Promise<SerializedForm[]> {
         const models = await FormModel.findAll(includeResponses ? { include: { model: FormResponseByTeamModel, as: "responses" } } : undefined);
-        return models.map(m => m.toJSON());
+        return [...models.map(m => m.toJSON()), await getVdrFormSerialized()];
     }
 
     public static async getSerializedForm(id: string, includeResponses?: boolean): Promise<SerializedForm | undefined> {
+        if (id === "VDR") return getVdrFormSerialized(includeResponses);
         const model = await FormModel.findByPk(id, includeResponses ? { include: { model: FormResponseByTeamModel, as: "responses" } } : undefined);
         return model?.toJSON();
     }
