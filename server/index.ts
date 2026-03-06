@@ -44,7 +44,7 @@ syncDatabase().then(() => {
 
         const allUsers = await UserModel.findAll();
         if (allUsers.length === 0 || !allUsers.some((user) => user.permission === Permission.ADMIN)) {
-            UserModel.addUser("admin", "password", Permission.ADMIN, true);
+            UserModel.addUser("admin", "password", "Default User", Permission.ADMIN);
         }
 
         // const settings: Settings = await getSettings();

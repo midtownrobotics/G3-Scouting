@@ -2,8 +2,9 @@ import { Equation, EquationComponent, EquationComponentType, Operator } from "@s
 import fetchData from "./fetchData";
 import doOperation from "./doOperation";
 import { getEquationEvaluationExpiry, getEquationEvaluationId } from "./vdrUtils";
+import { DateString } from "@shared/types";
 
-const equationCache = new Map<string, { exp: number, value: number }>();
+const equationCache = new Map<string, { exp: number, evalTime: number, value: number }>();
 
 /**
  * Evaluates an equation by fetching data and performing operations.
@@ -17,13 +18,14 @@ export async function evaluateEquation(
     equation: Equation,
     team?: number,
     match?: number
-): Promise<number | undefined> {
+): Promise<{ value: number, evalTime: number } | undefined> {
     const cacheValue = equationCache.get(getEquationEvaluationId(equation, match, team))
-    if (cacheValue && cacheValue.exp > Date.now()) return cacheValue.value;
+    if (cacheValue && cacheValue.exp > Date.now()) return cacheValue;
 
     let accumulator: number = 0;
     let currentOperator: Operator | null = null;
 
+    outerLoop:
     for (const component of equation) {
         switch (component.componentType) {
             case EquationComponentType.CONSTANT: {
@@ -58,8 +60,7 @@ export async function evaluateEquation(
 
             case EquationComponentType.OPERATOR: {
                 if (component.operator === Operator.END) {
-                    // Stop processing at END operator
-                    return accumulator;
+                    break outerLoop;
                 }
                 currentOperator = component.operator;
                 break;
@@ -67,9 +68,9 @@ export async function evaluateEquation(
         }
     }
 
-    equationCache.set(getEquationEvaluationId(equation, match, team), { exp: getEquationEvaluationExpiry(equation), value: accumulator });
+    equationCache.set(getEquationEvaluationId(equation, match, team), { exp: getEquationEvaluationExpiry(equation), value: accumulator, evalTime: Date.now() });
 
-    return accumulator;
+    return { value: accumulator, evalTime: Date.now() };
 }
 
 /**
@@ -114,7 +115,7 @@ export async function evaluateEquationWithPrecedence(
 
     // Now evaluate with precedence: multiply and divide first
     let values = [...resolvedValues];
-    
+
     // First pass: handle multiplication and division
     for (let i = 0; i < values.length; i++) {
         const item = values[i];
@@ -122,7 +123,7 @@ export async function evaluateEquationWithPrecedence(
             const left = values[i - 1] as number;
             const right = values[i + 1] as number;
             const result = doOperation(item, left, right);
-            
+
             // Replace the three elements (left, operator, right) with the result
             values.splice(i - 1, 3, result);
             i--; // Adjust index since we removed elements
@@ -136,7 +137,7 @@ export async function evaluateEquationWithPrecedence(
             const left = values[i - 1] as number;
             const right = values[i + 1] as number;
             const result = doOperation(item, left, right);
-            
+
             // Replace the three elements with the result
             values.splice(i - 1, 3, result);
             i--; // Adjust index since we removed elements

@@ -163,7 +163,7 @@ export default function Data() {
                             </Card>
                         </Col>
                     </Row>
-                    {VIEW_OPTIONS[viewer].component(accuracy ?? defaultAccuracy, fromMatch || 0, toMatch || 0)}
+                    {VIEW_OPTIONS[viewer].component(accuracy ?? defaultAccuracy, fromMatch || 0, toMatch || 100)}
                 </div>
             )}
         </div>

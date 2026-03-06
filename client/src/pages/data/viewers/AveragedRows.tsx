@@ -45,7 +45,7 @@ export default function AveragedRows({ accuracy, fromMatch, toMatch }: { accurac
     if (!teamQuestionData) {
         return (
             <div className="p-3">
-                <h1>Team Averages</h1>
+            <h1>Team Averages</h1>
                 <FormIdInput onChange={setFormId} />
             </div>
         );

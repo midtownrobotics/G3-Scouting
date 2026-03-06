@@ -85,19 +85,19 @@ export default class FormResponseByTeamModel extends Model<InferAttributes<FormR
         const equations = await VirtualDataEquationModel.findAll()
         const questions = equations.map(m => m.toQuestion());
 
-        responses.push({
-            formId: "",
-            team: 6340,
-            match: 1,
-            responses: []
-        })
+        // responses.push({
+        //     formId: "",
+        //     team: 6340,
+        //     match: 1,
+        //     responses: [],
+        // })
 
         for (const { equation, id } of equations) {
             console.log(equationNeedsCalculateOtf(equation));
             if (!equationNeedsCalculateOtf(equation)) continue;
             for (let i = 0; i < responses.length; i++) {
-                const value = await evaluateEquation(equation, responses[i].team, responses[i].match);
-                responses[i].responses.push({ question: id, response: (value ?? "").toString() })
+                const res = await evaluateEquation(equation, responses[i].team, responses[i].match);
+                responses[i].responses.push({ question: id, response: (res?.value ?? "").toString() })
             }
         }
 

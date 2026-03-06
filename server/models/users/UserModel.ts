@@ -59,7 +59,7 @@ class UserModel extends Model<User, UserCreationAttributes> {
      * @param password The user's password.
      * @param permissionId The permission ID that the user will have.
      */
-    public static async addUser(username: string, password: string, permission: Permission, reliable: boolean) {
+    public static async addUser(username: string, password: string, displayName: string, permission: Permission) {
         const [redCount, blueCount] = await Promise.all([
             UserModel.count({ where: { redAlliance: true } }),
             UserModel.count({ where: { redAlliance: false } }),
@@ -70,13 +70,13 @@ class UserModel extends Model<User, UserCreationAttributes> {
         await UserModel.create({
             username,
             permission,
-            reliable,
+            reliable: false,
             password: hash,
             redAlliance: redCount < blueCount,
             assignedMatches: [],
             tokens: 0,
             xp: 0,
-            displayName: username
+            displayName
         });
     }
 

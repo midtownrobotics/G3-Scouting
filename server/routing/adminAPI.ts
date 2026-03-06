@@ -11,6 +11,7 @@ import UserModel from '../models/users/UserModel';
 import { getSettingsValue, setSettingsValue } from '../other/settings';
 import deploySchedules from '../scheduling/deploySchedules';
 import { SaveableInputData } from '@shared/schemas/data';
+import { BodyText } from 'react-bootstrap-icons';
 
 const adminAPIRouter = express.Router();
 
@@ -78,7 +79,7 @@ adminAPIRouter.post("/addUser", async (req: Request, res: Response) => {
     const body = CreateUser.safeParse(req.body);
     if (body.success && body.data) {
         try {
-            await UserModel.addUser(body.data.username, body.data.password, body.data.permission, body.data.reliable);
+            await UserModel.addUser(body.data.username, body.data.password, body.data.displayName || body.data.username, body.data.permission);
         } catch (e) {
             res.sendStatus(400);
             return;

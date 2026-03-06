@@ -36,7 +36,7 @@ function UserTable() {
                         <th>Password</th>
                         <th>Permission</th>
                         {/* <th>Reliable?</th> */}
-                        <th>Red Alliance?</th>
+                        {/* <th>Red Alliance?</th> */}
                         <th>Slack Linked?</th>
                         <td colSpan={2} />
                     </tr>
