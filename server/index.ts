@@ -59,6 +59,13 @@ syncDatabase().then(() => {
 
 async function testCode() {
 
+    // (await UserModel.findByPk(5))?.set({ tokens: 200 });
+    // (await UserModel.findByPk(26))?.set({ tokens: 200 });
+    // (await UserModel.findByPk(23))?.set({ tokens: 200 });
+    // (await UserModel.findByPk(7))?.set({ tokens: 200 });
+    // (await UserModel.findByPk(10))?.set({ tokens: 200 });
+    // (await UserModel.findByPk(14))?.set({ tokens: 200 });
+
     // const form = (await FormModel.getForm("Quantitative", true));
     // console.time("Scoring");
     // if (form) await scoreUnscoredMatches(form);
@@ -155,26 +162,31 @@ async function testCode() {
     //     }
     // });
 
-    const equation: Equation = [
-        {
-            componentType: EquationComponentType.DATA,
-            data: {
-                type: DataType.SOM_TEAM_AVG,
-                path: "BPS_Form-FuelFired-1"
+    VirtualDataEquationModel.addEquation(
+        "PPG",
+        [
+            {
+                componentType: EquationComponentType.DATA,
+                data: {
+                    type: DataType.SOM_MATCH_TEAM,
+                    path: "score_breakdown.{$A}.autoCount"
+                }
+            },
+            {
+                componentType: EquationComponentType.OPERATOR,
+                operator: Operator.ADD
+            },
+            {
+                componentType: EquationComponentType.DATA,
+                data: {
+                    type: DataType.SOM_MATCH_ALLIANCE,
+                    path: "score_breakdown.{$A}.autoCount"
+                }
             }
-        },
+        ],
         {
-            componentType: EquationComponentType.OPERATOR,
-            operator: Operator.DIVIDE
-        },
-        {
-            componentType: EquationComponentType.DATA,
-            data: {
-                type: DataType.SOM_TEAM_AVG,
-                path: "BPS_Form-LoadTime-0"
-            }
+            type: "tba",
+            path: "score_breakdown.{$A}.autoCount"
         }
-    ];
-
-    VirtualDataEquationModel.addEquation("BPS", equation);
+    );
 }

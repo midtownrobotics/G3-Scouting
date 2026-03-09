@@ -48,10 +48,10 @@ export async function getVdrFormSerialized(includeResponses?: boolean) {
         deployed: true,
         openSubmission: false,
         maxComponentId: 0,
-        components: data?.questions.map(q => ({
+        components: data?.questions.map((q) => ({
             type: "Number",
             id: q.id,
-            creationArgs: [q.name, q.name]
+            creationArgs: [q.name, q.name, ("validation" in q) ? q.validation : undefined]
         })) ?? [],
         responses: data?.responses
     };

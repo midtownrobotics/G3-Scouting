@@ -33,7 +33,7 @@ export function Leaderboard(props: React.HTMLAttributes<HTMLDivElement>) {
                                 <tr key={r.userId} hidden={i >= 7 && !expanded} className={i == 0 ? "strobe-tr" : ""}>
                                     <td style={bg} className={i == 0 ? "strobe" : ""}>#{i + 1}</td>
                                     <td style={bg} className={i == 0 ? "strobe" : ""} title={r.username}>{formatUsername(r.displayName ?? r.username, i + 1)}</td>
-                                    <td style={bg} className={i == 0 ? "strobe" : ""}>{r.tokens}</td>
+                                    <td style={bg} className={i == 0 ? "strobe" : ""}>{Math.round(r.tokens*100)/100}</td>
                                 </tr>
                             );
                         })}

@@ -10,6 +10,7 @@ export type Settings = {
     nexus: string;
     eventKey: string;
     match: MatchData;
+    pitChecklist: string[];
 }
 
 interface AuthReq extends Request {

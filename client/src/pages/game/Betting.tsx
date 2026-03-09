@@ -114,8 +114,8 @@ export function Betting() {
                                     {r}
                                 </Button>
                                 <h5 className="mb-0 text-muted">
-                                    <strong>{(betData[i]?.percent || 0) * 100}%</strong> — $
-                                    {betData[i]?.totalBet ?? 0}
+                                    <strong>{Math.round((betData[i]?.percent || 0) * 10000) / 100}%</strong> — $
+                                    {Math.round((betData[i]?.totalBet ?? 0) * 100) / 100}
                                 </h5>
                             </div>
                         ))}
@@ -144,7 +144,7 @@ export function Betting() {
                             />
                         </InputGroup>
                     </div>
-                    
+
                     {!question.locked && <small className="text-muted">(You have ${tokens} to spend)</small>}
 
                     {maxPayout !== undefined && (

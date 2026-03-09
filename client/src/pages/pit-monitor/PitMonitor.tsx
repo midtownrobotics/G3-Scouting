@@ -1,11 +1,11 @@
 import { BatteryData, BatteryState, NexusEventStatus, NexusMatch, PitMonitorData, RankingRow } from "@shared/schemas/pit";
 import { AssignmentType, UserScheduleData } from "@shared/schemas/schedule";
-import { Clock, Maximize2, Minimize2, Users, Wrench } from "lucide-react";
+import { CircleCheckBigIcon, Clock, Maximize2, Minimize2, Users, Wrench } from "lucide-react";
 import React, { useEffect, useReducer, useState } from "react";
-import { Button, Card, Col, Container, Row, Table } from "react-bootstrap";
-import { fetchAPIJSON } from "../../API";
+import { Button, Card, Col, Container, Form, Row, Table } from "react-bootstrap";
+import { fetchAPIJSON, postAPI } from "../../API";
 import { formatDuration, getAssignmentDuration } from "../../utils";
-import { Asterisk, BatteryFull } from "react-bootstrap-icons";
+import { Asterisk, BatteryFull, Trash } from "react-bootstrap-icons";
 import Countdown from "./Countdown";
 
 function teamInMatch(m: NexusMatch, t: number) {
@@ -24,7 +24,7 @@ function usePitMonitor(refreshSec: number) {
 
     async function fetchAll() {
         const pitData = await fetchAPIJSON("/pit/data", PitMonitorData);
-        if (pitData) {
+        if (pitData?.nexusData) {
             setOurMatches(
                 pitData.nexusData.matches.filter(m => teamInMatch(m, pitData.team) && m.status !== "On field")
             );
@@ -42,7 +42,7 @@ function usePitMonitor(refreshSec: number) {
         return () => clearInterval(t);
     }, [refreshSec]);
 
-    return { data, currentSchedules, ourMatches };
+    return { data, currentSchedules, ourMatches, reload: fetchAll };
 }
 
 // ---------- Components ----------
@@ -62,7 +62,7 @@ const PitNowCard: React.FC<{ currentSchedules: UserScheduleData[]; }> = ({ curre
                         return (
                             <Col key={s.id} lg={2}>
                                 <div className={`mb-3 border rounded p-2 text-center text-light bg-${timeColor}`}>
-                                    <div className="fw-bold">{s.name}</div>
+                                    <div className="fw-bold">{s.displayName}</div>
                                     <div>{minsLeft}mins</div>
                                 </div>
                             </Col>
@@ -168,8 +168,63 @@ const UpcomingMatchesCard: React.FC<{ matches: NexusMatch[]; teamNumber: number;
     </Card>
 );
 
+const ChecklistCard: React.FC<{ checklist: string[], reload: () => void }> = ({ checklist, reload }) => {
+    const [values, setValues] = useState<boolean[]>(Array(checklist.length).fill(false));
+    const [deleteMode, setDeleteMode] = useState(false);
+    const [working, setWorking] = useState(false);
+
+    useEffect(() => setWorking(false), [checklist])
+
+    const removeItem = (item: string) => {
+        setWorking(true);
+        setDeleteMode(false);
+        postAPI("/pit/removeChecklistItem", { item }).then(reload);
+    }
+    const addItem = () => {
+        setWorking(true);
+        const item = prompt("Name of item to add to list.");
+        if (!item) return;
+        postAPI("/pit/addChecklistItem", { item }).then(reload);
+    }
+
+    return (
+        <Card>
+            <Card.Header><CircleCheckBigIcon size={18} className="me-2 mb-1" /> Checklist</Card.Header>
+            <Card.Body className="pt-0">
+                <Form className="mt-3">
+                    {checklist.map((item, i) => (
+                        <Form.Group key={i} className="mb-0 mt-0" controlId={`checkbox-${i}`}>
+                            <Form.Check
+                                checked={values[i] ?? false}
+                                onChange={v => setValues(prev => {
+                                    const next = [...prev];
+                                    next[i] = v.target.checked;
+                                    return next;
+                                })}
+                                type="checkbox"
+                                label={
+                                    <>
+                                        <b style={{ textDecoration: values[i] ? "line-through" : "", userSelect: "none" }}>{item}</b>
+                                        <b>{deleteMode && <Trash className="cursor-pointer ms-2" onClick={() => removeItem(item)} />}</b>
+                                    </>
+                                }
+                            />
+                        </Form.Group>
+                    ))}
+                </Form>
+                <Button size="sm" variant="outline-dark" className="mt-3 me-1" onClick={() => setValues([])}>Reset</Button>
+                <Button disabled={working} size="sm" variant="outline-dark" className="mt-3 me-1" onClick={addItem}>Add</Button>
+                <Button disabled={working} size="sm" variant="outline-dark" className="mt-3" onClick={() => setDeleteMode(m => !m)}>Delete</Button>
+            </Card.Body>
+        </Card>
+    );
+};
+
+
 const NexusCard: React.FC<{ data?: NexusEventStatus, team: number; }> = ({ data, team }) => {
     const matches = data?.matches.sort((b, a) => (a.times.actualOnFieldTime ?? Infinity) - (b.times.actualOnFieldTime ?? Infinity)) ?? [];
+
+    if (matches.length === 0) return (<></>);
 
     const queuingSoon = matches.find(m => m.status === "Queuing soon");
     const nowQueing = matches.find(m => m.status === "Now queuing");
@@ -226,6 +281,7 @@ const BatteryCard: React.FC<{ data?: BatteryData[]; }> = ({ data }) => {
                         <div className={`mb-3 border rounded p-2 text-center bg-primary text-light`}>
                             <div>In robot: <span className="fw-bold">{inRobot?.name}</span></div>
                             <div className="text-nowrap">For: {formatDuration(inRobot?.stateSince)}</div>
+                            {inRobot?.voltage && <div style={{ fontSize: "12px" }}>Last recorded voltage: {inRobot?.voltage}v</div>}
                         </div>
                     </Col>
                     <Col hidden={charging === undefined}>
@@ -242,7 +298,7 @@ const BatteryCard: React.FC<{ data?: BatteryData[]; }> = ({ data }) => {
 
 // ---------- Root ----------
 export default function PitMonitor() {
-    const { data, currentSchedules, ourMatches } = usePitMonitor(30);
+    const { data, currentSchedules, ourMatches, reload } = usePitMonitor(30);
     const [fullscreen, setFullscreen] = useState(false);
 
     useEffect(() => {
@@ -252,7 +308,7 @@ export default function PitMonitor() {
 
     return (
         <Container fluid className="p-3">
-            <div className="d-flex justify-content-between align-items-center mb-3">
+            <div className="d-flex justify-content-between align-items-center">
                 <h2 style={{ color: "#333" }}>G3 Robotics 1648 — Pit Monitor</h2>
                 <div>
                     <Button variant="outline-secondary" size="sm" onClick={() => setFullscreen(!fullscreen)}>
@@ -264,11 +320,12 @@ export default function PitMonitor() {
             <Row className="mt-0 g-3">
                 <Col lg={7}>
                     <div className="mt-3"><PitNowCard currentSchedules={currentSchedules ?? []} /></div>
+                    {data?.checklist && <div className="mt-3"><ChecklistCard checklist={data.checklist} reload={reload} /></div>}
                     <div className="mt-3"><UpcomingMatchesCard matches={ourMatches ?? []} teamNumber={data?.team ?? 0} /></div>
                 </Col>
                 <Col lg={5}>
-                    <div className="mt-3"><NexusCard data={data?.nexusData} team={data?.team ?? 0} /></div>
-                    <div className="mt-3"><RankingCard row={data?.ranking} /></div>
+                    {data?.nexusData && <div className="mt-3"><NexusCard data={data.nexusData} team={data?.team ?? 0} /></div>}
+                    {data?.ranking && <div className="mt-3"><RankingCard row={data.ranking} /></div>}
                     <div className="mt-3"><BatteryCard data={data?.batteryData} /></div>
                 </Col>
             </Row>

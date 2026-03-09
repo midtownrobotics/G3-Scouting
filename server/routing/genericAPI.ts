@@ -63,6 +63,7 @@ genericAPIRouter.get("/schedules", async (req, res) => {
             schedule: user.schedule,
             id: user.id,
             name: user.username,
+            displayName: user.displayName ?? user.username,
             current: await user.getCurrentAssignment()
         })
     }

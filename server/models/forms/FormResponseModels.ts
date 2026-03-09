@@ -44,8 +44,16 @@ export default class FormResponseByTeamModel extends Model<InferAttributes<FormR
         const form = await FormModel.findByPk(r.formId);
         if (!form) return;
 
-        if (form.deployed && !form.openSubmission) {
-            user.update({ tokens: user.tokens + 10 });
+        if (form.deployed) {
+            switch (form.type) {
+                case FormType.TEAM:
+                    user.update({ tokens: user.tokens + 10 });
+                    break;
+                case FormType.ALLIANCE:
+                case FormType.COMPARATIVE:
+                    user.update({ tokens: user.tokens + 15 });
+                    break;
+            }
         }
 
         if (r.type === SubmittedResponseType.MULTI_TEAM_FORMS) {
@@ -92,7 +100,7 @@ export default class FormResponseByTeamModel extends Model<InferAttributes<FormR
         //     responses: [],
         // })
 
-        for (const { equation, id } of equations) {
+        for (const { equation, id, validation } of equations) {
             console.log(equationNeedsCalculateOtf(equation));
             if (!equationNeedsCalculateOtf(equation)) continue;
             for (let i = 0; i < responses.length; i++) {

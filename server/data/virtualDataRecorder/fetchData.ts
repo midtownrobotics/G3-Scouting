@@ -3,7 +3,7 @@ import getQuestionDataForTeam from "../getData/getQuestionDataForTeam";
 import * as statbotics from "server/externalApis/statbotics/statbotics";
 import * as tba from "server/externalApis/tba/tba";
 import { getValueByPath } from "server/externalApis/getValueByPath";
-import { SbMatchData } from "server/externalApis/statbotics/types";
+import getMatchData from "../getData/getMatchData";
 
 /**
  * Fetches data for use in the virtual data recording system.
@@ -12,11 +12,14 @@ import { SbMatchData } from "server/externalApis/statbotics/types";
  * @param match The match to fetch the data for.
  * @returns A `number` or `undefined` if the data could not be fetched.
  */
-export default async function (data: Data, team?: number, match?: number) {
+export default async function (data: Data, team?: number, match?: number, alliance?: "red" | "blue") {
     switch (data.type) {
         case DataType.SOM_MATCH_TEAM:
             if (!match || !team) return;
             return fetchSomMatchTeamData(data.path, team, match);
+        case DataType.SOM_MATCH_ALLIANCE:
+            if (!match || !alliance) return;
+            return fetchSomMatchAllianceData(data.path, match, alliance);
         case DataType.SOM_TEAM_AVG:
             if (!team) return;
             return fetchSomMatchTeamAvgData(data.path, team);
@@ -32,6 +35,15 @@ export default async function (data: Data, team?: number, match?: number) {
         case DataType.TBA_TEAM:
             if (!team) return;
             return fetchTbaTeamData(data.path, team);
+    }
+}
+
+async function fetchSomMatchAllianceData(namespaceId: string, match: number, alliance: "red" | "blue") {
+    const matchData = await getMatchData(match);
+    if (!matchData) return;
+    let total = 0;
+    for (const team of matchData[alliance]) {
+        total += (await fetchSomMatchTeamData(namespaceId, team, match) ?? 0);
     }
 }
 

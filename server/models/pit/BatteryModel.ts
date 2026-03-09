@@ -15,6 +15,9 @@ export default class BatteryModel extends Model<BatteryData, Optional<BatteryDat
 
     @Column({ type: DataType.INTEGER })
     stateSince!: number;
+
+    @Column({ type: DataType.DOUBLE })
+    voltage!: number;
     
     @CreatedAt
     createdAt!: Date;
