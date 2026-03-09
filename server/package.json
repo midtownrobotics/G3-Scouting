@@ -38,7 +38,10 @@
         "@types/express": "^5.0.1",
         "@types/papaparse": "^5.3.16",
         "@types/sequelize": "^4.28.20",
-        "@types/uuid": "^10.0.0"
+        "@types/uuid": "^10.0.0",
+        "npx": "^10.2.2",
+        "sequelize-cli": "^6.6.5",
+        "ts-node": "^10.9.2"
     },
     "_moduleAliases": {
         "@shared": "dist/shared"

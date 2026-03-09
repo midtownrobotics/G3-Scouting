@@ -50,6 +50,7 @@ export type UserBlockAssignment = z.infer<typeof UserBlockAssignment>
 export const UserScheduleData = z.object({
     id: z.number(),
     name: z.string(),
+    displayName: z.string(),
     schedule: z.array(UserBlockAssignment),
     current: Assignment.optional()
 })

@@ -71,15 +71,3 @@
             0 0 60px rgba(0, 0, 255, 0.3);
     }
 }
-
-/* put in your app css file loaded after bootstrap */
-.w-md-50 {
-    width: 75%;
-    /* mobile default */
-}
-
-@media (min-width: 768px) {
-    .w-md-50 {
-        width: 50%;
-    }
-}

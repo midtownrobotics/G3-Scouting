@@ -4,6 +4,8 @@ import FormModel from '../models/forms/FormModel';
 import FormResponseByTeamModel from '../models/forms/FormResponseModels';
 import { AuthReq } from '../types';
 import { number } from 'zod';
+import { SerializedForm } from '@shared/schemas/forms';
+import { FormType } from '@shared/forms/Form';
 
 const formAPIRouter = express.Router();
 
@@ -24,6 +26,9 @@ formAPIRouter.get("/getForm/:formId", async (req, res) => {
 
 formAPIRouter.post("/submitForm", async (req: AuthReq, res) => {
     const body = SubmittedResponse.safeParse(req.body);
+
+    // console.log(req.body);
+    // console.log(body.error);
 
     if (req.user && body.success && body.data) {
         const { formId } = body.data;

@@ -1,8 +1,6 @@
+import { ZodFormType } from "@shared/forms/Form";
 import { Alliance } from "@shared/utils";
-import { FormType as FormTypeEnum } from "../forms/Form";
 import { z } from "zod";
-
-export const FormType = z.nativeEnum(FormTypeEnum);
 
 /** A question: response pair. Contains the **NON-NAMESPACED** questionId and a response. */
 export const QuestionResponse = z.object({
@@ -24,20 +22,25 @@ export const FormResponse = z.object({
 });
 export type FormResponse = z.infer<typeof FormResponse>;
 
+export enum SubmittedResponseType {
+    SINGLE_TEAM_FORMS = "SINGLE_TEAM_FORMS",
+    MULTI_TEAM_FORMS = "MULTI_TEAM_FORMS"
+}
+
 /** A response that is sent from the client to the server. */
 export const SubmittedResponse = z.union([
     z.object({
-        type: z.literal(FormTypeEnum.TEAM),
-        response: FormResponse
+        formId: z.string(),
+        type: z.literal(SubmittedResponseType.SINGLE_TEAM_FORMS),
+        response: FormResponse,
     }),
     z.object({
-        type: z.literal(FormTypeEnum.ALLIANCE),
+        formId: z.string(),
+        type: z.literal(SubmittedResponseType.MULTI_TEAM_FORMS),
         teams: z.array(z.number()),
-        responses: z.array(FormResponse)
+        responses: z.array(FormResponse),
     }),
-]).and(z.object({
-    formId: z.string()
-}));
+]);
 export type SubmittedResponse = z.infer<typeof SubmittedResponse>;
 
 /** Data about how to validate question data. */
@@ -49,20 +52,22 @@ export type QuestionValidationData = z.infer<typeof QuestionValidationData>;
 
 /** Metadata for form questions. */
 export const QuestionMetadata = z.union([
+    // Without validation
     z.object({
         name: z.string(),
         id: z.string(),
         formId: z.string(),
-        formType: FormType,
+        formType: ZodFormType,
         namespaceId: z.string(),
         type: z.enum(["string", "number"]),
-        classification: z.enum(["qualitative", "quantitative"])
+        classification: z.enum(["qualitative", "quantitative", "comparative"])
     }),
+    // With validation
     z.object({
         name: z.string(),
         id: z.string(),
         formId: z.string(),
-        formType: FormType,
+        formType: ZodFormType,
         namespaceId: z.string(),
         type: z.literal("number"),
         classification: z.literal("quantitative"),
@@ -74,7 +79,7 @@ export type QuestionMetadata = z.infer<typeof QuestionMetadata>;
 /** Contains information about the form responses including the form id, the questions, and the responses themselves. */
 export const FormResponseData = z.object({
     formId: z.string(),
-    formType: FormType,
+    formType: ZodFormType,
     responses: z.array(FormResponse),
     questions: z.array(QuestionMetadata)
 });
@@ -204,3 +209,15 @@ export const ServerToClientMessage = z.object({
     })
 }));
 export type ServerToClientMessage = z.infer<typeof ServerToClientMessage>;
+
+export const DataStatsResponse = z.object({
+    teamCoverage: z.array(z.object({
+        team: z.string(),
+        matchesScouted: z.number(),
+        totalMatches: z.number(),
+        percentage: z.number()
+    })),
+    totalCoverage: z.number(),
+    averageError: z.number()
+});
+export type DataStatsResponse = z.infer<typeof DataStatsResponse>;

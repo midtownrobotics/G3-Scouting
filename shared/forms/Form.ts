@@ -1,3 +1,4 @@
+import z from "zod";
 import { FormResponse, FormResponseData } from "../schemas/data";
 import { SerializedForm } from "../schemas/forms";
 import { FormComponent } from "./FormComponents";
@@ -7,8 +8,12 @@ export enum FormType {
     TEAM = "TEAM",
     ALLIANCE = "ALLIANCE",
     NO_MATCH = "NO_MATCH",
-    SINGLE_TEAM_RESPONSE = "SINGLE_TEAM_RESPONSE"
+    SINGLE_TEAM_RESPONSE = "SINGLE_TEAM_RESPONSE",
+    WHOLE_MATCH = "WHOLE_MATCH",
+    COMPARATIVE = "COMPARATIVE"
 }
+
+export const ZodFormType = z.nativeEnum(FormType);
 
 export default class Form {
     public readonly name: string;
@@ -24,7 +29,8 @@ export default class Form {
         return this.components.some(c => c.needsValidation);
     }
 
-    constructor(public type: FormType, name: string, public description: string) {
+    constructor(public type: FormType, name: string, public description: string, vdrErrorOverride?: boolean) {
+        if (name === "VDR" && !vdrErrorOverride) throw new Error("Form name cannot be \"VDR\"");
         this.name = name;
         this.id = toAlphanumeric(name);
     }
@@ -56,11 +62,12 @@ export default class Form {
         return this.components;
     }
 
-    public static fromJSON(json: SerializedForm): Form {
+    public static fromJSON(json: SerializedForm, vdrErrorOverride?: boolean): Form {
         const form = new Form(
             json.type,
             json.name,
-            json.description
+            json.description,
+            vdrErrorOverride
         );
 
         form.responses = json.responses;
@@ -91,7 +98,7 @@ export default class Form {
      * @param maxError The maximum error for responses to be included in the data result.
      * @returns `null` if there are no responses. Be sure to pass `true` into FormModel.getForm(s).
      */
-    public getResponseData(maxError?: number, fromMatch?: number): FormResponseData | null {
+    public getResponseData(maxError?: number, fromMatch?: number, toMatch?: number): FormResponseData | null {
         if (!this.responses) return null;
         if (this.type === FormType.NO_MATCH || this.type === FormType.SINGLE_TEAM_RESPONSE) maxError = undefined;
 
@@ -109,6 +116,8 @@ export default class Form {
                             (r.accuracyScore || 0) <= maxError
                         ) && (
                             (r.match && fromMatch !== undefined) ? r.match >= fromMatch : true
+                        ) && (
+                            (r.match && toMatch !== undefined) ? r.match <= toMatch : true
                         )
                     )
             )

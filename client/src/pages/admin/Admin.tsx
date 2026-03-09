@@ -3,6 +3,7 @@ import SaveableTextInput from "./SaveableTextInput";
 import UserTable from "./user-table/UserTable";
 import { Container, Row, Col } from "react-bootstrap";
 import { DocsLink } from "../../utils";
+import { BulkUserAdd } from "./BulkUserAdd";
 
 function Admin() {
   return (
@@ -16,12 +17,16 @@ function Admin() {
           <DocsLink link="/docs/admin.md#users" />
         </div>
         <UserTable />
+        <div className="mt-3">
+          <h2>Bulk User Add</h2>
+          <BulkUserAdd />
+        </div>
       </section>
 
       <hr />
 
       <section id="settings" className="my-4">
-        
+
         <div className="d-flex justify-content-center gap-2">
           <h2 className="my-0">Settings</h2>
           <DocsLink link="/docs/admin.md#settings" />

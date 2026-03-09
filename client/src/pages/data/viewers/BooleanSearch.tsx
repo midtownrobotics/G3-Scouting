@@ -20,7 +20,7 @@ type SearchGroup = {
     logic: 'AND' | 'OR';
 };
 
-export default function BooleanSearch({ accuracy, fromMatch }: { accuracy: number, fromMatch: number }) {
+export default function BooleanSearch({ accuracy, fromMatch, toMatch }: { accuracy: number, fromMatch: number, toMatch: number }) {
     const [data, setData] = useState<MultiTeamQuestionData[]>();
     const [query, setQuery] = useState("");
     const [results, setResults] = useState<number[]>([]);
@@ -39,12 +39,12 @@ export default function BooleanSearch({ accuracy, fromMatch }: { accuracy: numbe
     makeUrlParam("query", query);
 
     useEffect(() => {
-        fetchAPIJSON(`/data/getAllQuestionData/${accuracy}/${fromMatch}`, z.object({
+        fetchAPIJSON(`/data/getAllQuestionData/${accuracy}/${fromMatch}/${toMatch}`, z.object({
             data: z.array(MultiTeamQuestionData)
         })).then(res => {
             if (res) setData(res.data);
         });
-    }, [accuracy, fromMatch]);
+    }, [accuracy, fromMatch, toMatch]);
 
     const parseQuery = (queryString: string): SearchGroup[] | null => {
         try {

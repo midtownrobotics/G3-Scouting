@@ -22,6 +22,7 @@ const defaultSettings: Settings = {
         blue: [],
         red: [],
     },
+    pitChecklist: []
 };
 
 /**

@@ -6,13 +6,13 @@ import { z } from "zod";
 import { fetchAPIJSON } from "../../../API";
 import FormIdInput from "../helpers/FormIdInput";
 
-export default function AveragedRows({ accuracy, fromMatch }: { accuracy: number, fromMatch: number }) {
+export default function AveragedRows({ accuracy, fromMatch, toMatch }: { accuracy: number, fromMatch: number, toMatch: number }) {
     const [teamQuestionData, setTeamQuestionData] = useState<MultiTeamQuestionData[]>();
     const [formId, setFormId] = useState<string>();
 
     useEffect(() => {
         if (formId === undefined) return;
-        fetchAPIJSON(`/data/getQuestionData/${formId}/${accuracy}/${fromMatch}`, z.object({ 
+        fetchAPIJSON(`/data/getQuestionData/${formId}/${accuracy}/${fromMatch}/${toMatch}`, z.object({ 
             data: z.array(MultiTeamQuestionData) 
         })).then(res => {
             if (res) setTeamQuestionData(res.data);
@@ -45,8 +45,7 @@ export default function AveragedRows({ accuracy, fromMatch }: { accuracy: number
     if (!teamQuestionData) {
         return (
             <div className="p-3">
-                <h1>Team Averages</h1>
-                <br />
+            <h1>Team Averages</h1>
                 <FormIdInput onChange={setFormId} />
             </div>
         );
@@ -55,7 +54,6 @@ export default function AveragedRows({ accuracy, fromMatch }: { accuracy: number
     return (
         <div className="p-3">
             <h1>Team Averages</h1>
-            <br />
             <FormIdInput onChange={setFormId} />
             <br />
             <SortableTable

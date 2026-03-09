@@ -12,11 +12,13 @@ function isFormTypeKey(val: string): val is keyof typeof FormType {
 export default function SelectForm({
     form,
     forceUpdate,
-    setItems
+    setItems,
+    openVdr
 }: {
     form: React.RefObject<Form | undefined>,
     forceUpdate: () => void,
     setItems: (i: string[]) => void;
+    openVdr: () => void
 }) {
     const [forms, setForms] = useState<SerializedForm[]>();
     const [newFormName, setNewFormName] = useState("");
@@ -76,7 +78,7 @@ export default function SelectForm({
 
     const deleteForm = async (id: string, name: string) => {
         if (!confirm(`You are about to delete "${name}".`)) return;
-        if (prompt(`Please type "I am about to delete ${name}" in the box.`) !== `I am about to delete ${name}`) return;
+        if (prompt(`Please type "DELETE: ${name}" in the box.`) !== `DELETE: ${name}`) return;
         await postAPI("/admin/deleteForm", { form: id });
         await new Promise((r) => setTimeout(r, 200));
         getForms(() => setWorking(false));
@@ -85,6 +87,10 @@ export default function SelectForm({
     return (
         <div>
             <Row className="text-center">
+                <Button onClick={openVdr} variant="link">
+                    <h3>Open Virtual Data Recorder</h3>
+                </Button>
+
                 <Col className="m-2">
                     <h3>Manage current forms:</h3>
                     <Table
@@ -182,6 +188,8 @@ export default function SelectForm({
                         <BSForm.Select onChange={(e) => setNewFormType(e.target.value)}>
                             <option value="TEAM">Team Based</option>
                             <option value="ALLIANCE">Alliance Based</option>
+                            <option value="WHOLE_MATCH">Whole Match</option>
+                            <option value="COMPARATIVE">Single team + compare all teams</option>
                             <option value="NO_MATCH">Team Data (no match)</option>
                             <option value="SINGLE_TEAM_RESPONSE">Single response per team (pit scouting)</option>
                         </BSForm.Select>

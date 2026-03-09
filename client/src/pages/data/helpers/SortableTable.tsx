@@ -33,6 +33,7 @@ export function SortableTable<T>({
             <Table bordered hover size="sm" className="mb-0">
                 <thead className="sticky-top bg-white shadow-sm">
                     <tr>
+                        <th></th>
                         {visibleColumns.map(col => (
                             <th
                                 key={col.key}
@@ -46,8 +47,9 @@ export function SortableTable<T>({
                     </tr>
                 </thead>
                 <tbody>
-                    {rows.map(row => (
+                    {rows.map((row, i) => (
                         <tr key={rowKey(row)}>
+                            <td>{i+1}</td>
                             {visibleColumns.map(col => (
                                 <td key={col.key} style={{ verticalAlign: "middle", whiteSpace: "nowrap" }}>
                                     {formatCellData(((row as any)[col.key] ?? ""), col.key)}

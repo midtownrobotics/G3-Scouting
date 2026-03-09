@@ -17,6 +17,12 @@ import Form, { FormType } from "@shared/forms/Form";
 import FormModel from "./models/forms/FormModel";
 import { scoreUnscoredMatches } from "./data/reliability/scoreUnscoredMatches";
 import formComponents from "@shared/forms/FormComponents";
+import fetchData from "./data/virtualDataRecorder/fetchData";
+import { DataType, Equation, EquationComponentType, Operator } from "@shared/schemas/virtualDataRecorder";
+import { getTeamData } from "./externalApis/statbotics/statbotics";
+import doOperation from "./data/virtualDataRecorder/doOperation";
+import { evaluateEquation } from "./data/virtualDataRecorder/evaluateEquation";
+import VirtualDataEquationModel from "./models/forms/VirtualDataEquationModels";
 
 if (PRODUCTION) {
     require('module-alias/register');
@@ -38,7 +44,7 @@ syncDatabase().then(() => {
 
         const allUsers = await UserModel.findAll();
         if (allUsers.length === 0 || !allUsers.some((user) => user.permission === Permission.ADMIN)) {
-            UserModel.addUser("admin", "password", Permission.ADMIN, true);
+            UserModel.addUser("admin", "password", "Default User", Permission.ADMIN);
         }
 
         // const settings: Settings = await getSettings();
@@ -52,6 +58,13 @@ syncDatabase().then(() => {
 });
 
 async function testCode() {
+
+    // (await UserModel.findByPk(5))?.set({ tokens: 200 });
+    // (await UserModel.findByPk(26))?.set({ tokens: 200 });
+    // (await UserModel.findByPk(23))?.set({ tokens: 200 });
+    // (await UserModel.findByPk(7))?.set({ tokens: 200 });
+    // (await UserModel.findByPk(10))?.set({ tokens: 200 });
+    // (await UserModel.findByPk(14))?.set({ tokens: 200 });
 
     // const form = (await FormModel.getForm("Quantitative", true));
     // console.time("Scoring");
@@ -67,7 +80,7 @@ async function testCode() {
     // gray?.update({ tokens: 90 });
     // gray?.update({ tokens: 10000 });
 
-    const users = await UserModel.findAll();
+    // const users = await UserModel.findAll();
 
     // users.forEach(async u => {
     //     const matches = await FormResponseByTeamModel.findAll({ where: { formId: "Quantitative", userId: u.id }});
@@ -148,4 +161,32 @@ async function testCode() {
     //         u.save();
     //     }
     // });
+
+    VirtualDataEquationModel.addEquation(
+        "PPG",
+        [
+            {
+                componentType: EquationComponentType.DATA,
+                data: {
+                    type: DataType.SOM_MATCH_TEAM,
+                    path: "score_breakdown.{$A}.autoCount"
+                }
+            },
+            {
+                componentType: EquationComponentType.OPERATOR,
+                operator: Operator.ADD
+            },
+            {
+                componentType: EquationComponentType.DATA,
+                data: {
+                    type: DataType.SOM_MATCH_ALLIANCE,
+                    path: "score_breakdown.{$A}.autoCount"
+                }
+            }
+        ],
+        {
+            type: "tba",
+            path: "score_breakdown.{$A}.autoCount"
+        }
+    );
 }

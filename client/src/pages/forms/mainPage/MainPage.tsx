@@ -10,7 +10,7 @@ function MainPage({ setFormId }: { setFormId: (id: string) => void; }) {
     useEffect(() => {
         fetchAPIJSON("/forms/getForms", SerializedForm.array()).then(res => {
             if (res) {
-                setForms(res.filter(f => f.deployed));
+                setForms(res.filter(f => f.deployed && f.id !== "VDR"));
             }
         });
     }, []);

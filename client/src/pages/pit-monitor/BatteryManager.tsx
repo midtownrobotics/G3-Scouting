@@ -4,7 +4,8 @@ import { Trash } from "react-bootstrap-icons";
 import { BatteryData, BatteryState } from "@shared/schemas/pit";
 import { fetchAPIJSON, postAPI } from "../../API";
 import { z } from "zod";
-import { formatDuration } from "../../utils";
+import { formatDuration, numberParser } from "../../utils";
+import { FormControl } from "react-bootstrap";
 
 export default function BatteryManager() {
     const [batteries, setBatteries] = useState<BatteryData[]>([]);
@@ -52,6 +53,14 @@ export default function BatteryManager() {
         setWorking(false);
     }
 
+    async function updateVoltage(id: number, voltage: number) {
+        if (voltage < 12.8 || voltage > 14) alert("Voltage of battery put in the robot should be > 13 volts.")
+        setWorking(true);
+        await postAPI("/pit/setBatteryVoltage", { id, voltage });
+        await reloadData();
+        setWorking(false);
+    }
+
     return (
         <div className="container py-4">
             <div className="d-flex align-items-center justify-content-between mb-4">
@@ -92,13 +101,19 @@ export default function BatteryManager() {
                     .map(b => (
                         <div key={b.name} className="col-12">
                             <div className={`card shadow-sm ${b.state === BatteryState.CHARGING ? "bg-success-subtle" : b.state === BatteryState.IN_ROBOT ? "bg-primary-subtle" : ""}`}>
-                                <div className="card-body d-flex justify-content-between align-items-center">
-                                    <div>
+                                <div className={`card-body ${window.innerWidth < 500 ? "" : "d-flex justify-content-between align-items-center"}`}>
+                                    <div className={window.innerWidth < 500 ? "mb-2" : ""}>
                                         <h5 className="card-title mb-1">{b.name}</h5>
                                         <p className="card-text mb-1"><strong>State:</strong> {b.state}</p>
                                         <p className="card-text"><strong>In state:</strong> {formatDuration(b.stateSince)}</p>
                                     </div>
                                     <div className="d-flex align-items-center gap-2">
+                                        {b.state === BatteryState.IN_ROBOT && <FormControl
+                                            style={{ width: "80px" }}
+                                            defaultValue={b.voltage?.toString()}
+                                            placeholder="Volts"
+                                            onBlur={(e) => updateVoltage(b.id ?? -1, numberParser(e.target.value) ?? 0)}
+                                        />}
                                         <select
                                             className="form-select"
                                             style={{ width: "120px" }}

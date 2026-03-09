@@ -59,6 +59,7 @@ export const BatteryData = z.object({
     id: z.number().optional(),
     name: z.string(),
     state: z.nativeEnum(BatteryState),
+    voltage: z.number().nullish(),
     stateSince: z.number()
 })
 export type BatteryData = z.infer<typeof BatteryData>;
@@ -66,8 +67,9 @@ export type BatteryData = z.infer<typeof BatteryData>;
 export const PitMonitorData = z.object({
     team: z.number(),
     pitNow: z.array(z.string()),
-    ranking: RankingRow,
-    nexusData: NexusEventStatus,
+    ranking: RankingRow.nullish(),
+    nexusData: NexusEventStatus.nullish(),
     batteryData: z.array(BatteryData),
+    checklist: z.array(z.string())
 });
 export type PitMonitorData = z.infer<typeof PitMonitorData>;

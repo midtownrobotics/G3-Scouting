@@ -142,6 +142,40 @@ export class ShortResponse extends FormComponent {
     }
 }
 
+export class LongResponse extends FormComponent {
+    public metadata: QuestionMetadata | null = null;
+
+    /**
+     * Constructs a short response question.
+     * @param question The question itself. Ex: `"What is your favorite color?"`
+     * @param name The form unique name of the question. Ex: `"Color"`
+     */
+    constructor(public question: string, public name: string) {
+        super();
+    }
+
+    public _setMetadata(id: string, formId: string, formType: FormType): void {
+        this.metadata = {
+            name: this.name,
+            type: "string",
+            classification: "qualitative",
+            id,
+            formId,
+            formType,
+            namespaceId: `${formId}-${id}`,
+        };
+    }
+
+    public toJSON(): SerializedComponent {
+        if (!this.metadata) throw new Error("Cannot serialize component without adding it to a form.");
+        return {
+            type: "LongResponse",
+            creationArgs: [this.question, this.metadata.name],
+            id: this.id
+        };
+    }
+}
+
 export class Number extends FormComponent {
     public metadata: QuestionMetadata | null = null;
 
@@ -220,9 +254,9 @@ export class Range extends FormComponent {
      * @param name The form unique name of the question. Ex: `"Age"`
      */
     constructor(
-        public question: string, 
-        public name: string, 
-        public min: number, 
+        public question: string,
+        public name: string,
+        public min: number,
         public max: number,
         public step: number,
         public validation?: QuestionValidationData
@@ -253,21 +287,14 @@ export class Range extends FormComponent {
     }
 }
 
-export class RobotRanking extends FormComponent {
+export class Timer extends FormComponent {
     public metadata: QuestionMetadata | null = null;
 
-    /**
-     * Constructs a robot ranking question.
-     * This component can only be used on {@link FormType.ALLIANCE} forms.
-     * @param question The ranking criteria. Ex: `"Rank by Defense"`
-     * @param name The form unique name of the question. Ex: `"DefenseRanking"`
-     */
     constructor(public question: string, public name: string) {
         super();
     }
 
     public _setMetadata(id: string, formId: string, formType: FormType): void {
-        if (formType !== FormType.ALLIANCE)
         this.metadata = {
             type: "number",
             classification: "quantitative",
@@ -282,7 +309,36 @@ export class RobotRanking extends FormComponent {
     public toJSON(): SerializedComponent {
         if (!this.metadata) throw new Error("Cannot serialize component without adding it to a form.");
         return {
-            type: "RobotRanking",
+            type: "Timer",
+            creationArgs: [this.question, this.metadata.name],
+            id: this.id
+        };
+    }
+}
+
+export class Comparative extends FormComponent {
+    public metadata: QuestionMetadata | null = null;
+
+    constructor(public question: string, public name: string) {
+        super();
+    }
+
+    public _setMetadata(id: string, formId: string, formType: FormType): void {
+        this.metadata = {
+            type: "number",
+            classification: "comparative",
+            name: this.name,
+            id,
+            formId,
+            formType,
+            namespaceId: `${formId}-${id}`,
+        };
+    }
+
+    public toJSON(): SerializedComponent {
+        if (!this.metadata) throw new Error("Cannot serialize component without adding it to a form.");
+        return {
+            type: "Comparative",
             creationArgs: [this.question, this.metadata.name],
             id: this.id
         };
@@ -293,11 +349,13 @@ const formComponents = {
     SectionBreak,
     Number,
     ShortResponse,
+    LongResponse,
     MultipleChoice,
     Information,
     BooleanInput,
     Range,
-    RobotRanking
+    Timer,
+    Comparative
 } as const;
 
 export default formComponents;

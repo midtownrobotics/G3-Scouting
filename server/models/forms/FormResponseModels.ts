@@ -1,10 +1,12 @@
-import { FormResponse, QuestionResponse, SubmittedResponse } from "@shared/schemas/data";
+import { FormResponse, FormResponseData, QuestionResponse, SubmittedResponse, SubmittedResponseType } from "@shared/schemas/data";
 import { CreationOptional, InferAttributes, InferCreationAttributes } from "sequelize";
 import { Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
 import FormModel from "./FormModel";
-import { FormType } from "@shared/forms/Form";
-import { User } from "../types";
 import UserModel from "../users/UserModel";
+import { FormType } from "@shared/forms/Form";
+import VirtualDataEquationModel from "./VirtualDataEquationModels";
+import { equationNeedsCalculateOtf } from "server/data/virtualDataRecorder/vdrUtils";
+import { evaluateEquation } from "server/data/virtualDataRecorder/evaluateEquation";
 
 @Table({ tableName: "form_responses_by_team" })
 export default class FormResponseByTeamModel extends Model<InferAttributes<FormResponseByTeamModel>, InferCreationAttributes<FormResponseByTeamModel>> {
@@ -15,7 +17,11 @@ export default class FormResponseByTeamModel extends Model<InferAttributes<FormR
     userId!: number;
 
     @ForeignKey(() => FormModel)
-    @Column({ type: DataType.STRING, onDelete: "SET NULL", allowNull: true })
+    @Column({
+        type: DataType.STRING,
+        allowNull: true,
+        onDelete: 'SET NULL',
+    })
     formId!: string;
 
     @Column({ type: DataType.INTEGER })
@@ -33,15 +39,24 @@ export default class FormResponseByTeamModel extends Model<InferAttributes<FormR
     @Column({ type: DataType.FLOAT, defaultValue: null })
     accuracyScore!: number | null;
 
+    /** Turns a {@link SubmittedResponse} of either a single or multiple teams into {@link FormResponse}s and creates the models for them. */
     public static async submitResponse(r: SubmittedResponse, user: UserModel) {
         const form = await FormModel.findByPk(r.formId);
         if (!form) return;
 
-        if (form.deployed && !form.openSubmission) {
-            user.update({tokens: user.tokens + 10});
+        if (form.deployed) {
+            switch (form.type) {
+                case FormType.TEAM:
+                    user.update({ tokens: user.tokens + 10 });
+                    break;
+                case FormType.ALLIANCE:
+                case FormType.COMPARATIVE:
+                    user.update({ tokens: user.tokens + 15 });
+                    break;
+            }
         }
 
-        if (r.type === FormType.ALLIANCE) {
+        if (r.type === SubmittedResponseType.MULTI_TEAM_FORMS) {
             for (const response of r.responses) {
                 FormResponseByTeamModel.createResponse(response, user.id);
             }
@@ -50,11 +65,55 @@ export default class FormResponseByTeamModel extends Model<InferAttributes<FormR
         }
     }
 
+    /** Creates the actual models from a form response. */
     private static async createResponse(r: FormResponse, userId: number) {
         const submittedAt = new Date().toLocaleString();
 
         try {
             await FormResponseByTeamModel.create({ ...r, userId, submittedAt });
         } catch (err: any) { }
+    }
+
+    /** Submits data from the virtual data recorder. */
+    public static async submitVirtualResponse(r: FormResponse) {
+        if (r.formId !== "VDR") return;
+        const submittedAt = new Date().toLocaleString();
+        await FormResponseByTeamModel.create({ ...r, userId: -1, submittedAt });
+    }
+
+    /** Gets all the responses from the virtual data recorder. This may take a while depending on the number of equations that need OTF calculation. */
+    public static async getVirtualData(fromMatch?: number, toMatch?: number): Promise<FormResponseData> {
+        const responses: FormResponse[] = (await FormResponseByTeamModel.findAll({ where: { formId: "VDR" } }))
+            .filter(r => (
+                (r.match && fromMatch !== undefined) ? r.match >= fromMatch : true
+            ) && (
+                    (r.match && toMatch !== undefined) ? r.match <= toMatch : true
+                )
+            );
+        const equations = await VirtualDataEquationModel.findAll()
+        const questions = equations.map(m => m.toQuestion());
+
+        // responses.push({
+        //     formId: "",
+        //     team: 6340,
+        //     match: 1,
+        //     responses: [],
+        // })
+
+        for (const { equation, id, validation } of equations) {
+            console.log(equationNeedsCalculateOtf(equation));
+            if (!equationNeedsCalculateOtf(equation)) continue;
+            for (let i = 0; i < responses.length; i++) {
+                const res = await evaluateEquation(equation, responses[i].team, responses[i].match);
+                responses[i].responses.push({ question: id, response: (res?.value ?? "").toString() })
+            }
+        }
+
+        return {
+            formId: "VDR",
+            formType: FormType.TEAM,
+            questions,
+            responses
+        };
     }
 }

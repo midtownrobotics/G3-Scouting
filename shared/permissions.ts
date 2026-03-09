@@ -8,6 +8,10 @@ export enum Permission {
     BOOKIE = "BOOKIE"
 }
 
+export function isPermission(value: string): value is Permission {
+  return Object.values(Permission).includes(value as Permission);
+}
+
 export function getDisallowedPages(permission: Permission): PageKey[] {
     switch (permission) {
         case Permission.SCOUT:

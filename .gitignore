@@ -8,3 +8,4 @@ server/migrations
 dist
 **/package-lock.json
 !package-lock.json
+.VSCodeCounter

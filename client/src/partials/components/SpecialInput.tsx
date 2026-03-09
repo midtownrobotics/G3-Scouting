@@ -11,7 +11,6 @@ export default function SpecialInput({
 }) {
 
     const onChange = (v: string) => {
-        console.log(value)
         if (setter === undefined) return;
         
         const parsed = parseInt(v, 10);
@@ -30,7 +29,7 @@ export default function SpecialInput({
                 style={{ maxWidth: "150px" }}
                 type="text"
                 value={value || ""}
-                disabled={setter === undefined && children !== "Team Number"}
+                disabled={setter === undefined}
                 onChange={e => onChange(e.target.value)}
             />
         </Form.Group>

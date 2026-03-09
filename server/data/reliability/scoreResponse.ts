@@ -1,7 +1,7 @@
 import { FormResponseData } from "@shared/schemas/data";
 import { TbaMatchData } from "server/externalApis/tba/types";
 import { numberParser } from "server/utils";
-import { getValueByPath } from "../../externalApis/tba/getValueByPath";
+import { getValueByPath } from "../../externalApis/getValueByPath";
 import FormResponseByTeamModel from "../../models/forms/FormResponseModels";
 import UserModel from "server/models/users/UserModel";
 import getTokensFromAccuracy from "server/game/getTokensFromAccuracy";

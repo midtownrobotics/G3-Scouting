@@ -4,16 +4,16 @@ import { fetchAPIJSON } from "../../../API";
 import FormIdInput from "../helpers/FormIdInput";
 import FormResponseTable from "../helpers/FormResponseTable";
 
-export default function FormRows({ accuracy, fromMatch }: { accuracy: number, fromMatch: number }) {
+export default function FormRows({ accuracy, fromMatch, toMatch }: { accuracy: number, fromMatch: number, toMatch: number }) {
     const [formResponseData, setFormResponseData] = useState<FormResponseData>();
     const [formId, setFormId] = useState<string>();
 
     useEffect(() => {
         if (formId === undefined) return;
-        fetchAPIJSON(`/data/getFormData/${formId}/${accuracy}/${fromMatch}`, FormResponseData).then(res => {
+        fetchAPIJSON(`/data/getFormData/${formId}/${accuracy}/${fromMatch}/${toMatch}`, FormResponseData).then(res => {
             if (res) setFormResponseData(res);
         });
-    }, [formId, accuracy, fromMatch]);
+    }, [formId, accuracy, fromMatch, toMatch]);
 
     if (!formResponseData) {
         return (

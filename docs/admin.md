@@ -23,15 +23,14 @@ Fields:
     - "BOOKIE": Same as "DATA", but access to **Bookie** page.
     - "LEAD": Same as "BOOKIE", but access to **Lead** page.
     - "ADMIN": Access to all pages.
-- **Reliable**: boolean
-    - Planned to be used to tell which scouts should have a second account added to their station. 
-    - Not used currently
-- **Red Alliance**: boolean
-    - Whether the scout should scout the red alliance (true) or blue alliance (false).
-    - Only settable after user creation.
 - **Slack Linked**: boolean
     - Whether the scout has linked their slack account to receive notifications.
     - **Not settable**, only for display.
+
+### Bulk Add
+
+The bulk add is an easier way to add many users at a time.
+The format for the text input should be [username],[nickname],[password],[permission] with line breaks in between users.
 
 ## Settings
 

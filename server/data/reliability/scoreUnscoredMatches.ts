@@ -6,7 +6,7 @@ import scoreAllianceData from "./scoreResponse";
 export async function scoreAllForms() {
     // console.log("Started scoring...");
     // console.time("Finished scoring in");
-    const matchNumbers = (await getAllMatches())?.map(m => m.match_number);
+    const matchNumbers = (await getAllMatches())?.filter(m => m.comp_level === "qm").map(m => m.match_number);
     if (matchNumbers === undefined) return;
 
     const forms = await FormModel.getForms(true);
@@ -17,7 +17,7 @@ export async function scoreAllForms() {
 }
 
 export async function scoreUnscoredMatches(form: Form, matchNumbers?: number[]) {
-    if (matchNumbers === undefined) matchNumbers = (await getAllMatches())?.map(m => m.match_number);
+    if (matchNumbers === undefined) matchNumbers = (await getAllMatches())?.filter(m => m.comp_level === "qm").map(m => m.match_number);
     if (matchNumbers === undefined) return;
 
     const formData = form.getResponseData();

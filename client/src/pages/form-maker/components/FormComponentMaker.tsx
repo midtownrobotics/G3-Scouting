@@ -1,4 +1,4 @@
-import formComponents, { BooleanInput, FormComponent as FormComponentClass, Information, MultipleChoice, Number, Range, RobotRanking, SectionBreak, ShortResponse } from "@shared/forms/FormComponents";
+import formComponents, { BooleanInput, Comparative, FormComponent as FormComponentClass, Information, LongResponse, MultipleChoice, Number, Range, SectionBreak, ShortResponse, Timer } from "@shared/forms/FormComponents";
 import { useEffect, useState } from "react";
 import { FormControl } from "react-bootstrap";
 
@@ -29,6 +29,10 @@ function FormComponentMaker({ component, setCanSubmit, forceUpdate }: MakerProps
         return <ShortResponseMaker component={component} setCanSubmit={setCanSubmit} forceUpdate={forceUpdate} />
     }
 
+    if (component instanceof formComponents.LongResponse) {
+        return <LongResponseMaker component={component} setCanSubmit={setCanSubmit} forceUpdate={forceUpdate} />
+    }
+
     if (component instanceof formComponents.Range) {
         return <RangeMaker component={component} setCanSubmit={setCanSubmit} forceUpdate={forceUpdate} />
     }
@@ -37,8 +41,12 @@ function FormComponentMaker({ component, setCanSubmit, forceUpdate }: MakerProps
         return <BooleanInputMaker component={component} setCanSubmit={setCanSubmit} forceUpdate={forceUpdate} />
     }
 
-    if (component instanceof formComponents.RobotRanking) {
-        return <RobotRankingMaker component={component} setCanSubmit={setCanSubmit} forceUpdate={forceUpdate} />
+    if (component instanceof formComponents.Comparative) {
+        return <ComparativeMaker component={component} setCanSubmit={setCanSubmit} forceUpdate={forceUpdate} />
+    }
+
+    if (component instanceof formComponents.Timer) {
+        return <TimerMaker component={component} setCanSubmit={setCanSubmit} forceUpdate={forceUpdate} />
     }
 
     return <div>Unknown component type</div>;
@@ -209,6 +217,40 @@ function NumberMaker({ component, setCanSubmit, forceUpdate }: MakerProps<Number
     );
 }
 
+
+function TimerMaker({ component, setCanSubmit, forceUpdate }: MakerProps<Timer>) {
+    const [name, setName] = useState("");
+    const [question, setQuestion] = useState("");
+
+    useEffect(() => { component.question = question; }, [question]);
+    useEffect(() => { component.name = name; }, [name]);
+
+
+    useEffect(() => {
+        forceUpdate();
+        setCanSubmit(question !== "" && name !== "");
+    }, [question, name]);
+
+    return (
+        <div>
+            <FormControl
+                className="mx-auto text-center my-2"
+                style={{ maxWidth: "300px" }}
+                placeholder="Question"
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+            />
+            <FormControl
+                className="mx-auto text-center my-2"
+                style={{ maxWidth: "300px" }}
+                placeholder="Datapoint Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+            />
+        </div>
+    );
+}
+
 function RangeMaker({ component, setCanSubmit, forceUpdate }: MakerProps<Range>) {
     const [name, setName] = useState("");
     const [question, setQuestion] = useState("");
@@ -314,7 +356,39 @@ function ShortResponseMaker({ component, setCanSubmit, forceUpdate }: MakerProps
     );
 }
 
-function RobotRankingMaker({ component, setCanSubmit, forceUpdate }: MakerProps<RobotRanking>) {
+function LongResponseMaker({ component, setCanSubmit, forceUpdate }: MakerProps<LongResponse>) {
+    const [name, setName] = useState("");
+    const [question, setQuestion] = useState("");
+
+    useEffect(() => { component.question = question; }, [question]);
+    useEffect(() => { component.name = name; }, [name]);
+
+    useEffect(() => {
+        forceUpdate();
+        setCanSubmit(question !== "" && name !== "");
+    }, [question, name]);
+
+    return (
+        <div>
+            <FormControl
+                className="mx-auto text-center my-2"
+                style={{ maxWidth: "300px" }}
+                placeholder="Question"
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+            />
+            <FormControl
+                className="mx-auto text-center my-2"
+                style={{ maxWidth: "300px" }}
+                placeholder="Datapoint Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+            />
+        </div>
+    );
+}
+
+function ComparativeMaker({ component, setCanSubmit, forceUpdate }: MakerProps<Comparative>) {
     const [name, setName] = useState("");
     const [question, setQuestion] = useState("");
 

@@ -1,7 +1,7 @@
 main,
 footer,
 #login-page {
-    background-color: rgb(235, 235, 235);
+    background-color: rgb(245, 235, 235);
     padding: 15px;
 }
 
@@ -75,4 +75,16 @@ a.plain-link:focus {
 
 .spin-once {
     animation: spin360 1s linear forwards;
+}
+
+/* put in your app css file loaded after bootstrap */
+.w-md-50 {
+    width: 75%;
+    /* mobile default */
+}
+
+@media (min-width: 768px) {
+    .w-md-50 {
+        width: 50%;
+    }
 }

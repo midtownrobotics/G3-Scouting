@@ -21,7 +21,7 @@ leadAPIrouter.get("/getCurrentAssignment", async (req, res) => {
 
 leadAPIrouter.post("/sendNotification", async (req, res) => {
     const body = z.object({ msg: z.string(), expires: z.number() }).safeParse(req.body);
-    console.log(req.body)
+    // console.log(req.body)
     if (body.success) {
         sendNotification(body.data.msg, "userMessaging", new Date(body.data.expires), 1);
         res.send(200);
