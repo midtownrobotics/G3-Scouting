@@ -66,7 +66,7 @@ export default class FormModel extends Model<SerializedForm> {
 
     public static async getSerializedForms(includeResponses?: boolean): Promise<SerializedForm[]> {
         const models = await FormModel.findAll(includeResponses ? { include: { model: FormResponseByTeamModel, as: "responses" } } : undefined);
-        return [...models.map(m => m.toJSON()), await getVdrFormSerialized()];
+        return [...models.map(m => m.toJSON()), await getVdrFormSerialized(includeResponses)];
     }
 
     public static async getSerializedForm(id: string, includeResponses?: boolean): Promise<SerializedForm | undefined> {

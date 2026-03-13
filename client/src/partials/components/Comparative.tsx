@@ -87,19 +87,21 @@ export default function Comparative({
     teams: number[];
     answers: Map<string, string>;
 }) {
-    const [rankedItems, setRankedItems] = useState<RankingItem[]>(teams.map((t, i) => ({
-        rank: i+1,
-        team: t,
-        id: `team-${t}`
-    })));
+    const [rankedItems, setRankedItems] = useState<RankingItem[]>([]);
 
     useEffect(() => {
         for (let i = 0; i < rankedItems.length; i++) {
             onChange(`${rankedItems[i].team}##${component.getId()}`, rankedItems[i].rank.toString());
         }
-        setTimeout(() => 
-        console.log(answers), 1000)
     }, [rankedItems]);
+
+    useEffect(() => {
+        setRankedItems(teams.map((t, i) => ({
+            rank: i + 1,
+            team: t,
+            id: `team-${t}`
+        })))
+    }, [teams])
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -119,9 +121,9 @@ export default function Comparative({
             setRankedItems((items) => {
                 const oldIndex = items.findIndex(item => item.id === active.id);
                 const newIndex = items.findIndex(item => item.id === over.id);
-                
+
                 const newItems = arrayMove(items, oldIndex, newIndex);
-                
+
                 // Recalculate ranks after reordering
                 return newItems.map((item, index) => ({
                     ...item,
@@ -156,7 +158,7 @@ export default function Comparative({
     return (
         <Form.Group className="my-3">
             <Form.Label className="fs-2">{component.question}</Form.Label>
-            
+
             {rankedItems.length > 0 && (
                 <DndContext
                     sensors={sensors}

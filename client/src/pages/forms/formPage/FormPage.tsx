@@ -20,36 +20,74 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
 
     const [knownMatch, setKnownMatch] = useState<number>();
 
+    const [inProgress, setInProgress] = useState(false);
+
+    const [highlighting, setHighlighting] = useState<number>();
+
     useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                setHighlighting(undefined);
+                return;
+            }
+
+            const max = (form.current?.getComponents().length ?? 0) - 1;
+
+            if (e.key === 'ArrowDown') {
+                setHighlighting(prev => {
+                    const next = (prev ?? 0) + 1;
+                    return next > max ? max : next;
+                });
+            }
+            if (e.key === 'ArrowUp') {
+                setHighlighting(prev => {
+                    const next = (prev ?? 0) - 1;
+                    return next < 0 ? 0 : next;
+                });
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+    
+    useEffect(() => {
+        if (inProgress) return;
         if (nextMatch?.number === knownMatch && knownMatch !== undefined) return;
         if (nextMatch?.number) setKnownMatch(nextMatch?.number);
 
         fetchAPIJSON("/getCurrentMatch", MatchData).then(res => {
             if (!res) return;
             setMatchData(res);
+
             if (
                 (
                     form.current?.type === FormType.WHOLE_MATCH ||
                     form.current?.type === FormType.COMPARATIVE
-                ) && 
+                ) &&
                 teams !== res.teams
             ) setTeams(res.teams);
+
             if (
                 form.current?.openSubmission &&
                 form.current?.type === FormType.ALLIANCE &&
                 teams !== res.blue &&
                 teams !== res.red
             ) setTeams(res.blue);
+
+            if (nextMatch?.team !== undefined && nextMatch.number === matchData?.number) {
+                setTeam(nextMatch.team);
+            } else {
+                setTeam(res.teams[0])
+            }
+
+            setInProgress(true);
         })
+    }, [nextMatch, knownMatch, inProgress])
 
-        if (nextMatch?.team !== undefined) {
-            setTeam(nextMatch.team);
-        }
-    }, [nextMatch, knownMatch])
-
-    const [team, setTeam] = useState(nextMatch?.team);
-    const [teams, setTeams] = useState(nextMatch?.teams);
-    const [alliance, _setAlliance] = useState(nextMatch?.alliance);
+    const [team, setTeam] = useState<number>();
+    const [teams, setTeams] = useState<number[]>();
+    const [alliance, _setAlliance] = useState<Alliance>();
     const setAlliance = (a: Alliance) => {
         if (form.current?.type !== FormType.ALLIANCE) return;
         _setAlliance(a)
@@ -72,7 +110,7 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
         let res: Response | null;
 
         if (
-            form.current.type === FormType.ALLIANCE || 
+            form.current.type === FormType.ALLIANCE ||
             form.current.type === FormType.WHOLE_MATCH ||
             form.current.type === FormType.COMPARATIVE
         ) {
@@ -109,15 +147,18 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
             } as SubmittedResponse);
         }
 
-        userDataProvider.apiStatusRefresh();
-
         setTimeout(() => setSubmitting(false), 1000)
 
         if (res?.status !== 200) return submittingFail();
+        resetWindow();
+    };
 
+    const resetWindow = () => {
+        setInProgress(false);
+        userDataProvider.apiStatusRefresh();
         setAnswers(new Map());
         window.scrollTo(0, 0);
-    };
+    }
 
     const submittingFail = () => {
         setSubmitting(false);
@@ -141,17 +182,19 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
 
     return (
         <div id="form-page">
+            {/* <h1>{inProgress ? "in progress" : "not in progress"}</h1>
+            <h1>{userData?.user.nextMatch?.finished ? "submitted" : "not submitted"}</h1> */}
             <h1>{form.current.name}</h1>
 
             <FormComp
                 answers={answers}
                 handleAnswerChange={handleAnswerChange}
                 form={form.current}
-                match={nextMatch?.number ?? matchData?.number}
+                match={matchData?.number}
                 team={team}
                 teams={teams}
                 alliance={alliance}
-                // setTeam={setTeam}
+                highlighting={(highlighting !== undefined && form.current.type === FormType.TEAM) ? form.current.getComponents()[highlighting]?.getId() : undefined}
                 setTeam={form.current.openSubmission ? setTeam : undefined}
                 setAlliance={form.current.openSubmission ? setAlliance : undefined}
             />
@@ -159,6 +202,9 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
             <br />
 
             <Button id="submit" variant="success" disabled={submitting} onClick={submitForm}>{submitting ? <Spinner role="status" /> : "Submit"}</Button>
+            <br />
+            <br />
+            <Button id="advance" variant="warning" disabled={submitting} onClick={() => confirm("You are about to reset all your data for this match.") ? resetWindow() : undefined}>Advance match without submitting</Button>
         </div>
     );
 }

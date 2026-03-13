@@ -20,7 +20,7 @@ export default function FormComp({
     team,
     teams,
     alliance,
-    dragging,
+    highlighting,
     setTeam,
     setAlliance
 }: {
@@ -31,7 +31,7 @@ export default function FormComp({
     team?: number,
     teams?: number[],
     alliance?: Alliance,
-    dragging?: string,
+    highlighting?: string,
     setAlliance?: (a: Alliance) => void,
     setTeam?: (t: number) => void;
 }) {
@@ -48,12 +48,13 @@ export default function FormComp({
             <SpecialInput value={match}>Match Number</SpecialInput>
             <SpecialInput value={team} setter={setTeam}>Team Number</SpecialInput>
             {form.getComponents().map(c => (
-                <div key={c.getId()} className={dragging === c.getId() ? "bg-primary-subtle p-2" : ""}>
+                <div key={c.getId()} className={highlighting === c.getId() ? "bg-primary-subtle p-2" : ""}>
                     <FormComponent
                         component={c}
                         onAnswerChange={handleAnswerChange}
                         answer={answers.get(c.getId())}
                         responseType={SubmittedResponseType.SINGLE_TEAM_FORMS}
+                        highlighting={highlighting === c.getId()}
                     />
                 </div>
             ))}
@@ -82,7 +83,7 @@ export default function FormComp({
                     <hr />
                     <h2>Team #{t}</h2>
                     {form.getComponents().map(c => (
-                        <div className={dragging === c.getId() ? "bg-primary-subtle p-4" : ""}>
+                        <div className={highlighting === c.getId() ? "bg-primary-subtle p-4" : ""}>
                             <FormComponent
                                 key={t + "##" + c.getId()}
                                 team={t}
@@ -90,6 +91,7 @@ export default function FormComp({
                                 onAnswerChange={handleAnswerChange}
                                 answer={answers.get(t + "##" + c.getId())}
                                 responseType={SubmittedResponseType.MULTI_TEAM_FORMS}
+                                highlighting={highlighting === c.getId()}
                             />
                         </div>
                     ))}
@@ -97,7 +99,7 @@ export default function FormComp({
             ))}
 
             {teams && comparativeComponents.map(c =>
-                <div className={dragging === c.getId() ? "bg-primary-subtle p-4" : ""}>
+                <div className={highlighting === c.getId() ? "bg-primary-subtle p-4" : ""}>
                     <hr />
                     <ComparativeElement
                         key={c.getId()}
@@ -125,7 +127,7 @@ export default function FormComp({
                 <hr />
                 <h2>Team #{team}</h2>
                 {teams && form.getComponents().map(c => (
-                    <div className={dragging === c.getId() ? "bg-primary-subtle p-4" : ""}>
+                    <div className={highlighting === c.getId() ? "bg-primary-subtle p-4" : ""}>
                         {c instanceof formComponents.Comparative
                             ? <ComparativeElement
                                 key={c.getId()}
@@ -141,6 +143,7 @@ export default function FormComp({
                                 onAnswerChange={handleAnswerChange}
                                 answer={answers.get(team + "##" + c.getId())}
                                 responseType={SubmittedResponseType.MULTI_TEAM_FORMS}
+                                highlighting={highlighting === c.getId()}
                             />
                         }
                     </div>
@@ -154,13 +157,14 @@ export default function FormComp({
             <hr />
             <SpecialInput value={team} setter={setTeam}>Team Number</SpecialInput>
             {form.getComponents().map(c => (
-                <div key={c.getId()} className={dragging === c.getId() ? "bg-primary-subtle p-2" : ""}>
+                <div key={c.getId()} className={highlighting === c.getId() ? "bg-primary-subtle p-2" : ""}>
                     <FormComponent
                         key={c.getId()}
                         component={c}
                         onAnswerChange={handleAnswerChange}
                         answer={answers.get(c.getId())}
                         responseType={SubmittedResponseType.SINGLE_TEAM_FORMS}
+                        highlighting={highlighting === c.getId()}
                     />
                 </div>
             ))}

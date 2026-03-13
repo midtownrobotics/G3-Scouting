@@ -11,7 +11,7 @@ export default async function (matchNumber: number): Promise<{ success: true } |
     const matchData = await getMatchData(matchNumber);
 
     if (!matchData || !matchData.posted) return { err: "noTbaData", success: false };
-    if (statbotics.hasMatchHappened(await statbotics.getMatchData(matchNumber))) return { err: "noStatboticsData", success: false };
+    if (!statbotics.hasMatchHappened(await statbotics.getMatchData(matchNumber))) return { err: "noStatboticsData", success: false };
 
     const equations = await VirtualDataEquationModel.findAll();
 
@@ -21,7 +21,7 @@ export default async function (matchNumber: number): Promise<{ success: true } |
         for (const equation of equations) {
             if (equationNeedsCalculateOtf(equation.equation)) continue;
             const value = await evaluateEquation(equation.equation, team, matchData.number);
-            equationResults.push({ id: equation.id, value });
+            equationResults.push({ id: equation.id, value: value?.value });
         }
 
         FormResponseByTeamModel.submitVirtualResponse({

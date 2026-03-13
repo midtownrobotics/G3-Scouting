@@ -23,6 +23,7 @@ import { getTeamData } from "./externalApis/statbotics/statbotics";
 import doOperation from "./data/virtualDataRecorder/doOperation";
 import { evaluateEquation } from "./data/virtualDataRecorder/evaluateEquation";
 import VirtualDataEquationModel from "./models/forms/VirtualDataEquationModels";
+import updateAllVdrData from "./data/virtualDataRecorder/updateAllVdrData";
 
 if (PRODUCTION) {
     require('module-alias/register');
@@ -169,7 +170,7 @@ async function testCode() {
                 componentType: EquationComponentType.DATA,
                 data: {
                     type: DataType.SOM_MATCH_TEAM,
-                    path: "score_breakdown.{$A}.autoCount"
+                    path: "Quantitative_Form-FuelScored-2"
                 }
             },
             {
@@ -179,14 +180,12 @@ async function testCode() {
             {
                 componentType: EquationComponentType.DATA,
                 data: {
-                    type: DataType.SOM_MATCH_ALLIANCE,
-                    path: "score_breakdown.{$A}.autoCount"
+                    type: DataType.SOM_MATCH_TEAM,
+                    path: "Quantitative_Form-TeleopFuelScore-7"
                 }
             }
-        ],
-        {
-            type: "tba",
-            path: "score_breakdown.{$A}.autoCount"
-        }
+        ]
     );
+
+    // updateAllVdrData();
 }

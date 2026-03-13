@@ -6,11 +6,24 @@ export default function BooleanInput({
     component,
     onChange,
     value,
+    highlighting
 }: {
     component: BooleanInputComponent;
     onChange: (id: string, value: string) => void;
     value: string;
+    highlighting: boolean;
 }) {
+    useEffect(() => {
+        if (!highlighting) return;
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') onChange(component.getId(), value === "true" ? "false" : "true");
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [highlighting, value, onChange]);
+
 
     useEffect(() => {
         if (value === undefined || value === null) onChange(component.getId(), "false");

@@ -135,11 +135,11 @@ export function Betting() {
                             <Form.Control
                                 disabled={!question || question.locked}
                                 type="number"
-                                min={0}
-                                max={tokens}
+                                min={10}
+                                max={Math.round(tokens)}
                                 value={amount.toString()}
                                 onChange={(e) =>
-                                    setAmount(Math.min(Math.max(parseInt(e.target.value) || 0, 0), tokens))
+                                    setAmount(Math.min(Math.max(parseInt(e.target.value) || 0, 10), Math.round(tokens)))
                                 }
                             />
                         </InputGroup>

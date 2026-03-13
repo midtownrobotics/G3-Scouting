@@ -14,6 +14,13 @@ export default async function assignForMatch(nextMatch: number) {
     const allTeams = redTeams.concat(blueTeams);
     // if (allTeams.length !== 6) return;
 
+    const setNoNextMatch = (user: UserModel) => user.update({
+        nextMatch: {
+            number: nextMatch,
+            finished: false
+        }
+    });
+
     const users = await UserModel.findAll();
     for (const alliance of [Alliance.RED, Alliance.BLUE]) {
         const assigned: CurrentAssignment[] = [];
@@ -21,10 +28,10 @@ export default async function assignForMatch(nextMatch: number) {
 
         for (const user of users) {
             const currentAssignment = await user.getCurrentAssignment();
-            if (currentAssignment?.type !== AssignmentType.ASSIGNED) continue;
+            if (currentAssignment?.type !== AssignmentType.ASSIGNED) { setNoNextMatch(user); continue; };;
             const i = assigned.length;
             const userAlliance = await user.getCurrentAlliance();
-            if (userAlliance !== alliance) continue;
+            if (userAlliance !== alliance) { setNoNextMatch(user); continue; };
             const team = allianceTeams[i % 3];
 
             const newAssignment: CurrentAssignment = {
@@ -62,7 +69,7 @@ export async function getAllCurrentAssignmentStatuses(): Promise<CurrentAssignme
     const match = await getSettingsValue("match");
     const users = await UserModel.findAll();
     const assignments = users
-        .filter(u => u.nextMatch != null && u.nextMatch?.number === match.number)
+        .filter(u => u.nextMatch != null && u.nextMatch.team !== undefined && u.nextMatch?.number === match.number)
         .map(u => ({
             ...u.nextMatch!,
             userId: u.id,

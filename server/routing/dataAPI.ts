@@ -12,6 +12,7 @@ import { numberParser } from "../utils";
 import { z } from "zod";
 import getDataStats from "server/data/getData/getDataStats";
 import FormResponseByTeamModel from "server/models/forms/FormResponseModels";
+import { getAllMatchData } from "server/externalApis/statbotics/statbotics";
 
 const dataApiRouter = express.Router();
 
@@ -120,5 +121,11 @@ dataApiRouter.get("/getVirtualData{/:fromMatch}{/:toMatch}", async (req, res) =>
     if (!data) { res.sendStatus(400); return; }
     res.send(data);
 });
+
+dataApiRouter.get("/getAllMatchesStatbotics{/:elim}", async (req, res) => {
+    const data = await getAllMatchData(req.params.elim === "true");
+    if (!data) { res.sendStatus(400); return; }
+    res.send(data);
+})
 
 export default dataApiRouter;

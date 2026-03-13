@@ -1,10 +1,11 @@
 import { GamblingQuestion } from "@shared/schemas/game";
 import { useEffect, useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Button, Col, Form, Row, Table } from "react-bootstrap";
 import { fetchAPIJSON, postAPI } from "../../API";
 import { z } from "zod";
-import { Check2Circle, Circle, Floppy, Lock, Plus, Trash, Unlock } from "react-bootstrap-icons";
+import { BoxArrowUpRight, Check2Circle, Circle, Floppy, Lock, Plus, Trash, Unlock } from "react-bootstrap-icons";
 import { MatchData } from "@shared/schemas/data";
+import { SbMatchData } from "@shared/schemas/apis/statbotics";
 
 export function BookiePage() {
     const [questions, setQuestions] = useState<GamblingQuestion[]>([]);
@@ -13,9 +14,13 @@ export function BookiePage() {
     const [newResponse, setNewResponse] = useState("");
     const [saving, setSaving] = useState(false);
     const [currentMatch, setCurrentMatch] = useState<number>();
+    const [sbMatchData, setSbMatchData] = useState<SbMatchData[]>([])
+
+    const matchData = sbMatchData.find(m => m.match_number === match);
 
     useEffect(() => {
         fetchAPIJSON("/game/bookie/getQuestions", z.array(GamblingQuestion)).then(q => q && setQuestions(q));
+        fetchAPIJSON("/data/getAllMatchesStatbotics", z.array(SbMatchData)).then(d => d && setSbMatchData(d));
         fetchAPIJSON("/getCurrentMatch", MatchData).then(m => {
             m && setMatch(m?.number);
             setCurrentMatch(m?.number);
@@ -62,7 +67,7 @@ export function BookiePage() {
 
     const setCorrectResponse = (index: number) => {
         if (!question) return;
-        if (!question.locked) return alert("Question needs to be locked before an answer can be set."); 
+        if (!question.locked) return alert("Question needs to be locked before an answer can be set.");
         if (!confirm("Once a correct answer is saved, it cannot be changed.")) return;
         setQuestion({
             ...question,
@@ -109,6 +114,29 @@ export function BookiePage() {
                 </div>
 
                 <br />
+
+                {matchData && <div style={{ textAlign: "center" }}>
+                    <Row>
+                        <Col>
+                            <h5>{matchData.alliances.blue.team_keys.map(t => <a className="mx-2 text-primary" href={`https://statbotics.io/team/${t}`} target="_blank">{t}</a>)}</h5>
+                            <h5 className="text-primary">Win pred: {((1 - (matchData.pred?.red_win_prob ?? 0)) * 100).toFixed(2)}%</h5>
+                            <h5 className="text-primary">Score pred: {(matchData.pred?.blue_score ?? 0).toFixed(2)}</h5>
+                        </Col>
+                        <Col>
+                            <h5>{matchData.alliances.red.team_keys.map(t => <a className="mx-2 text-danger" href={`https://statbotics.io/team/${t}`} target="_blank">{t}</a>)}</h5>
+                            <h5 className="text-danger">Win pred: {((matchData.pred?.red_win_prob ?? 0) * 100).toFixed(2)}%</h5>
+                            <h5 className="text-danger">Score pred: {(matchData.pred?.red_score ?? 0).toFixed(2)}</h5>
+                        </Col>
+                    </Row>
+                    <h5>Total match score pred: {((matchData.pred?.blue_score ?? 0) + (matchData.pred?.red_score ?? 0)).toFixed(2)}</h5>
+                    <a
+                        href={`https://statbotics.io/match/${matchData?.key}`}
+                        target="_blank"
+                        style={{ textDecoration: 'underline', textDecorationSkipInk: 'none' }}
+                    >
+                        Open in statbotics <BoxArrowUpRight size={10} style={{ verticalAlign: 'middle' }} />
+                    </a>
+                </div>}
 
                 <div className="w-100">
                     <h6>Question</h6>

@@ -6,6 +6,11 @@
         width: 40%;
     }
 
+    #advance {
+        font-size: 20px;
+        width: 40%;
+    }
+
     .form-label {
         font-size: 20px;
         font-weight: 500;

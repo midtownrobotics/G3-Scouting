@@ -15,14 +15,16 @@ function FormComponent({
     onAnswerChange,
     answer,
     team,
-    responseType
+    responseType,
+    highlighting
 }: {
     component: FormComponentClass,
     onAnswerChange: (id: string, value: string) => void,
     answer: any,
     team?: number,
     teams?: number[],
-    responseType: SubmittedResponseType
+    responseType: SubmittedResponseType,
+    highlighting: boolean
 }) {
     const multiTeamForm = responseType === SubmittedResponseType.MULTI_TEAM_FORMS;
 
@@ -45,7 +47,7 @@ function FormComponent({
     }
 
     if (component instanceof formComponents.Number) {
-        return <Number component={component} onChange={_onAnswerChange} value={answer} />;
+        return <Number component={component} onChange={_onAnswerChange} value={answer} highlighting={highlighting} />;
     }
 
     if (component instanceof formComponents.ShortResponse) {
@@ -61,7 +63,7 @@ function FormComponent({
     }
 
     if (component instanceof formComponents.BooleanInput) {
-        return <BooleanInput component={component} onChange={_onAnswerChange} value={answer} />;
+        return <BooleanInput component={component} onChange={_onAnswerChange} value={answer} highlighting={highlighting} />;
     }
 
     if (component instanceof formComponents.Timer) {
