@@ -9,6 +9,7 @@ import { AuthReq } from "../types";
 import { getNotifications } from "server/other/notifications";
 import { z } from "zod";
 import { parse } from "papaparse";
+import { checkIn, checkOut, isUserCheckedIn } from "server/scheduling/checkIn";
 
 const genericAPIRouter = express.Router();
 
@@ -18,7 +19,7 @@ genericAPIRouter.get("/status", (req, res) => {
 
 genericAPIRouter.get("/nameFromId/:userId", async (req, res) => {
     const user = await UserModel.findByPk(req.params.userId);
-    if (!user) { res.send(400); return; }
+    if (!user) { res.sendStatus(400); return; }
     res.send({ name: user.username });
 });
 
@@ -49,6 +50,7 @@ genericAPIRouter.get("/me", async (req: AuthReq, res) => {
             tokens: user.tokens,
             xp: user.xp
         },
+        checkedIn: isUserCheckedIn(user.id),
         currentAssignment: await user.getCurrentAssignment(),
         notifications: getNotifications(user.id)
     };
@@ -83,6 +85,16 @@ genericAPIRouter.get("/profiles", async (req, res) => {
     const parsed = await z.array(UserProfile).safeParseAsync(users);
     if (parsed.success) { res.send(parsed.data); return; }
     res.sendStatus(400);
+});
+
+genericAPIRouter.post("/checkIn", async (req: AuthReq, res) => {
+    if (!req.user) { res.sendStatus(400); return; }
+    checkIn(req.user);
+});
+
+genericAPIRouter.post("/checkOut", async (req: AuthReq, res) => {
+    if (!req.user) { res.sendStatus(400); return; }
+    checkOut(req.user.id);
 });
 
 export default genericAPIRouter;

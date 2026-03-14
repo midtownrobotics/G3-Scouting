@@ -36,7 +36,7 @@ export default function SelectForm({
     const getForms = (next?: () => void) => {
         fetchAPIJSON("/forms/getForms", SerializedForm.array()).then(res => {
             if (res) {
-                setForms(res);
+                setForms(res.filter(f => f.id !== "VDR"));
                 if (next) next();
             }
         });
@@ -87,9 +87,9 @@ export default function SelectForm({
     return (
         <div>
             <Row className="text-center">
-                <Button onClick={openVdr} variant="link">
+                {/* <Button onClick={openVdr} variant="link">
                     <h3>Open Virtual Data Recorder</h3>
-                </Button>
+                </Button> */}
 
                 <Col className="m-2">
                     <h3>Manage current forms:</h3>

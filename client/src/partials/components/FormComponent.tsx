@@ -1,4 +1,5 @@
 import formComponents, { FormComponent as FormComponentClass } from "@shared/forms/FormComponents";
+import { TEAM_NUMBER_COMPONENT_ID_SEPARATOR } from "@shared/forms/Form";
 import Information from "./Information";
 import MultipleChoice from "./MultipleChoice";
 import Number from "./Number";
@@ -9,6 +10,7 @@ import BooleanInput from "./BooleanInput";
 import Timer from "./Timer";
 import LongResponse from "./LongResponse";
 import { SubmittedResponseType } from "@shared/schemas/data";
+import MultiSelect from "./MultiSelect";
 
 function FormComponent({
     component,
@@ -30,7 +32,7 @@ function FormComponent({
 
     const _onAnswerChange = (id: string, val: string) => {
         if (!team && multiTeamForm) return;
-        if (multiTeamForm) onAnswerChange(team + "##" + id, val);
+        if (multiTeamForm) onAnswerChange(team + TEAM_NUMBER_COMPONENT_ID_SEPARATOR + id, val);
         else onAnswerChange(id, val);
     };
 
@@ -43,7 +45,7 @@ function FormComponent({
     }
 
     if (component instanceof formComponents.MultipleChoice) {
-        return <MultipleChoice component={component} onChange={_onAnswerChange} value={answer} />;
+        return <MultipleChoice component={component} onChange={_onAnswerChange} value={answer} highlighting={highlighting} />;
     }
 
     if (component instanceof formComponents.Number) {
@@ -51,11 +53,11 @@ function FormComponent({
     }
 
     if (component instanceof formComponents.ShortResponse) {
-        return <ShortResponse component={component} onChange={_onAnswerChange} value={answer} />;
+        return <ShortResponse component={component} onChange={_onAnswerChange} value={answer} highlighting={highlighting} />;
     }
 
     if (component instanceof formComponents.LongResponse) {
-        return <LongResponse component={component} onChange={_onAnswerChange} value={answer} />;
+        return <LongResponse component={component} onChange={_onAnswerChange} value={answer} highlighting={highlighting} />;
     }
 
     if (component instanceof formComponents.Range) {
@@ -70,7 +72,11 @@ function FormComponent({
         return <Timer component={component} onChange={_onAnswerChange} value={answer} />;
     }
 
-    if (component instanceof formComponents.Comparative) return <></>;
+    if (component instanceof formComponents.MultiSelect) {
+        return <MultiSelect component={component} onChange={_onAnswerChange} value={answer} />;
+    }
+
+    if (component instanceof formComponents.Comparative || component instanceof formComponents.PageBreak) return <></>;
 
     return <div>Unknown component type</div>;
 }

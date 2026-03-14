@@ -19,6 +19,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { useEffect, useState } from 'react';
 import { X } from "react-bootstrap-icons";
+import { TEAM_NUMBER_COMPONENT_ID_SEPARATOR } from "@shared/forms/Form"
 
 interface RankingItem {
     id: string;
@@ -49,7 +50,7 @@ function SortableRankItem({ item, onRemove }: {
         <div
             ref={setNodeRef}
             style={style}
-            className="d-flex justify-content-center align-items-center gap-2 mb-2 p-2 bg-light rounded w-md-50 mx-auto"
+            className="d-flex justify-content-center align-items-center gap-2 mb-2 p-2 bg-light rounded w-md-50 mx-auto form-component"
         >
             <div
                 {...attributes}
@@ -79,19 +80,17 @@ function SortableRankItem({ item, onRemove }: {
 export default function Comparative({
     component,
     onChange,
-    teams,
-    answers
+    teams
 }: {
     component: ComponentComponent;
     onChange: (id: string, value: string) => void;
     teams: number[];
-    answers: Map<string, string>;
 }) {
     const [rankedItems, setRankedItems] = useState<RankingItem[]>([]);
 
     useEffect(() => {
         for (let i = 0; i < rankedItems.length; i++) {
-            onChange(`${rankedItems[i].team}##${component.getId()}`, rankedItems[i].rank.toString());
+            onChange(`${rankedItems[i].team}${TEAM_NUMBER_COMPONENT_ID_SEPARATOR}${component.getId()}`, rankedItems[i].rank.toString());
         }
     }, [rankedItems]);
 

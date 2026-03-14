@@ -244,7 +244,7 @@ export default function FormMaker() {
                         match={5}
                         team={1648}
                         teams={form.current.type === FormType.ALLIANCE ? [2974, 1648, 254] : [2974, 1648, 254, 1771, 2025, 1678]}
-                        dragging={dragging}
+                        highlighting={dragging}
                     />
                 </Col>
             </Row>

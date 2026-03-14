@@ -28,7 +28,7 @@ export default function Range({
     const ticks = generateTicks();
 
     return (
-        <Form.Group className="my-3 w-75 mx-auto">
+        <Form.Group className="my-3 w-75 mx-auto form-component">
             <Form.Label>{component.question}</Form.Label>
             <div 
             className="d-flex justify-content-center align-items-center gap-2 px-2 rounded border"

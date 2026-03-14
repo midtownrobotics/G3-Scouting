@@ -31,7 +31,7 @@ export default function BooleanInput({
 
     return (
         <div
-            className="w-100 d-flex justify-content-center mt-3"
+            className="w-100 d-flex justify-content-center mt-3 form-component"
             onClick={() => onChange(component.getId(), String(value == "false"))}
         >
             <Form.Check

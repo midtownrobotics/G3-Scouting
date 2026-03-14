@@ -1,6 +1,6 @@
 import { GamblingQuestion } from "@shared/schemas/game";
 import { useEffect, useState } from "react";
-import { Button, Col, Form, Row, Table } from "react-bootstrap";
+import { Button, Col, Form, Row } from "react-bootstrap";
 import { fetchAPIJSON, postAPI } from "../../API";
 import { z } from "zod";
 import { BoxArrowUpRight, Check2Circle, Circle, Floppy, Lock, Plus, Trash, Unlock } from "react-bootstrap-icons";

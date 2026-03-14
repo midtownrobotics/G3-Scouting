@@ -5,8 +5,15 @@ import UserModel from "../models/users/UserModel";
 import { getSettingsValue, setSettingsValue } from "../other/settings";
 import { scoreAllForms } from "./reliability/scoreUnscoredMatches";
 import { Alliance } from "@shared/utils";
+import * as CheckIn from "../scheduling/checkIn"
 
 export default async function assignForMatch(nextMatch: number) {
+    const currentAssignments = await getAllCurrentAssignmentStatuses();
+    for (const user of currentAssignments) {
+        if (!CheckIn.isUserCheckedIn(user.userId)) continue;
+        if (!user.finished) CheckIn.checkOut(user.userId);
+    }
+
     const match = (await getAllMatches())?.find(m => m.match_number === nextMatch && m.comp_level == "qm");
     if (!match) return;
     const redTeams = match.alliances.red.team_keys.map(t => parseInt(t.slice(3)));
@@ -28,9 +35,11 @@ export default async function assignForMatch(nextMatch: number) {
 
         for (const user of users) {
             const currentAssignment = await user.getCurrentAssignment();
-            if (currentAssignment?.type !== AssignmentType.ASSIGNED) { setNoNextMatch(user); continue; };;
+            const userCheckedIn = CheckIn.isUserCheckedIn(user.id);
+            if (currentAssignment?.type !== AssignmentType.ASSIGNED && !userCheckedIn) { setNoNextMatch(user); continue; };
+            console.log(user.displayName);
             const i = assigned.length;
-            const userAlliance = await user.getCurrentAlliance();
+            const userAlliance = !userCheckedIn ? await user.getCurrentAlliance() : [Alliance.RED, Alliance.BLUE][Math.floor(Math.random()*2)];
             if (userAlliance !== alliance) { setNoNextMatch(user); continue; };
             const team = allianceTeams[i % 3];
 
@@ -42,8 +51,10 @@ export default async function assignForMatch(nextMatch: number) {
                 username: user.username,
                 userId: user.id,
                 displayName: user.displayName,
-                alliance: alliance,
+                alliance
             };
+
+            CheckIn.checkOut(user.id);
 
             await user.update({
                 assignedMatches: [...user.assignedMatches, nextMatch],
@@ -75,6 +86,5 @@ export async function getAllCurrentAssignmentStatuses(): Promise<CurrentAssignme
             userId: u.id,
             username: u.username
         }));
-
     return assignments;
 }

@@ -21,6 +21,7 @@ export default function Number({
             if (e.key === 'ArrowRight') onChange(component.getId(), (parseInt(value) + 1).toString());
             if (e.key === '/') onChange(component.getId(), (parseInt(value) + 10).toString());
             if (e.key === 'Shift') onChange(component.getId(), (parseInt(value) + 5).toString());
+            if (e.key === '0') onChange(component.getId(), (0).toString());
         };
 
         window.addEventListener('keydown', handleKeyDown);
@@ -32,7 +33,7 @@ export default function Number({
     }, [value]);
 
     return (
-        <Form.Group className="my-3">
+        <Form.Group className="my-3 form-component">
             <Form.Label>{component.question}</Form.Label>
             <div className="d-flex justify-content-center align-items-center gap-2">
                 <Button

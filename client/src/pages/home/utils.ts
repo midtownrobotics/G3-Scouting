@@ -63,7 +63,7 @@ type CondensedRow = {
     endTime: number;
     date: DateString;
     blockIds: number[];
-    alliance: Alliance | undefined;
+    alliance: Alliance | null | undefined;
 };
 
 export function condenseSchedule(userData: UserInformation): CondensedRow[] {

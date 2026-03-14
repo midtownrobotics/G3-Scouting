@@ -1,13 +1,14 @@
-import Form, { FormType } from "@shared/forms/Form";
+import Form, { FormType, TEAM_NUMBER_COMPONENT_ID_SEPARATOR } from "@shared/forms/Form";
 import { MatchData, QuestionResponse, SubmittedResponse, SubmittedResponseType } from "@shared/schemas/data";
 import React, { useEffect, useState } from "react";
-import { Button, Spinner } from "react-bootstrap";
+import { Button, OverlayTrigger, Spinner, Tooltip } from "react-bootstrap";
 import { fetchAPIJSON, postAPI } from "../../../API";
 import FormComp from "../../../partials/FormComp";
 import { useUserData } from "../../../userData";
 import './FormPage.css';
 import { Alliance } from "@shared/utils";
 import { AssignmentType } from "@shared/schemas/schedule";
+import formComponents from "@shared/forms/FormComponents";
 
 function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
     const [answers, setAnswers] = useState(new Map<string, string>());
@@ -19,10 +20,13 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
     const nextMatch = userData?.user.nextMatch;
 
     const [knownMatch, setKnownMatch] = useState<number>();
-
     const [inProgress, setInProgress] = useState(false);
-
     const [highlighting, setHighlighting] = useState<number>();
+
+    const [pageNum, setPageNum] = useState(0);
+
+    const pageBreaks = form.current?.getComponents().filter(c => c instanceof formComponents.PageBreak) ?? [];
+    const maxPageNum = pageBreaks.length;
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -34,15 +38,23 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
             const max = (form.current?.getComponents().length ?? 0) - 1;
 
             if (e.key === 'ArrowDown') {
+                e.preventDefault();
                 setHighlighting(prev => {
-                    const next = (prev ?? 0) + 1;
-                    return next > max ? max : next;
+                    const next = prev === undefined ? 0 : Math.min(prev + 1, max);
+                    // document.querySelectorAll('.form-component')[next]
+                    //     ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    window.scrollBy({ top: 75 })
+                    return next;
                 });
             }
             if (e.key === 'ArrowUp') {
+                e.preventDefault();
                 setHighlighting(prev => {
-                    const next = (prev ?? 0) - 1;
-                    return next < 0 ? 0 : next;
+                    const next = prev === undefined ? 0 : Math.max(prev - 1, 0);
+                    // document.querySelectorAll('.form-component')[next]
+                    //     ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    window.scrollBy({ top: -75 })
+                    return next;
                 });
             }
         };
@@ -50,8 +62,8 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, []);
-    
-    useEffect(() => {
+
+    useEffect(() => {        
         if (inProgress) return;
         if (nextMatch?.number === knownMatch && knownMatch !== undefined) return;
         if (nextMatch?.number) setKnownMatch(nextMatch?.number);
@@ -66,24 +78,29 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
                     form.current?.type === FormType.COMPARATIVE
                 ) &&
                 teams !== res.teams
-            ) setTeams(res.teams);
+            ) {
+                setTeams(res.teams);
+                setInProgress(true);
+            }
 
             if (
                 form.current?.openSubmission &&
                 form.current?.type === FormType.ALLIANCE &&
                 teams !== res.blue &&
                 teams !== res.red
-            ) setTeams(res.blue);
+            ) {
+                setTeams(res.blue);
+                setInProgress(true);
+            }
 
             if (nextMatch?.team !== undefined && nextMatch.number === matchData?.number) {
                 setTeam(nextMatch.team);
+                setInProgress(true);
             } else {
                 setTeam(res.teams[0])
             }
-
-            setInProgress(true);
         })
-    }, [nextMatch, knownMatch, inProgress])
+    }, [nextMatch, knownMatch, inProgress]);
 
     const [team, setTeam] = useState<number>();
     const [teams, setTeams] = useState<number[]>();
@@ -116,7 +133,7 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
         ) {
             const teamsMap = new Map<string, QuestionResponse[]>();
             for (const a of answers) {
-                const [team, id] = a[0].split("##");
+                const [team, id] = a[0].split(TEAM_NUMBER_COMPONENT_ID_SEPARATOR);
                 if (!teamsMap.has(team)) {
                     teamsMap.set(team, []);
                 }
@@ -158,6 +175,7 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
         userDataProvider.apiStatusRefresh();
         setAnswers(new Map());
         window.scrollTo(0, 0);
+        setPageNum(0);
     }
 
     const submittingFail = () => {
@@ -165,15 +183,51 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
         alert("Submit FAILED. Check internet and try again.");
     };
 
-    if (!form.current) return (<h1>You can't be here.</h1>);
+    const [checkingIn, setCheckingIn] = useState(false)
+    const [checkingOut, setCheckingOut] = useState(false)
 
-    if (!form.current.openSubmission && (nextMatch == null || nextMatch.number !== matchData?.number || nextMatch.finished)) return (
+    useEffect(() => {
+        if (userData?.checkedIn) setCheckingIn(false);
+        if (userData?.checkedIn === false) setCheckingOut(false);
+    }, [userData?.checkedIn]);
+
+    const checkIn = () => {
+        setCheckingIn(true);
+        postAPI("/checkIn", {});
+    }
+
+    const checkOut = () => {
+        setCheckingOut(true);
+        postAPI("/checkOut", {});
+    }
+
+    if (!form.current) return;
+
+    if (
+        !form.current.openSubmission &&
+        (
+            nextMatch == null ||
+            nextMatch.number !== matchData?.number ||
+            nextMatch.finished ||
+            (
+                !nextMatch.alliance &&
+                !nextMatch.team &&
+                !nextMatch.teams
+            )
+        )
+    ) return (
         <div id="form-page">
             {userData?.currentAssignment?.type === AssignmentType.ASSIGNED ?
                 <h1>Waiting for next assignment...</h1> : (
                     <>
                         <h1>You aren't currently assigned to scout.</h1>
                         <h3>This form is locked, so you must be assigned to access it.</h3>
+                        <br />
+                        <br />
+                        {userData?.checkedIn
+                            ? <h3>You are checked in. You will be assigned a team for the next match.</h3>
+                            : <h3>You can also <a href="#" onClick={e => { e.preventDefault(); !checkingIn && checkIn(); }}>check in</a> to be able to scout on your breaks.</h3>
+                        }
                     </>
                 )
             }
@@ -182,9 +236,27 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
 
     return (
         <div id="form-page">
-            {/* <h1>{inProgress ? "in progress" : "not in progress"}</h1>
-            <h1>{userData?.user.nextMatch?.finished ? "submitted" : "not submitted"}</h1> */}
+            {userData?.checkedIn && <h3>You are checked in. Click here to <a href="#" onClick={e => { e.preventDefault(); !checkingOut && checkOut(); }}>check out</a>.</h3>}
+
             <h1>{form.current.name}</h1>
+            <OverlayTrigger
+                placement="bottom"
+                overlay={
+                    <Tooltip id="tooltip-bottom" style={{ "--bs-tooltip-max-width": "400px" } as React.CSSProperties}>
+                        '↑ / ↓' - Start hotkey mode and cycle questions <br />
+                        '←/→' - Increment or decrement by 1 or cycle responses<br />
+                        'Shift' - Increment by 5 <br />
+                        '/' - Increment by 10 <br />
+                        '0' - Reset counter to 0 <br />
+                        'Esc' - Stop hotkey mode
+                    </Tooltip>
+                }
+            >
+                <small
+                    hidden={form.current.type !== FormType.TEAM}
+                    className="text-decoration-underline text-primary"
+                >Hotkey Info</small>
+            </OverlayTrigger>
 
             <FormComp
                 answers={answers}
@@ -197,11 +269,13 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
                 highlighting={(highlighting !== undefined && form.current.type === FormType.TEAM) ? form.current.getComponents()[highlighting]?.getId() : undefined}
                 setTeam={form.current.openSubmission ? setTeam : undefined}
                 setAlliance={form.current.openSubmission ? setAlliance : undefined}
+                pageNum={pageNum}
             />
 
             <br />
 
-            <Button id="submit" variant="success" disabled={submitting} onClick={submitForm}>{submitting ? <Spinner role="status" /> : "Submit"}</Button>
+            {pageNum === maxPageNum && <Button id="submit" variant="success" disabled={submitting} onClick={submitForm}>{submitting ? <Spinner role="status" /> : "Submit"}</Button>}
+            {pageNum !== maxPageNum && <Button id="submit" variant="success" disabled={submitting} onClick={() => { setPageNum(p => p + 1); window.scrollTo(0, 0); }}>Advance to {pageBreaks[pageNum].title}</Button>}
             <br />
             <br />
             <Button id="advance" variant="warning" disabled={submitting} onClick={() => confirm("You are about to reset all your data for this match.") ? resetWindow() : undefined}>Advance match without submitting</Button>

@@ -156,8 +156,7 @@ export function getBetData(match: number) {
         count: 0,
         response: r,
         percent: 0,
-        totalBet: 0,
-        payout: 0
+        totalBet: 0
     }));
 
     for (const [userId, bet] of matchBets.entries()) {

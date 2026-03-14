@@ -1,5 +1,8 @@
 import { Notification, NotificationService } from "@shared/schemas/user";
 
+const MAX_NOTIFICATIONS_PER_USER = 20;
+
+// notifications are intentionally in-memory and ephemeral
 const notificationsByUser = new Map<number, Notification[]>();
 
 /**
@@ -27,6 +30,10 @@ export function sendNotification(
         sentAt: Date.now(),
         priority
     });
+
+    if (userNotifications.length > MAX_NOTIFICATIONS_PER_USER) {
+        userNotifications.splice(0, userNotifications.length - MAX_NOTIFICATIONS_PER_USER);
+    }
 
     notificationsByUser.set(userId ?? -1, userNotifications);
 }
