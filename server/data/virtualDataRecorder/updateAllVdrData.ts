@@ -21,6 +21,7 @@ export default async function updateAllVdrData() {
         if (matchData === undefined || !tba.hasMatchHappened(matchData)) return;
 
         const res = await recordDataForMatch(match);
+        console.log(match, res);
         if (res.success) {
             matchesWithData.push(match);
         }

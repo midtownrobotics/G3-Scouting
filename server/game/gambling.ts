@@ -7,13 +7,7 @@ import { Question } from "react-bootstrap-icons";
 
 const getCurrentMatch = async () => (await getSettingsValue("match")).number;
 
-const gamblingQuestions: GamblingQuestion[] = [{
-    match: 25,
-    question: "How does this test question make you feel?",
-    responses: ["Good", "Bad", "Terrible"],
-    locked: false,
-    correctResponse: undefined
-}];
+const gamblingQuestions: GamblingQuestion[] = [];
 
 export async function setCorrectAnswer(responseIndex: number, match: number) {
     const matchBets = bets.get(match);
@@ -162,8 +156,7 @@ export function getBetData(match: number) {
         count: 0,
         response: r,
         percent: 0,
-        totalBet: 0,
-        payout: 0
+        totalBet: 0
     }));
 
     for (const [userId, bet] of matchBets.entries()) {

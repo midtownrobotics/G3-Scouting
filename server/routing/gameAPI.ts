@@ -24,10 +24,10 @@ gameAPIRouter.get("/bookie/getQuestions", async (req, res) => {
 
 gameAPIRouter.post("/bookie/setQuestion", async (req, res) => {
     const question = GamblingQuestion.safeParse(req.body);
-    if (!question.success) { res.send(400); return; }
+    if (!question.success) { res.sendStatus(400); return; }
 
     addQuestion(question.data);
-    res.send(200);
+    res.sendStatus(200);
 });
 
 export default gameAPIRouter;

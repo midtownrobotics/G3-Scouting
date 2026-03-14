@@ -37,7 +37,7 @@ export default function Timer({
     } = useStopwatch({ autoStart: false, interval: 20 });
 
     return (
-        <Form.Group className="my-3">
+        <Form.Group className="my-3 form-component">
             <Form.Label>{component.question}</Form.Label>
             <div className="d-flex justify-content-center align-items-center gap-2">
                 <div

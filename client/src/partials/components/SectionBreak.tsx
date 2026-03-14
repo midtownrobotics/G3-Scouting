@@ -2,7 +2,7 @@ import { SectionBreak as SectionBreakComponent } from "@shared/forms/FormCompone
 
 export default function SectionBreak({ component }: { component: SectionBreakComponent }) {
     return (
-        <div className="my-4 mb-0">
+        <div className="my-4 mb-0 form-component form-component">
             <hr />
             <h3>{component.title}</h3>
         </div>

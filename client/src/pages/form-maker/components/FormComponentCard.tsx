@@ -9,7 +9,7 @@ function FormComponentCard({
     component: FormComponentClass,
     deleteFn: () => void;
 }) {
-    if (component instanceof formComponents.SectionBreak) {
+    if (component instanceof formComponents.SectionBreak || component instanceof formComponents.PageBreak) {
         return <CardTemplate deleteFn={deleteFn} component={component} prop={"title"} color="success" />;
     }
 

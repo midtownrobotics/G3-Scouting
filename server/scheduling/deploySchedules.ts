@@ -14,6 +14,9 @@ import { Alliance } from "@shared/utils";
 export default async function deploySchedules(
   deployPayload: DeployPayload
 ): Promise<boolean> {
+
+  console.log(deployPayload);
+
   const transaction = await managementDatabase.transaction();
 
   try {

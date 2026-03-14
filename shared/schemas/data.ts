@@ -119,10 +119,10 @@ export type MultiTeamQuestionData = z.infer<typeof MultiTeamQuestionData>;
 
 export const NextMatch = z.object({
     number: z.number(),
-    team: z.number(),
-    teams: z.array(z.number()),
-    finished: z.boolean(),
-    alliance: z.nativeEnum(Alliance)
+    team: z.number().optional(),
+    teams: z.array(z.number()).optional(),
+    alliance: z.nativeEnum(Alliance).optional(),
+    finished: z.boolean()
 });
 export type NextMatch = z.infer<typeof NextMatch>;
 

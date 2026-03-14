@@ -4,6 +4,15 @@ import { SerializedForm } from "../schemas/forms";
 import { FormComponent } from "./FormComponents";
 import { generateRandomString, toAlphanumeric } from "./FormUtils";
 
+/** 
+ * This separator is used between team numbers and component ids to identify
+ * components in multi-team forms that have the same id but are repeated for
+ * every team in the form. If you used the regular component id, then the form
+ * and response system would not be able to differentiate responses or components 
+ * for different teams.
+**/ 
+export const TEAM_NUMBER_COMPONENT_ID_SEPARATOR = "##";
+
 export enum FormType {
     TEAM = "TEAM",
     ALLIANCE = "ALLIANCE",

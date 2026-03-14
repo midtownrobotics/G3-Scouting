@@ -51,6 +51,28 @@ export class SectionBreak extends FormComponent {
     }
 }
 
+export class PageBreak extends FormComponent {
+    public metadata = null;
+    public _setMetadata() { };
+    public name = null;
+
+    /**
+     * Constructs an page break component.
+     * @param title The page title.
+     */
+    constructor(public title: string) {
+        super();
+    }
+
+    public toJSON(): SerializedComponent {
+        return {
+            type: "PageBreak",
+            creationArgs: [this.title],
+            id: this.id
+        };
+    }
+}
+
 export class Information extends FormComponent {
     public metadata = null;
     public _setMetadata() { };
@@ -345,6 +367,41 @@ export class Comparative extends FormComponent {
     }
 }
 
+export class MultiSelect extends FormComponent {
+    public metadata: QuestionMetadata | null = null;
+
+    /**
+     * Constructs a multi-select question (multiple checkboxes, value stored as comma-joined string).
+     * @param question The question. Ex: `"Which game pieces did they score?"`
+     * @param name The form unique name. Ex: `"GamePieces"`
+     * @param choices The choices. Ex: `["Cone", "Cube", "None"]`
+     */
+    constructor(public question: string, public name: string, public choices: string[]) {
+        super();
+    }
+
+    public _setMetadata(id: string, formId: string, formType: FormType): void {
+        this.metadata = {
+            type: "string",
+            classification: "quantitative",
+            id,
+            formId,
+            formType,
+            namespaceId: `${formId}-${id}`,
+            name: this.name
+        };
+    }
+
+    public toJSON(): SerializedComponent {
+        if (!this.metadata) throw new Error("Cannot serialize component without adding it to a form.");
+        return {
+            type: "MultiSelect",
+            creationArgs: [this.question, this.metadata.name, this.choices],
+            id: this.id
+        };
+    }
+}
+
 const formComponents = {
     SectionBreak,
     Number,
@@ -355,7 +412,9 @@ const formComponents = {
     BooleanInput,
     Range,
     Timer,
-    Comparative
+    Comparative,
+    MultiSelect,
+    PageBreak
 } as const;
 
 export default formComponents;

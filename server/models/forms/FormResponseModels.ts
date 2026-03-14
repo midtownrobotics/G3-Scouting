@@ -1,12 +1,12 @@
+import { FormType } from "@shared/forms/Form";
 import { FormResponse, FormResponseData, QuestionResponse, SubmittedResponse, SubmittedResponseType } from "@shared/schemas/data";
 import { CreationOptional, InferAttributes, InferCreationAttributes } from "sequelize";
 import { Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
-import FormModel from "./FormModel";
-import UserModel from "../users/UserModel";
-import { FormType } from "@shared/forms/Form";
-import VirtualDataEquationModel from "./VirtualDataEquationModels";
-import { equationNeedsCalculateOtf } from "server/data/virtualDataRecorder/vdrUtils";
 import { evaluateEquation } from "server/data/virtualDataRecorder/evaluateEquation";
+import { equationNeedsCalculateOtf } from "server/data/virtualDataRecorder/vdrUtils";
+import UserModel from "../users/UserModel";
+import FormModel from "./FormModel";
+import VirtualDataEquationModel from "./VirtualDataEquationModels";
 
 @Table({ tableName: "form_responses_by_team" })
 export default class FormResponseByTeamModel extends Model<InferAttributes<FormResponseByTeamModel>, InferCreationAttributes<FormResponseByTeamModel>> {
@@ -47,11 +47,12 @@ export default class FormResponseByTeamModel extends Model<InferAttributes<FormR
         if (form.deployed) {
             switch (form.type) {
                 case FormType.TEAM:
-                    user.update({ tokens: user.tokens + 10 });
+                    user.update({ tokens: user.tokens + 10, xp: user.xp + 130 + Math.round((Math.random() * 2 - 1) * 15) });
                     break;
                 case FormType.ALLIANCE:
+                case FormType.WHOLE_MATCH:
                 case FormType.COMPARATIVE:
-                    user.update({ tokens: user.tokens + 15 });
+                    user.update({ tokens: user.tokens + 15, xp: user.xp + 150 + Math.round((Math.random() * 2 - 1) * 20)  });
                     break;
             }
         }

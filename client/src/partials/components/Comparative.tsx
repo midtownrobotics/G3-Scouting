@@ -19,6 +19,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { useEffect, useState } from 'react';
 import { X } from "react-bootstrap-icons";
+import { TEAM_NUMBER_COMPONENT_ID_SEPARATOR } from "@shared/forms/Form"
 
 interface RankingItem {
     id: string;
@@ -49,7 +50,7 @@ function SortableRankItem({ item, onRemove }: {
         <div
             ref={setNodeRef}
             style={style}
-            className="d-flex justify-content-center align-items-center gap-2 mb-2 p-2 bg-light rounded w-md-50 mx-auto"
+            className="d-flex justify-content-center align-items-center gap-2 mb-2 p-2 bg-light rounded w-md-50 mx-auto form-component"
         >
             <div
                 {...attributes}
@@ -79,27 +80,27 @@ function SortableRankItem({ item, onRemove }: {
 export default function Comparative({
     component,
     onChange,
-    teams,
-    answers
+    teams
 }: {
     component: ComponentComponent;
     onChange: (id: string, value: string) => void;
     teams: number[];
-    answers: Map<string, string>;
 }) {
-    const [rankedItems, setRankedItems] = useState<RankingItem[]>(teams.map((t, i) => ({
-        rank: i+1,
-        team: t,
-        id: `team-${t}`
-    })));
+    const [rankedItems, setRankedItems] = useState<RankingItem[]>([]);
 
     useEffect(() => {
         for (let i = 0; i < rankedItems.length; i++) {
-            onChange(`${rankedItems[i].team}##${component.getId()}`, rankedItems[i].rank.toString());
+            onChange(`${rankedItems[i].team}${TEAM_NUMBER_COMPONENT_ID_SEPARATOR}${component.getId()}`, rankedItems[i].rank.toString());
         }
-        setTimeout(() => 
-        console.log(answers), 1000)
     }, [rankedItems]);
+
+    useEffect(() => {
+        setRankedItems(teams.map((t, i) => ({
+            rank: i + 1,
+            team: t,
+            id: `team-${t}`
+        })))
+    }, [teams])
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -119,9 +120,9 @@ export default function Comparative({
             setRankedItems((items) => {
                 const oldIndex = items.findIndex(item => item.id === active.id);
                 const newIndex = items.findIndex(item => item.id === over.id);
-                
+
                 const newItems = arrayMove(items, oldIndex, newIndex);
-                
+
                 // Recalculate ranks after reordering
                 return newItems.map((item, index) => ({
                     ...item,
@@ -156,7 +157,7 @@ export default function Comparative({
     return (
         <Form.Group className="my-3">
             <Form.Label className="fs-2">{component.question}</Form.Label>
-            
+
             {rankedItems.length > 0 && (
                 <DndContext
                     sensors={sensors}

@@ -46,6 +46,7 @@ export const UserInformation = z.object({
         schedule: z.array(UserBlockAssignment),
         nextMatch: NextMatch.nullish()
     })),
+    checkedIn: z.boolean(),
     currentAssignment: Assignment.optional(),
     notifications: z.array(Notification)
 });

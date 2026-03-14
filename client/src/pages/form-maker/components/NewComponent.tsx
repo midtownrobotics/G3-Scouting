@@ -25,6 +25,7 @@ export default function NewComponent({ addComponent }: { addComponent: (componen
             _setComponent(c);
             switch (component) {
                 case "MultipleChoice":
+                case "MultiSelect":
                     return setComponentClass(new formComponents[component]("", "", []));
                 case "Range":
                     return setComponentClass(new formComponents[component]("", "", 0, 0, 0));
@@ -84,8 +85,8 @@ export default function NewComponent({ addComponent }: { addComponent: (componen
                 <Card className="mt-2" style={{ backgroundColor: "rgb(197, 197, 197)" }}>
                     <Card.Body>
                         {componentClass instanceof formComponents.Comparative
-                            ? <Comparative component={componentClass} onChange={() => undefined} answers={new Map()} teams={componentClass.metadata?.formType === FormType.ALLIANCE ? [2974, 1648, 254] : [2974, 1648, 254, 1771, 2025, 1678]} />
-                            : <FormComponent component={componentClass} onAnswerChange={() => undefined} answer={undefined} responseType={SubmittedResponseType.SINGLE_TEAM_FORMS} />
+                            ? <Comparative component={componentClass} onChange={() => undefined} teams={componentClass.metadata?.formType === FormType.ALLIANCE ? [2974, 1648, 254] : [2974, 1648, 254, 1771, 2025, 1678]} />
+                            : <FormComponent highlighting={false} component={componentClass} onAnswerChange={() => undefined} answer={undefined} responseType={SubmittedResponseType.SINGLE_TEAM_FORMS} />
                         }
                     </Card.Body>
                 </Card>

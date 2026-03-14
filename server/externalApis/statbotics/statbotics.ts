@@ -34,6 +34,15 @@ export async function getMatchData(match: number): Promise<SbMatchData | undefin
     return undefined;
 }
 
+export async function getAllMatchData(elim?: boolean): Promise<SbMatchData[] | undefined> {
+    const event = await getSettingsValue("eventKey");
+    const fetched = await fetchSb(`/matches?event=${event}&elim=${elim ? "true" : "false"}`);
+    if (!fetched) return undefined;
+    const data = SbMatchData.array().safeParse(await fetched.json());
+    if (data.success) return data.data;
+    return undefined;
+}
+
 export function hasMatchHappened(sbMatchData?: SbMatchData) {
     if (!sbMatchData) return false;
     const redScore = sbMatchData.result?.red_score;
