@@ -320,13 +320,13 @@ export default function PitMonitor() {
             <Row className="mt-0 g-3">
                 <Col lg={7}>
                     <div className="mt-3"><PitNowCard currentSchedules={currentSchedules ?? []} /></div>
-                    {data?.checklist && <div className="mt-3"><ChecklistCard checklist={data.checklist} reload={reload} /></div>}
                     <div className="mt-3"><UpcomingMatchesCard matches={ourMatches ?? []} teamNumber={data?.team ?? 0} /></div>
                 </Col>
                 <Col lg={5}>
                     {data?.nexusData && <div className="mt-3"><NexusCard data={data.nexusData} team={data?.team ?? 0} /></div>}
                     {data?.ranking && <div className="mt-3"><RankingCard row={data.ranking} /></div>}
                     <div className="mt-3"><BatteryCard data={data?.batteryData} /></div>
+                    {data?.checklist && <div className="mt-3"><ChecklistCard checklist={data.checklist} reload={reload} /></div>}
                 </Col>
             </Row>
         </Container>

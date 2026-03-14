@@ -135,12 +135,32 @@ export function Betting() {
                             <Form.Control
                                 disabled={!question || question.locked}
                                 type="number"
-                                min={10}
+                                min={0}
                                 max={Math.round(tokens)}
                                 value={amount.toString()}
-                                onChange={(e) =>
-                                    setAmount(Math.min(Math.max(parseInt(e.target.value) || 0, 10), Math.round(tokens)))
-                                }
+                                onChange={(e) => {
+                                    const raw = e.target.value;
+                                    if (raw === "") {
+                                        setAmount(0);
+                                        return;
+                                    }
+
+                                    if(!Number.isNaN(parseInt(e.target.value, 10))) {
+                                        setAmount(parseInt(e.target.value, 10));
+                                    }
+                                }}
+                                onBlur={(e) => {
+                                    const value = Number.isNaN(parseInt(e.target.value)) ? 0 : parseInt(e.target.value, 10);
+                                    let input : number;
+                                    if (value === 0) {
+                                        input = 0;
+                                    } else if (value > 10) {
+                                        input = value;
+                                    } else {
+                                        input = 10;
+                                    }
+                                    setAmount(Math.min(input, Math.round(tokens)))
+                                }}
                             />
                         </InputGroup>
                     </div>

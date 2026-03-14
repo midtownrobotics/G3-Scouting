@@ -28,33 +28,34 @@ export default async function assignForMatch(nextMatch: number) {
         }
     });
 
+    let count = 0;
     const users = await UserModel.findAll();
-    for (const alliance of [Alliance.RED, Alliance.BLUE]) {
+    // for (const alliance of [Alliance.RED, Alliance.BLUE]) {
         const assigned: CurrentAssignment[] = [];
-        const allianceTeams = alliance === Alliance.RED ? redTeams : blueTeams;
+        // const allianceTeams = alliance === Alliance.RED ? redTeams : blueTeams;
 
         for (const user of users) {
             const currentAssignment = await user.getCurrentAssignment();
             const userCheckedIn = CheckIn.isUserCheckedIn(user.id);
+            // console.log(userCheckedIn);
             if (currentAssignment?.type !== AssignmentType.ASSIGNED && !userCheckedIn) { setNoNextMatch(user); continue; };
-            console.log(user.displayName);
+            // console.log(user.displayName);
             const i = assigned.length;
-            const userAlliance = !userCheckedIn ? await user.getCurrentAlliance() : [Alliance.RED, Alliance.BLUE][Math.floor(Math.random()*2)];
-            if (userAlliance !== alliance) { setNoNextMatch(user); continue; };
-            const team = allianceTeams[i % 3];
+            const userAlliance = (count % 2 == 0 ? Alliance.RED : Alliance.BLUE) //: [Alliance.RED, Alliance.BLUE][Math.floor(Math.random() * 2)];
+            // if (userAlliance !== alliance) { setNoNextMatch(user); continue; };
+            count++;
+            const team = (userAlliance === Alliance.RED ? redTeams : blueTeams)[i % 3];
 
             const newAssignment: CurrentAssignment = {
                 number: nextMatch,
                 team,
-                teams: allianceTeams,
+                teams: (userAlliance === Alliance.RED ? redTeams : blueTeams),
                 finished: false,
                 username: user.username,
                 userId: user.id,
                 displayName: user.displayName,
-                alliance
+                alliance: userAlliance
             };
-
-            CheckIn.checkOut(user.id);
 
             await user.update({
                 assignedMatches: [...user.assignedMatches, nextMatch],
@@ -63,7 +64,7 @@ export default async function assignForMatch(nextMatch: number) {
 
             assigned.push(newAssignment);
         }
-    }
+    // }
 
     setSettingsValue("match", {
         number: nextMatch,

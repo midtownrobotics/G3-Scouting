@@ -64,7 +64,7 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
     }, []);
 
     useEffect(() => {        
-        if (inProgress) return;
+        // if (inProgress) return;
         if (nextMatch?.number === knownMatch && knownMatch !== undefined) return;
         if (nextMatch?.number) setKnownMatch(nextMatch?.number);
 
@@ -93,8 +93,10 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
                 setInProgress(true);
             }
 
-            if (nextMatch?.team !== undefined && nextMatch.number === matchData?.number) {
-                setTeam(nextMatch.team);
+            console.log(nextMatch?.team, res?.number)
+
+            if (nextMatch?.team !== undefined && nextMatch.number === res?.number) {
+                nextMatch && setTeam(nextMatch.team);
                 setInProgress(true);
             } else {
                 setTeam(res.teams[0])
