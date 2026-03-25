@@ -140,25 +140,13 @@ export function Betting() {
                                 value={amount.toString()}
                                 onChange={(e) => {
                                     const raw = e.target.value;
-                                    if (raw === "") {
-                                        setAmount(0);
-                                        return;
-                                    }
-
-                                    if(!Number.isNaN(parseInt(e.target.value, 10))) {
-                                        setAmount(parseInt(e.target.value, 10));
-                                    }
+                                    if (raw === "") return setAmount(0);
+                                    if(!Number.isNaN(parseInt(e.target.value, 10))) setAmount(parseInt(e.target.value, 10));
                                 }}
                                 onBlur={(e) => {
                                     const value = Number.isNaN(parseInt(e.target.value)) ? 0 : parseInt(e.target.value, 10);
-                                    let input : number;
-                                    if (value === 0) {
-                                        input = 0;
-                                    } else if (value > 10) {
-                                        input = value;
-                                    } else {
-                                        input = 10;
-                                    }
+                                    let input = 10;
+                                    if (value > 10 || value === 0) input = value;
                                     setAmount(Math.min(input, Math.round(tokens)))
                                 }}
                             />

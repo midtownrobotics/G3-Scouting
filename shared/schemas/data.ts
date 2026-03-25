@@ -122,7 +122,7 @@ export const NextMatch = z.object({
     team: z.number().optional(),
     teams: z.array(z.number()).optional(),
     alliance: z.nativeEnum(Alliance).optional(),
-    finished: z.boolean()
+    finished: z.boolean().optional()
 });
 export type NextMatch = z.infer<typeof NextMatch>;
 

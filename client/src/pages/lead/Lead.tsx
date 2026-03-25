@@ -29,7 +29,7 @@ export default function Lead() {
             assignments: z.array(CurrentAssignment)
         })).then(res => {
             if (res) {
-                setAssignments(res.assignments);
+                setAssignments(res.assignments.filter(a => a.team || a.teams || a.alliance));
                 return;
             }
         });
