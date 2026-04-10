@@ -15,6 +15,7 @@ import { GameHome } from "./pages/game/GameHome";
 import { Profiles } from "./pages/profiles/Profiles";
 import { BookiePage } from "./pages/game/BookiePage";
 import Info from "./pages/Info";
+import Lootboxes from "./pages/lootboxes/Lootboxes";
 
 /** Gets the JSX element for a page from its respective {@link PageKey}. */
 export const getPageFromKey = (pageKey: PageKey) => {
@@ -33,6 +34,7 @@ export const getPageFromKey = (pageKey: PageKey) => {
     if (pageKey === "profiles") return <Profiles />;
     if (pageKey === "bookie") return <BookiePage />;
     if (pageKey === "info") return <Info />;
+    if (pageKey === "lootboxes") return <Lootboxes />;
 
     const { setPageKey } = usePage();
     setPageKey("home");

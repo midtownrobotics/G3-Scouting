@@ -10,6 +10,7 @@ import { getNotifications } from "server/other/notifications";
 import { z } from "zod";
 import { parse } from "papaparse";
 import { checkIn, checkOut, isUserCheckedIn } from "server/scheduling/checkIn";
+import { use } from "marked";
 
 const genericAPIRouter = express.Router();
 
@@ -48,7 +49,8 @@ genericAPIRouter.get("/me", async (req: AuthReq, res) => {
             slackLinked: user.slackLinked,
             displayName: user.displayName,
             tokens: user.tokens,
-            xp: user.xp
+            xp: user.xp,
+            title: user.title
         },
         checkedIn: isUserCheckedIn(user.id),
         currentAssignment: await user.getCurrentAssignment(),

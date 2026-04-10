@@ -35,7 +35,8 @@ export type PageKey = (
     "game" | 
     "profiles" |
     "bookie" | 
-    "info"
+    "info" |
+    "lootboxes"
 );
 
 export const morePages: PageKey[] = [
@@ -45,5 +46,6 @@ export const morePages: PageKey[] = [
     "pit-monitor", 
     "battery-manager", 
     "profiles",
-    "bookie"
+    "bookie",
+    "lootboxes"
 ];

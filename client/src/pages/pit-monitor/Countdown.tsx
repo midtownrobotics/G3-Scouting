@@ -21,7 +21,7 @@ export default function Countdown({ targetDate, backup, prefix }: CountdownProps
         const pad = (n: number) => n.toString().padStart(2, "0");
 
         if (hours === 0) return `${prefix ?? ""}${pad(minutes)}:${pad(seconds)}`;
-        return `${prefix ?? ""}${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+        return `${prefix ?? " "}${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
     };
 
     const [timeLeft, setTimeLeft] = useState(getTimeLeftString);

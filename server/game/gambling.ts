@@ -1,4 +1,4 @@
-import { Bet, GamblingQuestion, ResponseBetData } from "@shared/schemas/game";
+import { Bet, GamblingQuestion, ResponseBetData } from "@shared/schemas/game/game";
 import UserModel from "server/models/users/UserModel";
 import { gameWsHandler } from "server/routing/router";
 import { getSettingsValue } from "server/other/settings";

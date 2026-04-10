@@ -2,7 +2,17 @@ import { MultiTeamQuestionData, QuestionData, QuestionMetadata } from "@shared/s
 import FormModel from "../../models/forms/FormModel";
 import { aggregateResponse, AggregationEntry, computeAverage } from "./getQuestionDataUtils";
 
+const cache: Map<string, { data: MultiTeamQuestionData[], exp: number}> = new Map();
+
+/**
+ * Gets the question data for every team. This data is cached for 60 seconds because this call is somewhat intensive.
+ */
 export default async function getQuestionDataForAllTeams(formId: string, maxError?: number, fromMatch?: number, toMatch?: number): Promise<MultiTeamQuestionData[] | null> {
+    const cached = cache.get(formId);
+    if (cached && cached.exp > Date.now()) {
+        return cached.data;
+    }
+
     const formData = (await FormModel.getForm(formId, true))?.getResponseData(maxError, fromMatch, toMatch);
     if (!formData) return null;
 
@@ -91,6 +101,8 @@ export default async function getQuestionDataForAllTeams(formId: string, maxErro
         q.stats.percentile50 = percentile(values, 50);
         q.stats.percentile75 = percentile(values, 75);
     }
+
+    cache.set(formId, { data: questionData, exp: Date.now() + 60000 });
 
     return questionData;
 }

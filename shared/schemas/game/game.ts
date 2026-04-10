@@ -72,3 +72,4 @@ export const ServerToClientMessage = z.object({
     type: z.literal("ping")
 }));;
 export type ServerToClientMessage = z.infer<typeof ServerToClientMessage>;
+

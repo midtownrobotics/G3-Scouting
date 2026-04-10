@@ -6,12 +6,14 @@ export default function Number({
     component,
     onChange,
     value,
-    highlighting
+    highlighting,
+    hopper
 }: {
     component: NumberComponent;
     onChange: (id: string, value: string) => void;
     value: string;
     highlighting: boolean;
+    hopper: number | undefined
 }) {
     useEffect(() => {
         if (!highlighting) return;
@@ -22,6 +24,10 @@ export default function Number({
             if (e.key === '/') onChange(component.getId(), (parseInt(value) + 10).toString());
             if (e.key === 'Shift') onChange(component.getId(), (parseInt(value) + 5).toString());
             if (e.key === '0') onChange(component.getId(), (0).toString());
+            if (hopper) {
+                if (e.key === ',') onChange(component.getId(), (parseInt(value) + Math.round(hopper*0.5)).toString());
+                if (e.key === '.') onChange(component.getId(), (parseInt(value) + Math.round(hopper)).toString());
+            }
         };
 
         window.addEventListener('keydown', handleKeyDown);
@@ -58,6 +64,18 @@ export default function Number({
                     style={{ width: "50px" }}
                     onClick={() => onChange(component.getId(), (parseInt(value) + 5).toString())}
                 >+5</Button>
+                {hopper && <>
+                    <Button
+                        variant="light"
+                        style={{ width: "70px" }}
+                        onClick={() => onChange(component.getId(), (parseInt(value) + Math.round(hopper*0.5)).toString())}
+                    >Half Hop</Button>
+                    <Button
+                        variant="light"
+                        style={{ width: "70px" }}
+                        onClick={() => onChange(component.getId(), (parseInt(value) + Math.round(hopper)).toString())}
+                    >Full Hop</Button>
+                </>}
             </div>
         </Form.Group>
     );

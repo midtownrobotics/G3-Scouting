@@ -6,6 +6,7 @@ import { NextMatch } from './data';
 export const SimpleUser = z.object({
     username: z.string(),
     displayName: z.string().nullish(),
+    title: z.string().nullish(),
     id: z.coerce.number(),
     permission: z.nativeEnum(Permission),
     reliable: z.coerce.boolean(),
@@ -71,5 +72,6 @@ export const UserProfile = z.object({
     displayName: z.string().nullish(),
     tokens: z.number(),
     xp: z.number(),
+    title: z.string().nullish()
 });
 export type UserProfile = z.infer<typeof UserProfile>;

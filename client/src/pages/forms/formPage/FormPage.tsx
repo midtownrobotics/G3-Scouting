@@ -43,7 +43,7 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
                     const next = prev === undefined ? 0 : Math.min(prev + 1, max);
                     // document.querySelectorAll('.form-component')[next]
                     //     ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    window.scrollBy({ top: 75 })
+                    window.scrollBy({ top: 90 })
                     return next;
                 });
             }
@@ -53,7 +53,7 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
                     const next = prev === undefined ? 0 : Math.max(prev - 1, 0);
                     // document.querySelectorAll('.form-component')[next]
                     //     ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    window.scrollBy({ top: -75 })
+                    window.scrollBy({ top: -90 })
                     return next;
                 });
             }
@@ -249,6 +249,8 @@ function FormPage({ form }: { form: React.RefObject<Form | null>; }) {
                         '←/→' - Increment or decrement by 1 or cycle responses<br />
                         'Shift' - Increment by 5 <br />
                         '/' - Increment by 10 <br />
+                        ',' - Increment by half hopper <br />
+                        '.' - Increment by full hopper <br />
                         '0' - Reset counter to 0 <br />
                         'Esc' - Stop hotkey mode
                     </Tooltip>

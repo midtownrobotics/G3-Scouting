@@ -1,4 +1,4 @@
-import { GamblingQuestion, ResponseBetData, ServerToClientMessage } from "@shared/schemas/game";
+import { GamblingQuestion, ResponseBetData, ServerToClientMessage } from "@shared/schemas/game/game";
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { Alert, Button, Card, Form, InputGroup, Spinner } from "react-bootstrap";
 import { sendWsMsg } from "./websocket";

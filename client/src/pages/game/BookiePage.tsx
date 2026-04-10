@@ -1,4 +1,4 @@
-import { GamblingQuestion } from "@shared/schemas/game";
+import { GamblingQuestion } from "@shared/schemas/game/game";
 import { useEffect, useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { fetchAPIJSON, postAPI } from "../../API";

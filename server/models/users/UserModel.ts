@@ -20,6 +20,9 @@ class UserModel extends Model<User, UserCreationAttributes> {
     public displayName!: string | null;
 
     @Column({ type: DataType.TEXT, allowNull: true })
+    public title!: string | null;
+
+    @Column({ type: DataType.TEXT, allowNull: true })
     public slackId?: string | null;
 
     @Column({ type: DataType.TEXT, allowNull: false })

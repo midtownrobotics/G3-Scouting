@@ -17,6 +17,7 @@ export interface User {
     tokens: number;
     xp: number;
     displayName: string | null;
+    title: string | null;
     schedule?: InferAttributes<UserBlockAssignmentModel>[]
 }
 

@@ -106,7 +106,7 @@ const RankingCard: React.FC<{ row?: RankingRow; }> = ({ row }) => (
 export const formatTime = (t?: number | null) => {
     if (!t) return "";
     const d = new Date(t);
-    return `${(d.getHours() - 1) % 12 + 1}:${d.getMinutes().toString().padStart(2, "0")} ${d.getHours() > 11 ? "PM" : "AM"}`;
+    return ` ${(d.getHours() - 1) % 12 + 1}:${d.getMinutes().toString().padStart(2, "0")} ${d.getHours() > 11 ? "PM" : "AM"}`;
 };
 
 const MatchRow: React.FC<{ m: NexusMatch; teamNumber: string; }> = ({ m, teamNumber }) => (

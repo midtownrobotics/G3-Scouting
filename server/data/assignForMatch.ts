@@ -7,6 +7,8 @@ import { scoreAllForms } from "./reliability/scoreUnscoredMatches";
 import { Alliance } from "@shared/utils";
 import * as CheckIn from "../scheduling/checkIn"
 
+const warnings = new Set<number>();
+
 /** 
  * Gives all users that are checked in or are currently assigned to be scouting a team and alliance to scout. 
  * @param nextMatch The match to assign teams for.
@@ -16,8 +18,16 @@ export default async function assignForMatch(nextMatch: number) {
     const currentAssignments = await getAllCurrentAssignmentStatuses();
 
     for (const user of currentAssignments) {
-        // If the user is checked in and had an assignment but did not scout their match, check them out.
-        if (CheckIn.isUserCheckedIn(user.userId) && !user.finished) CheckIn.checkOut(user.userId);
+        // If the user is checked in and had an assignment but did not scout their match.
+        if (CheckIn.isUserCheckedIn(user.userId) && !user.finished) {
+            // Give the user a "warning" or last chance before checking them out
+            if (!warnings.has(user.userId)) warnings.add(user.userId);
+            // If they already have a warning, check them out
+            else {
+                CheckIn.checkOut(user.userId);
+                warnings.delete(user.userId);
+            }
+        }
     }
 
     // Get match data from TBA

@@ -1,6 +1,8 @@
 import { ClientToServerMessage, PickListItem, ServerToClientMessage } from "@shared/schemas/data";
 import UserModel from "server/models/users/UserModel";
 import { WebSocket } from "ws";
+import * as fs from "fs";
+import path from "path";
 
 type PickListWebsocketData = {
     ws: WebSocket,
@@ -8,7 +10,19 @@ type PickListWebsocketData = {
 }
 
 // [(PickList), (NoPickList)]
-let lists: [PickListItem[], PickListItem[]] = [[],[]];
+let lists: [PickListItem[], PickListItem[]] = [[], []];
+
+try {
+    lists = JSON.parse(fs.readFileSync(path.join(__dirname, "picklist.json")).toString());
+    console.log(fs.readFileSync(path.join(__dirname, "picklist.json")).toString()); 
+} catch (err) {
+    lists = [[], []];
+    persistLists([[], []]);
+}
+
+function persistLists(updated: typeof lists) {
+    fs.writeFileSync(path.join(__dirname, "picklist.json"), JSON.stringify(updated));
+}
 
 export default class PickListWebsocketHandler {
     private sockets: Map<number, PickListWebsocketData> = new Map();
@@ -57,6 +71,8 @@ export default class PickListWebsocketHandler {
                                 id: msg.payload.id
                             }
                         })
+
+                        persistLists(lists);
 
                         break;
                 }

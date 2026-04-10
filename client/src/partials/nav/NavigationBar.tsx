@@ -65,6 +65,7 @@ function NavigationBar() {
                                 title={"More"}
                                 style={{ color: morePages.includes(pageKey) ? "black" : "white" }}
                             >
+                                <NavPageLink page="lootboxes" onClick={onclick} dropdown />
                                 <NavPageLink page="form-maker" onClick={onclick} dropdown />
                                 <NavPageLink page="shift-tracker" onClick={onclick} dropdown />
                                 <NavPageLink page="scheduler" onClick={onclick} dropdown />

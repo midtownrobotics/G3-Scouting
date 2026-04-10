@@ -52,7 +52,8 @@ export enum BatteryState {
     CHARGING = "Charging",
     IN_ROBOT = "In Robot",
     IDLE = "Idle",
-    BROKEN = "Broken"
+    BROKEN = "Broken",
+    MATCH = "Match"
 }
 
 export const BatteryData = z.object({

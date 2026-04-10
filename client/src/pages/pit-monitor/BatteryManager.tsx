@@ -122,6 +122,7 @@ export default function BatteryManager() {
                                             disabled={working}
                                         >
                                             <option value={BatteryState.CHARGING}>Charging</option>
+                                            {/* <option value={BatteryState.MATCH}>Match</option> */}
                                             <option value={BatteryState.IDLE}>Idle</option>
                                             <option value={BatteryState.BROKEN}>Broken</option>
                                             <option value={BatteryState.IN_ROBOT}>In Robot</option>

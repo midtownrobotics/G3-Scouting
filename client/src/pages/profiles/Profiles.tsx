@@ -26,7 +26,7 @@ export function Profiles() {
 
     const searchFilter = (profiles: UserProfile[]) => {
         profiles = profiles.filter(p => searchContent ? (p.username.toLowerCase().includes((searchContent).toLowerCase()) || p.displayName?.toLowerCase().includes(searchContent.toLowerCase()) || (searchContent.includes("id-") && ("id-" + p.id.toString()) == searchContent)) : true);
-        profiles = profiles.sort((p1, p2) => p2.xp - p1.xp);
+        profiles = profiles.sort((p1, p2) => p1.xp - p2.xp);
         profiles = profiles.sort(p => p.username === userData?.user.username ? -1 : 1);
         return profiles;
     }
@@ -53,10 +53,10 @@ export function Profiles() {
                                     <h3 className="mb-0">{u.displayName ?? u.username} </h3>
                                     <small>{u.displayName != null ? u.username : <a>&nbsp;</a>}</small>
                                 </Card.Title>
-                                <h5>[Insert Rank Title Here]</h5>
+                                {u.title && <h5 className="fst-italic">"{u.title}"</h5>}
                                 <br />
                                 <h4>XP: {u.xp}</h4>
-                                <h4>Tokens: {u.tokens}</h4>
+                                <h4>Tokens: {Math.round(u.tokens*100)/100}</h4>
                             </Card.Body>
                         </Card>
                     </Col>

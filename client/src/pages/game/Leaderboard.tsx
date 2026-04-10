@@ -1,4 +1,4 @@
-import { TokenLeaderboardEntry } from "@shared/schemas/game";
+import { TokenLeaderboardEntry } from "@shared/schemas/game/game";
 import { CSSProperties, useEffect, useState } from "react";
 import { fetchAPIJSON } from "../../API";
 import { z } from "zod";

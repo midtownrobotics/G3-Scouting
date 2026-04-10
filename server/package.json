@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.ts",
     "scripts": {
-        "dev": "npx nodemon --require tsconfig-paths/register --ignore \"settings.json\" index.ts",
+        "dev": "npx nodemon --require tsconfig-paths/register --ignore \"*.json\" index.ts",
         "build": "tsc --project tsconfig.json",
         "prod": "node ./dist/server/index.js"
     },
