@@ -26,7 +26,7 @@ export function Profiles() {
 
     const searchFilter = (profiles: UserProfile[]) => {
         profiles = profiles.filter(p => searchContent ? (p.username.toLowerCase().includes((searchContent).toLowerCase()) || p.displayName?.toLowerCase().includes(searchContent.toLowerCase()) || (searchContent.includes("id-") && ("id-" + p.id.toString()) == searchContent)) : true);
-        profiles = profiles.sort((p1, p2) => p1.xp - p2.xp);
+        profiles = profiles.sort((p1, p2) => p2.xp - p1.xp);
         profiles = profiles.sort(p => p.username === userData?.user.username ? -1 : 1);
         return profiles;
     }

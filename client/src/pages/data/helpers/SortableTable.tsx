@@ -8,7 +8,7 @@ interface Props<T> {
     sortKey: string | null;
     sortAsc: boolean;
     onSort: (key: string) => void;
-    rowKey: (row: T) => string | number;
+    rowKey: (row: T, i: number) => string | number;
 }
 
 export function SortableTable<T>({
@@ -19,7 +19,7 @@ export function SortableTable<T>({
     onSort,
     rowKey,
 }: Props<T>) {
-    if (new Set(rows.map(r => rowKey(r))).size !== rows.length) return (<h3>{"Internal error building table: Duplicate row keys. Rows: " + rows.map(r => rowKey(r)).join(" ,")}</h3>)
+    if (new Set(rows.map((r, i) => rowKey(r, i))).size !== rows.length) return (<h3>{"Internal error building table: Duplicate row keys. Rows: " + rows.map((r, i) => rowKey(r, i)).join(" ,")}</h3>)
     const visibleColumns = columns.filter(col => typeof col !== "boolean");
 
     const formatCellData = (data: string, key: string): JSX.Element => {
@@ -48,7 +48,7 @@ export function SortableTable<T>({
                 </thead>
                 <tbody>
                     {rows.map((row, i) => (
-                        <tr key={rowKey(row)}>
+                        <tr key={rowKey(row, i)}>
                             <td>{i+1}</td>
                             {visibleColumns.map(col => (
                                 <td key={col.key} style={{ verticalAlign: "middle", whiteSpace: "nowrap" }}>

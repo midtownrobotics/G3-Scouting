@@ -1,12 +1,28 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SortableTable } from "./SortableTable";
 import { useSortableTable } from "./useSortableTable";
 import { FormResponseData } from "@shared/schemas/data";
 import { isMatchRelated } from "./utils";
+import { getNameFromId } from "../../../utils";
 
 export default function FormResponseTable({ formResponseData }: { formResponseData: FormResponseData; }) {
+    useEffect(() => console.log(formResponseData), []);
 
-    useEffect(() => console.log(formResponseData), [])
+    const [userNames, setUserNames] = useState<Record<string, string>>({});
+
+    useEffect(() => {
+        if (!formResponseData) return;
+        const fetchNames = async () => {
+            const entries = await Promise.all(
+                formResponseData.responses.map(async (response) => {
+                    const name = await getNameFromId(response.userId);
+                    return [response.userId, name] as const;
+                })
+            );
+            setUserNames(Object.fromEntries(entries));
+        };
+        fetchNames();
+    }, [formResponseData]);
 
     const rows = useMemo(() => {
         if (!formResponseData) return [];
@@ -14,7 +30,7 @@ export default function FormResponseTable({ formResponseData }: { formResponseDa
             const row: { [key: string]: string | number; } = {
                 _team: response.team,
                 _match: response.match ?? -1,
-                _scout: response.userId ?? "",
+                _scout: userNames[response.userId ?? Infinity] ?? response.userId,
                 _score: response.accuracyScore ?? "",
                 _submittedAt: response.submittedAt ?? "UNKNOWN"
             };
@@ -23,7 +39,7 @@ export default function FormResponseTable({ formResponseData }: { formResponseDa
             }
             return row;
         });
-    }, [formResponseData]);
+    }, [formResponseData, userNames]);
 
     const columns = useMemo(() => {
         if (!formResponseData) return [];
@@ -46,7 +62,7 @@ export default function FormResponseTable({ formResponseData }: { formResponseDa
             sortKey={sortKey}
             sortAsc={sortAsc}
             onSort={handleSort}
-            rowKey={(row) => `${row._team}-${row._match ?? "NA"}-${row._scout}-${row._submittedAt}`}
+            rowKey={(row, i) => `${row._team}-${row._match ?? "NA"}-${row._scout}-${row._submittedAt}-${i}`}
         />
     );
 }

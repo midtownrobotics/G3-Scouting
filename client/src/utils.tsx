@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { DateString } from "@shared/types";
 import { Assignment, UserBlockAssignment } from "@shared/schemas/schedule";
 import { InfoCircle } from "react-bootstrap-icons";
+import { fetchAPIJSON } from "./API";
+import z from "zod";
 
 export function getWebsocket(handler: string) {
     try {
@@ -137,4 +139,16 @@ export function DocsLink({ link }: { link: string }) {
             </a>
         </div>
     );
+}
+const userIdNameMap = new Map<number, string>();
+
+export async function getNameFromId(userId?: number | string) {
+    const id = numberParser(userId);
+    if (!id) return "";
+    if (userIdNameMap.has(id)) return userIdNameMap.get(id)!;
+
+    const result = await fetchAPIJSON(`/nameFromId/${id}`, z.object({ name: z.string() }));
+    const name = result?.name ?? "";
+    userIdNameMap.set(id, name);
+    return name;
 }

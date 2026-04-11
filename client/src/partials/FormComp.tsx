@@ -45,17 +45,6 @@ export default function FormComp({
         if (isAlliance(val)) setAlliance(Alliance[val]);
     };
 
-    const [hopper, setHopper] = useState<number>();
-
-    useEffect(() => {
-        fetchAPIJSON(`/data/getQuestionData/Pit_Scouting`, z.object({ data: MultiTeamQuestionData.array()})).then(r => {
-            const q = r?.data.find(r => r.metadata.id === "HopperCapacity-16");
-            const t = q?.teamData.find(t => t.team === team);
-            const a = t?.questionData.average; 
-            setHopper((a && typeof a === "number" && a > 0) ? a : undefined);
-        });
-    }, [team]);
-
     const comparativeComponents = form.getComponents().filter(c => c instanceof Comparative);
 
     const minPageIndex = pageNum === undefined ? 0 : form.getComponents().map((c, i) => ({ c: c, i: i })).filter(c => c.c instanceof formComponents.PageBreak)[pageNum - 1]?.i ?? 0;
@@ -63,7 +52,6 @@ export default function FormComp({
 
     if (form.type === FormType.TEAM) return (
         <BSForm>
-            <h1>Hopper: {hopper}</h1>
             <hr />
             {pageNum === 0 && <>
                 <SpecialInput value={match}>Match Number</SpecialInput>
@@ -77,7 +65,6 @@ export default function FormComp({
                         answer={answers.get(c.getId())}
                         responseType={SubmittedResponseType.SINGLE_TEAM_FORMS}
                         highlighting={highlighting === c.getId()}
-                        hopper={hopper}
                     />
                 </div>
             ))}

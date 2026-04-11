@@ -18,8 +18,7 @@ function FormComponent({
     answer,
     team,
     responseType,
-    highlighting,
-    hopper
+    highlighting
 }: {
     component: FormComponentClass,
     onAnswerChange: (id: string, value: string) => void,
@@ -27,8 +26,7 @@ function FormComponent({
     team?: number,
     teams?: number[],
     responseType: SubmittedResponseType,
-    highlighting: boolean,
-    hopper?: number | undefined
+    highlighting: boolean
 }) {
     const multiTeamForm = responseType === SubmittedResponseType.MULTI_TEAM_FORMS;
 
@@ -51,7 +49,7 @@ function FormComponent({
     }
 
     if (component instanceof formComponents.Number) {
-        return <Number hopper={hopper} component={component} onChange={_onAnswerChange} value={answer} highlighting={highlighting} />;
+        return <Number component={component} onChange={_onAnswerChange} value={answer} highlighting={highlighting} />;
     }
 
     if (component instanceof formComponents.ShortResponse) {
